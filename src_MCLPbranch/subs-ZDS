@@ -1,0 +1,81 @@
+N[1]=900;
+N[2]=1800;
+N[3]=2500;
+N[4]=1000;
+N[5]=1100;
+N[6]=1200;
+N[7]=1300;
+N[8]=1400;
+N[9]=1500;
+N[10]=1600;
+N[11]=1700;
+N[12]=1900;
+N[13]=2000;
+N[14]=2100;
+N[15]=2200;
+N[16]=2300;
+N[17]=2400;
+
+D[1]=15;
+D[2]=20;
+D[3]=25;
+
+R[1]=3.5;
+R[2]=3.75;
+R[3]=4;
+
+timlim=7200;
+exec[1]=default
+para[1]=1
+exec[2]=presolve_branch
+para[2]=1
+exec[3]=benders
+para[3]=2
+exec[4]=presolve
+para[4]=1
+exec[5]=presolve_nocol
+para[5]=1
+exec[6]=presolve_nodnc
+para[6]=1
+exec[7]=presolve_nodpa
+para[7]=1
+exec[8]=presolve_noda
+para[8]=1
+
+maindir=ZDS-final
+mkdir ${maindir}
+for((i=1; i<=8;i++));
+do
+   dir[i]=${maindir}/${exec[i]};
+   mkdir ${dir[i]}
+done
+
+f_datadir=../DATA/ReVelle_3_2
+c_datadir=../DATA/ReVelle_3_2
+
+
+for((i=1; i<=17;i++)); # N
+do
+   for((j=1; j<=3;j++));  #R
+   do
+      
+      for((k=1; k<=3;k++)); # P
+      do
+         for((l=1; l<=5;l++));  #SEED
+         do
+            f_name=${f_datadir}/m2500_d0_100_rand_s${l}.dat
+            c_name=${c_datadir}/m2500_d0_100_rand_s${l}.dat
+
+            workname=n${N[i]}_m${N[i]}_r${R[j]}_d${D[k]}_s${l}
+         
+            #echo "${workname} ${f_name} ${c_name}"
+            
+            for((p=2; p<=2;p++));
+            do
+              bsub -J ${workname} -q batch -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./${exec[p]} ${f_name} ${c_name} ${N[i]} ${N[i]} ${para[p]} $timlim ${R[j]} ${D[k]}"
+#echo "./${exec[p]} ${f_name} ${c_name} ${N[i]} ${N[i]} ${para[p]} $timlim ${R[j]} ${D[k]}"
+            done
+         done
+      done
+   done
+done

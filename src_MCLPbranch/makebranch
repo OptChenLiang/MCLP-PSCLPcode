@@ -1,0 +1,10 @@
+#g++ -o default -DdistS=0 --std=c++11 -DOPEN=1 -DBRANCH=1 -DBIN=1 -DDA=0 -DPRESOLVE=0 -DDPA=0 -DBEN1=0 -w -I./include/cplex/ -I./include/concert/ilconcert/ *.cpp  -L./lib/cplex -L./lib/concert -lconcert -lilocplex -lcplex -lm -lpthread -g -O2
+g++ -o nopresolve_dpa -DdistS=0 --std=c++11 -DBIN=1 -DDA=0 -DPRESOLVE=1 -DDPA=1 -DBEN1=0 -w -I./include/cplex/ -I./include/concert/ilconcert/ *.cpp  -L./lib/cplex -L./lib/concert -lconcert -lilocplex -lcplex -lm -lpthread -g -O2
+
+#g++ -o presolve -DdistS=0 --std=c++11 -DBIN=1 -DDA=1 -DPRESOLVE=1 -DDPA=1 -DBEN1=0 -DDNC=1 -DCOL=1 -w -I./include/cplex/ -I./include/concert/ilconcert/ *.cpp  -L./lib/cplex -L./lib/concert -lconcert -lilocplex -lcplex -lm -lpthread -g -O2
+g++ -o presolve_branch -DdistS=0 --std=c++11 -DBRANCH=1 -DCUT=1 -DBIN=1 -DDA=1 -DPRESOLVE=1 -DDPA=1 -DBEN1=0 -DDNC=1 -DCOL=1 -w -I./include/cplex/ -I./include/concert/ilconcert/ *.cpp  -L./lib/cplex -L./lib/concert -lconcert -lilocplex -lcplex -lm -lpthread -g -O2
+#g++ -o presolve_noda -DdistS=0 --std=c++11 -DBRANCH=1 -DCUT=1 -DBIN=1 -DPRESOLVE=1 -DDPA=1 -DBEN1=0 -DDNC=1 -DCOL=1 -w -I./include/cplex/ -I./include/concert/ilconcert/ *.cpp  -L./lib/cplex -L./lib/concert -lconcert -lilocplex -lcplex -lm -lpthread -g -O2
+
+#g++ -o presolve_nodpa -DdistS=0 --std=c++11 -DBRANCH=1 -DCUT=1 -DBIN=1 -DPRESOLVE=1 -DBEN1=0 -DDNC=1 -DCOL=1 -w -I./include/cplex/ -I./include/concert/ilconcert/ *.cpp  -L./lib/cplex -L./lib/concert -lconcert -lilocplex -lcplex -lm -lpthread -g -O2
+
+#g++ -o presolve_nodnc -DdistS=0 --std=c++11 -DBRANCH=1 -DCUT=1 -DBIN=1 -DDA=1 -DPRESOLVE=1 -DDPA=1 -DBEN1=0 -DCOL=1 -w -I./include/cplex/ -I./include/concert/ilconcert/ *.cpp  -L./lib/cplex -L./lib/concert -lconcert -lilocplex -lcplex -lm -lpthread -g -O2
