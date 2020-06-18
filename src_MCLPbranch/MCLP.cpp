@@ -13,7 +13,7 @@ extern double presolve_time;
 extern double presolve_dnc_time;
 
 
-
+//Empty callback for a fair comparison with Benders
 int CPXPUBLIC mycutcallback_FAKE(CPXCENVptr env,void *cbdata,int wherefrom,void *cbhandle,int *useraction_p)
 {
 
@@ -53,7 +53,6 @@ void build_model(instance *inst)
 	inst->lb=(double*) calloc(inst->ccnt,sizeof(double));
 	inst->ub=(double*) calloc(inst->ccnt,sizeof(double));
 	inst->c_type=(char*) calloc(inst->ccnt,sizeof(char));
-
 
 	inst->colname=(char**) calloc(inst->ccnt,sizeof(char*));
 	for(int i=0;i<inst->ccnt;i++)
@@ -261,6 +260,7 @@ void solve_model(instance *inst)
 {
 	CPXsetintparam (inst->env, CPX_PARAM_SCRIND, CPX_ON);
    
+   // * Reset random seed if necessary *
    if(inst->seed != -1)
    {
       inst->status = CPXsetintparam (inst->env, CPX_PARAM_RANDOMSEED, inst->seed);
@@ -526,6 +526,7 @@ void solve_model(instance *inst)
 	cout << "\n***open_facilities\t" << open_facilities << " " << inst->BUDGET<<endl;
 	cout << "***satisfied_clients\t" << satisfied_clients << endl;
 
+   //Statistics output
 	cout << "\n\nSTAT:\tobjval\t" << setw(16) << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients <<"\tnodecount\t"<<inst->nodecount<<"\tpresolve_time\t"<<inst->presolve_dpa_time <<"\tsolve_time\t"<< solution_time<<"\ttotal_time\t"<<inst->presolve_time+solution_time<<"\ttotal_time_minus_presolve_time\t "<<inst->presolve_time+solution_time<< endl << endl;
 
    cout<<"presolve_node_time "<<inst->presolve_node_time<<endl;
@@ -556,7 +557,8 @@ void clean_model(instance *inst)
 	inst->status=CPXcloseCPLEX(&(inst->env));
 	if(inst->status!=0) {printf("error in CPXcloseCPLEX\n");exit(-1);}
 }
-
+         
+// * Node presolving callback *
 static int CPXPUBLIC
 mycutcallback (CPXCENVptr env,
       void       *cbdata,

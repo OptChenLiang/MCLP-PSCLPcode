@@ -6,6 +6,7 @@ int main(int argc, char** argv) {
    
 	instance inst;
 
+   //Input locations file and clients file
 	inst.input_file_f = (char *) calloc(1000, sizeof(char));
 	inst.input_file_c = (char *) calloc(1000, sizeof(char));
 	////////////////////////////////////////////////////////////////////////////////////////
@@ -52,8 +53,11 @@ int main(int argc, char** argv) {
 	cout << "***NUMBER OF CPUs " << inst.number_of_CPU << endl;
 	
    inst.cohordinates_loaded = false;
+   //Build MIP model
    build_model(&inst);
+   //Solve MIP model
    solve_model(&inst);
+   //Clean MIP model
    clean_model(&inst);
 
    free(inst.input_file_f);

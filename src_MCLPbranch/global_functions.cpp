@@ -101,6 +101,7 @@ void read_file(instance *inst)
    cout<<"BUDGET: "<<inst->BUDGET<<endl;
    cout<<"RADIUS: "<<inst->RADIUS<<endl;
 	//////////////////////////
+   //Initialize statistics
    inst->num_easy = 0;
    inst->num_col = 0;
    inst->num_row = 0;
@@ -125,10 +126,12 @@ void read_file(instance *inst)
 
    inst->isfind = true;
    inst->validlocations = inst->n_locations;
+   //Dominated columns
 #if COL
    inst->isfind = false;
    dominatedcolumns(inst);
    if(inst->isfind)
+      //Reimplement dual parallel aggregation if dominated columns presolving succeed
       dualparallelaggr2(inst);
    int n_deleted = 0;
 	for ( int i = 0; i < inst->n_locations; i++ )
@@ -141,6 +144,7 @@ void read_file(instance *inst)
    inst->validlocations = inst->covers.size() - n_deleted;
 #endif
 #if DA
+   //Reimplement dual aggregations after dominated columns presolving
    dualaggr(inst);
 #endif
 	//////////////////////////////////
@@ -160,12 +164,13 @@ void read_file(instance *inst)
          meandemand += inst->data[i]->demand/inst->data.size();
       }
    }
+   //Statistics after presolving
    cout<<"mindemand: "<< mindemand<<" maxdemand: "<<maxdemand<<" meandemand: "<<meandemand<<endl;
    nnz += inst->validlocations;
    cout<<"DPANNZ= "<<nnz<<endl;
    cout<<"Row2: "<<inst->n_data<<endl;
 }
-
+//Free intermediate variables
 /*****************************************************************/
 void free_data(instance *inst)
    /*****************************************************************/

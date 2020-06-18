@@ -3,13 +3,14 @@
 #define MAXFACILITY 2500
 #define MAXCLIENT (MAXFACILITY*MAXFACILITY) 
 
+// Distance computation
 double distance(double x1,double y1,double x2, double y2)
 {
 	double distancex = (x2 - x1)*(x2 - x1);
 	double distancey = (y2 - y1)*(y2 - y1);
 	return  distancex + distancey;
 }
-
+//Sorting lexicographically
 bool Comp(MyPair* a, MyPair *b)
 {
    int size1 = a->locations.size();
@@ -66,7 +67,7 @@ bool CompEQ(MyPair* a, MyPair *b)
    }
    return true;
 }
-
+// Set bound in node presolving
 bool setbound(instance* inst, int pos, char sign, char method)
 {
    assert(pos >= 0 && pos <= inst->validlocations + inst->data.size());
@@ -129,7 +130,7 @@ bool setbound(instance* inst, int pos, char sign, char method)
       assert(0);
    return true;
 }
-
+// Get column information
 bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
 {
    int size = a.size();
@@ -149,7 +150,7 @@ bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
    }
    return true;
 }
-
+//Determine whether the subset relationship is valid
 bool issubset(vector<int> &a, vector<int> &b)
 {
    int size1 = a.size();
@@ -216,7 +217,7 @@ bool subset(vector<int> &a, vector<int> &b)
    a.erase(a.begin() + n_locations, a.end());
    return true;
 }
-
+// Variables reductions by dominated columns presolving
 void dominatedcolumns(instance* inst)
 {
    clock_t time_presolvestart=clock();

@@ -21,11 +21,11 @@
 #include "include/cplex/cplex.h"
 
 using namespace std;
-
+//Covering relationship and aggregation information
 class MyPair
 {
 public:
-   vector<int> locations;
+   vector<int> locations; 
    vector<long long> clients;
    double demand;
    double cost;
@@ -42,6 +42,7 @@ public:
       isdeleted = false; 
    }
    ~MyPair(){};
+   //Output callback
    void Print()
    {
       int size = locations.size(); 
@@ -140,12 +141,12 @@ struct MyVector_equal
       return true;
    }
 };
-
+//MCLP instance
 typedef struct {
 ////////////////////
-   vector<MyPair*> data;
-   vector<MyPair*> covers;
-   vector<int> singlecover;
+   vector<MyPair*> data;  //Rows(Clients) information
+   vector<MyPair*> covers;  //Columns(Facilities) informaion
+   vector<int> singlecover;  
 
    int n_data;
 
@@ -167,9 +168,9 @@ typedef struct {
    bool isfind;
    int validlocations;
 
-	double timelimit;
+	double timelimit;  //Time limitation
 
-	int seed;
+	int seed;  //Random seed
 
 	int number_of_CPU;
    
