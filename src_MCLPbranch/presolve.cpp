@@ -3,14 +3,13 @@
 #define MAXFACILITY 2500
 #define MAXCLIENT (MAXFACILITY*MAXFACILITY) 
 
-// Distance computation
 double distance(double x1,double y1,double x2, double y2)
 {
 	double distancex = (x2 - x1)*(x2 - x1);
 	double distancey = (y2 - y1)*(y2 - y1);
 	return  distancex + distancey;
 }
-//Sorting lexicographically
+
 bool Comp(MyPair* a, MyPair *b)
 {
    int size1 = a->locations.size();
@@ -130,7 +129,7 @@ bool setbound(instance* inst, int pos, char sign, char method)
       assert(0);
    return true;
 }
-// Get column information
+
 bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
 {
    int size = a.size();
@@ -150,8 +149,8 @@ bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
    }
    return true;
 }
-//Determine whether the subset relationship is valid
-bool issubset(vector<int> &a, vector<int> &b)
+
+bool IsSubSet(vector<int> &a, vector<int> &b)
 {
    int size1 = a.size();
    int size2 = b.size();
@@ -183,7 +182,7 @@ bool issubset(vector<int> &a, vector<int> &b)
    return true;
 }
 
-bool subset(vector<int> &a, vector<int> &b)
+bool RemoveSubSet(vector<int> &a, vector<int> &b)
 {
    int size1 = a.size();
    int size2 = b.size();
@@ -217,8 +216,8 @@ bool subset(vector<int> &a, vector<int> &b)
    a.erase(a.begin() + n_locations, a.end());
    return true;
 }
-// Variables reductions by dominated columns presolving
-void dominatedcolumns(instance* inst)
+
+void DominatedColumns(instance* inst)
 {
    clock_t time_presolvestart=clock();
    int asize = inst->covers.size();
@@ -231,13 +230,14 @@ void dominatedcolumns(instance* inst)
       {
          if(inst->covers[j]->isdeleted == true)
             continue;
-         if(issubset(inst->covers[i]->locations, inst->covers[j]->locations))
+         if(IsSubSet(inst->covers[i]->locations, inst->covers[j]->locations))
          {
             inst->covers[j]->isdeleted = true;
          }
       }
    }
    sort(inst->covers.begin(), inst->covers.end(), CompforIndex);
+   //Remove the deleted facilities from the set I(j).
    int lsize = 0, ncounter = 0;
    for(int i = 0; i<inst->n_data; i++)
    {
@@ -257,7 +257,7 @@ void dominatedcolumns(instance* inst)
    inst->presolve_dc_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
 }
 
-void dualparallelaggr2(instance* inst)
+void DualParallelAggr2(instance* inst)
 {
    inst->isfind = false;
    clock_t time_presolvestart;
@@ -283,8 +283,8 @@ void dualparallelaggr2(instance* inst)
          inst->isfind = true;
       }
    }
-   time_presolveend=clock();
-   inst->presolve_dpa_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
+   time_presolveend = clock();
+   inst->presolve_dpa_time += (double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
    int ncounter = 0;
    for(int i = 0; i<inst->n_data; i++)
    {
@@ -300,9 +300,9 @@ void dualparallelaggr2(instance* inst)
    return;
 }
 
-void dualparallelaggr(instance *inst)
+void DualParallelAggr(instance *inst)
 {
-   if(inst->cohordinates_loaded == false)
+   if(inst->coordinates_loaded == false)
       cout<< "Randomly generate!"<<endl;
    unordered_map<MyArray, MyPair*, MyArray_hasher, MyArray_equal> mymap;
    unordered_map<MyArray, MyPair*, MyArray_hasher, MyArray_equal>::iterator it;
@@ -310,7 +310,11 @@ void dualparallelaggr(instance *inst)
    clock_t time_presolveend;
    MyPair* pair;
    int local_dummy_a[MAXFACILITY];
-   int **totalarray = new int*[inst->n_locations*inst->n_locations];
+   int **totalarray;
+   if(inst->isDpa)
+      totalarray = new int*[inst->n_locations*inst->n_locations];
+   else
+      totalarray = new int*[inst->n_clients];
    int n_data = 0;
    double Distance = 0.0;
    double x,y;
@@ -320,9 +324,10 @@ void dualparallelaggr(instance *inst)
    local_dummy.a = local_dummy_a;
    local_dummy.len = len;
    time_presolvestart=clock();
+   double rsquare = inst->RADIUS*inst->RADIUS;
 	for ( long long i = 0; i < inst->n_clients; i++ ){
       len = 0;
-      if(inst->cohordinates_loaded == false)
+      if(inst->coordinates_loaded == false)
       {
          //Random generate points of clients
          x = rand()/rand_max*30;
@@ -330,7 +335,7 @@ void dualparallelaggr(instance *inst)
          for ( int j = 0; j < inst->n_locations; j++)
          {
             Distance = distance(x,y,inst->x_location[j],inst->y_location[j]);
-            if(Distance < inst->RADIUS*inst->RADIUS)
+            if(Distance < rsquare)
                local_dummy_a[len++] = j;
          }
       }
@@ -341,18 +346,71 @@ void dualparallelaggr(instance *inst)
             Distance = distance(inst->x_client[i],inst->y_client[i],inst->x_location[j],inst->y_location[j]);
             if( strcmp(inst->input_file_f, inst->input_file_c) == 0 && i == j)
                Distance = 0;
-            if(Distance < inst->RADIUS*inst->RADIUS)
+            if(Distance < rsquare)
             {
                local_dummy_a[len++] = j;
             }
          }
       }
-#if DPA
-      local_dummy.a = local_dummy_a;
-      local_dummy.len = len;
-      it = mymap.find(local_dummy);
-      if(it == mymap.end())
+      if(inst->isDpa)
       {
+         local_dummy.a = local_dummy_a;
+         local_dummy.len = len;
+         it = mymap.find(local_dummy);
+         if(it == mymap.end())
+         {
+            pair = new MyPair(n_data);
+            totalarray[n_data] = new int[local_dummy.len];
+            for(int ll = 0; ll<local_dummy.len; ll++)
+            {
+               pair->locations.push_back(local_dummy.a[ll]);
+               totalarray[n_data][ll] = local_dummy.a[ll];
+            }
+            local_dummy.a = totalarray[n_data];
+            if(inst->isPSCLP)
+            {
+               pair->cost = 0;
+               if(inst->coordinates_loaded==true)
+                  pair->demand = inst->demand[i];
+               else
+                  pair->demand = (rand() % (100-10+1))+ 10;
+            }
+            else
+            {
+               pair->demand = 0;
+               if(inst->coordinates_loaded == true)
+                  pair->cost = inst->demand[i];
+               else
+                  pair->cost = (rand() % (100-10+1))+ 10;
+            }
+            inst->data.push_back(pair);
+            mymap.insert({ local_dummy, pair});
+            n_data++;
+         }
+         else
+         {
+            if(inst->isPSCLP)
+            {
+               it->second->cost = 0;
+               if(inst->coordinates_loaded==true)
+                  it->second->demand = inst->demand[i];
+               else
+                  it->second->demand = (rand() % (100-10+1))+ 10;
+            }
+            else
+            {
+               it->second->demand = 0;
+               if(inst->coordinates_loaded == true)
+                  it->second->cost += inst->demand[i];
+               else
+                  it->second->cost += (rand() % (100-10+1))+ 10;
+            }
+         }
+      }
+      else
+      {
+         local_dummy.a = local_dummy_a;
+         local_dummy.len = len;
          pair = new MyPair(n_data);
          totalarray[n_data] = new int[local_dummy.len];
          for(int ll = 0; ll<local_dummy.len; ll++)
@@ -361,58 +419,38 @@ void dualparallelaggr(instance *inst)
             totalarray[n_data][ll] = local_dummy.a[ll];
          }
          local_dummy.a = totalarray[n_data];
-         pair->demand = 0;
-         if(inst->cohordinates_loaded == true)
-            pair->cost = inst->demand[i];
+         if(inst->isPSCLP)
+         {
+            pair->cost = 0;
+            if(inst->coordinates_loaded==true)
+               pair->demand = inst->demand[i];
+            else
+               pair->demand = (rand() % (100-10+1))+ 10;
+         }
          else
-            pair->cost = (rand() % (100-10+1))+ 10;
+         {
+            pair->demand = 0;
+            if(inst->coordinates_loaded==true)
+               pair->cost = inst->demand[i];
+            else
+               pair->cost = (rand() % (100-10+1))+ 10;
+         }
          inst->data.push_back(pair);
-         mymap.insert({ local_dummy, pair});
          n_data++;
       }
-      else
-      {
-         it->second->demand = 0;
-         if(inst->cohordinates_loaded == true)
-            it->second->cost += inst->demand[i];
-         else
-            it->second->cost += (rand() % (100-10+1))+ 10;
-      }
-#else
-      local_dummy.a = local_dummy_a;
-      local_dummy.len = len;
-      pair = new MyPair(n_data);
-      totalarray[n_data] = new int[local_dummy.len];
-      for(int ll = 0; ll<local_dummy.len; ll++)
-      {
-         pair->locations.push_back(local_dummy.a[ll]);
-         totalarray[n_data][ll] = local_dummy.a[ll];
-      }
-      local_dummy.a = totalarray[n_data];
-      pair->demand = 0;
-      if(inst->cohordinates_loaded==true)
-         pair->cost = inst->demand[i];
-      else
-         pair->cost = (rand() % (100-10+1))+ 10;
-      inst->data.push_back(pair);
-      n_data++;
-#endif
-	}
+   }
    time_presolveend=clock();
    inst->presolve_dpa_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
+   cout<< inst->presolve_dpa_time <<endl;
    for(int i = 0; i<n_data; i++)
    {
       delete[] totalarray[i];
    }
    delete[] totalarray;
    inst->n_data = inst->data.size();
-   inst->n_data = inst->data.size();
-   time_presolvestart = clock();
-   time_presolveend=clock();
-   inst->presolve_dpa_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
 }
 
-void dualaggr(instance* inst)
+void DualAggr(instance* inst)
 {
    int csize = inst->data.size();
    inst->n_data = 0;
@@ -438,7 +476,7 @@ void dualaggr(instance* inst)
    inst->data.erase(inst->data.begin()+inst->n_data, inst->data.end()); 
 }
 
-void nodepresolveinit(instance* inst)
+void NodePresolveInit(instance* inst)
 {
    int i = 0, j = 0;
    int posi = 0;
@@ -465,7 +503,7 @@ void nodepresolveinit(instance* inst)
    }
 }
 
-void nodepresolve(instance* inst, double bestobj)
+void NodePresolve(instance* inst, double bestobj)
 {
-   nodepresolveinit(inst);
+   NodePresolveInit(inst);
 }

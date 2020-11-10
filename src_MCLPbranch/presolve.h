@@ -11,26 +11,26 @@ bool CompforIndex(MyPair* a, MyPair *b);
 bool CompEQ(MyPair* a, MyPair *b);
 
 //Set a contains Set b ?
-bool issubset(vector<int> &a, vector<int> &b);
+bool IsSubSet(vector<int> &a, vector<int> &b);
 
 //Remove the elements of Set a in Set b?
-bool subset(vector<int> &a, vector<int> &b);
+bool RemoveSubSet(vector<int> &a, vector<int> &b);
 
 //Calculate J(i) based on I(j)
 bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b);
 
 //Dual parallel aggregation (and generate random data)
-void dualparallelaggr(instance *inst);
+void DualParallelAggr(instance *inst);
 
 //Dual parallel aggregation
-void dualparallelaggr2(instance* inst);
+void DualParallelAggr2(instance* inst);
 
 //Dominated columns
-void dominatedcolumns(instance* inst);
+void DominatedColumns(instance* inst);
 
 //Dual aggregation
-void dualaggr(instance* inst);
+void DualAggr(instance* inst);
 
 //Node presolve
-void nodepresolve(instance* inst, double bestobj);
+void NodePresolve(instance* inst, double bestobj);
 #endif

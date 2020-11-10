@@ -18,7 +18,7 @@
 #include <unordered_map>
 #include <cstddef>
 #include <functional>
-#include "include/cplex/cplex.h"
+#include "include/cplex.h"
 
 using namespace std;
 //Covering relationship and aggregation information
@@ -182,19 +182,7 @@ typedef struct {
 
    long nodeindex;
 
-#if 0
-	///////////////////////////////////////////////////////////////////////////////
-	int *NFS;     // NFS[i]: begin of FS(i) in AFS
-	int *AFS;     // arcs index ordered for FS
-	int *DP;  // number of neighbours delta+
-
-	int *NBS;     // NBS[i]: begin of BS(i) in ABS
-	int *ABS;     // arcs index ordered for BS
-	int *DM;  // number of neighbours delta-
-	///////////////////////////////////////////////////////////////////////////////
-#endif
-
-	bool cohordinates_loaded;
+	bool coordinates_loaded;
 	double *x_location;
 	double *y_location;
 
@@ -225,6 +213,15 @@ typedef struct {
    long num_easy;
    long num_col;
    long num_row;
+
+   bool isBranch;
+   bool isCut;
+   bool isBin;
+   bool isDpa;
+   bool isDa;
+   bool isDc;
+   bool isDnc;
+   bool isPSCLP;
 } instance;
 
 

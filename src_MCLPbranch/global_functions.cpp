@@ -1,5 +1,3 @@
-
-
 #include "global_functions.h"
 #include "presolve.h"
 
@@ -19,18 +17,19 @@ void read_file(instance *inst)
    }
    if(!in_c)
    {
-      inst->cohordinates_loaded = false;
+      
+      inst->coordinates_loaded = false;
       cout << "Client file could not be opened. " << endl;
    }
    else
-      inst->cohordinates_loaded = true;
+      inst->coordinates_loaded = true;
 
-   //The number of facilities/clients does not excceed the number of rows in files.
+   //The number of facilities/clients does not exceed the number of rows in files.
    double a;
    in_f >> a;
    if(inst->n_locations > a)
       inst->n_locations = (int)floor(a+1e-8);
-   if( inst->cohordinates_loaded == true)
+   if( inst->coordinates_loaded == true)
    {
       in_c >> a;
       if(inst->n_clients > a)
@@ -44,7 +43,8 @@ void read_file(instance *inst)
    inst->x_location= (double *) calloc(inst->n_locations, sizeof(double));
    inst->y_location= (double *) calloc(inst->n_locations, sizeof(double));
 
-   if( inst->cohordinates_loaded == true)
+   //If customer file exists,  
+   if( inst->coordinates_loaded == true)
    {
       inst->demand = (double *) calloc(inst->n_clients, sizeof(double));
       inst->x_client= (double *) calloc(inst->n_clients, sizeof(double));
@@ -64,19 +64,20 @@ void read_file(instance *inst)
 		in_f >> inst->fixed_cost[j];
       inst->fixed_cost[j] = 1;
       mypair = new MyPair(j);
-      mypair->demand = inst->fixed_cost[j];
-      mypair->cost = 0;
+      if(inst->isPSCLP)
+      {
+         mypair->demand = 0;
+         mypair->cost = inst->fixed_cost[j];
+      }
+      else
+      {
+         mypair->demand = inst->fixed_cost[j];
+         mypair->cost = 0;
+      }
       mypair->index = j;
       inst->covers.push_back(mypair);
 	}
-   if(inst->BUDGET < 1)
-   {
-      double sumdemand = 0;
-      for(int i = 0; i<inst->n_locations; i++)
-         sumdemand += inst->covers[i]->demand;
-      inst->BUDGET = (int)floor(inst->BUDGET * sumdemand);
-   }
-   if( inst->cohordinates_loaded == true)
+   if( inst->coordinates_loaded == true)
    {
       for ( int i = 0; i < inst->n_clients; i++ )
       {
@@ -97,8 +98,6 @@ void read_file(instance *inst)
       }
    }
 
-	cout << "BUILDING neighbourhoods "<<endl;
-   cout<<"BUDGET: "<<inst->BUDGET<<endl;
    cout<<"RADIUS: "<<inst->RADIUS<<endl;
 	//////////////////////////
    //Initialize statistics
@@ -111,7 +110,36 @@ void read_file(instance *inst)
    inst->presolve_dc_time = 0.0;
    inst->presolve_node_time = 0.0;
    //Dual parallel aggregation
-   dualparallelaggr(inst);
+   //If the customer file does not exits, generate randomly the coordinates of locations of customers.
+   DualParallelAggr(inst);
+   if(inst->isPSCLP)
+   {
+      if(inst->COVERING_DEMAND <= 1+1e-8)
+      {
+         //Calculate total valid demand of customers (covered by at least one potential facilities).
+         double ratio = 0;
+         for(int i = 0; i<inst->data.size(); i++)
+         {
+            if(inst->data[i]->locations.size() > 0)
+               ratio = ratio + inst->data[i]->demand;
+         }
+         inst->COVERING_DEMAND = (int)ceil(inst->COVERING_DEMAND * ratio);
+         cout<<"BUDGET: "<<inst->COVERING_DEMAND<<endl;
+      }
+
+   }
+   else
+   {
+      if(inst->BUDGET < 1)
+      {
+         //Calculate total valid cost of facilities.
+         double ratio = 0;
+         for(int i = 0; i<inst->n_locations; i++)
+            ratio += inst->covers[i]->demand;
+         inst->BUDGET = (int)floor(inst->BUDGET * ratio);
+         cout<<"BUDGET: "<<inst->BUDGET<<endl;
+      }
+   }
    
    inst->numchg = 0;
    inst->chgind = (int*) calloc(inst->data.size() + inst->covers.size(), sizeof(int));
@@ -127,27 +155,31 @@ void read_file(instance *inst)
    inst->isfind = true;
    inst->validlocations = inst->n_locations;
    //Dominated columns
-#if COL
-   inst->isfind = false;
-   dominatedcolumns(inst);
-   if(inst->isfind)
-      //Reimplement dual parallel aggregation if dominated columns presolving succeed
-      dualparallelaggr2(inst);
-   int n_deleted = 0;
-	for ( int i = 0; i < inst->n_locations; i++ )
+   if(inst->isDc)
    {
-      if(inst->covers[i]->isdeleted)
-         n_deleted++;
+      inst->isfind = false;
+      DominatedColumns(inst);
+      int n_deleted = 0;
+      for ( int i = 0; i < inst->n_locations; i++ )
+      {
+         if(inst->covers[i]->isdeleted)
+            n_deleted++;
+      }
+      cout<<"n_deleted_columns: "<<n_deleted<<endl;
+      
+      if(inst->isfind)
+         //Reimplement dual parallel aggregation if dominated columns presolving succeed
+         DualParallelAggr2(inst);
+      
+      cout<<"n_deleted_rows: "<<size1 - inst->n_data<<endl;
+      inst->validlocations = inst->covers.size() - n_deleted;
    }
-   cout<<"n_deleted_columns: "<<n_deleted<<endl;;
-   cout<<"n_deleted_rows: "<<size1 - inst->n_data<<endl;;
-   inst->validlocations = inst->covers.size() - n_deleted;
-#endif
-#if DA
-   //Reimplement dual aggregations after dominated columns presolving
-   dualaggr(inst);
-#endif
-	//////////////////////////////////
+   if(inst->isDa)
+   {
+      //Reimplement dual aggregations after dominated columns presolving
+      DualAggr(inst);
+   }
+   //////////////////////////////////
    int nnz = 0;
    double mindemand = 1e+20;
    double maxdemand = 0;
@@ -192,7 +224,7 @@ void free_data(instance *inst)
 
    free(inst->x_location);
    free(inst->y_location);
-   if(inst->cohordinates_loaded==true){
+   if(inst->coordinates_loaded==true){
       free(inst->demand);
       free(inst->x_client);
       free(inst->y_client);
