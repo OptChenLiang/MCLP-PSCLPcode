@@ -1,0 +1,101 @@
+N[1]=100;
+N[2]=300;
+N[3]=500;
+N[4]=700;
+N[5]=900;
+N[6]=600;
+N[7]=800;
+N[8]=1100;
+N[9]=1300;
+N[10]=1500;
+
+D[0]=0.5;
+D[1]=0.5;
+D[2]=0.5;
+D[3]=0.5;
+
+R[0]=5.5;
+R[1]=5.75;
+R[2]=6;
+R[3]=6.25;
+
+D[4]=0.6;
+D[5]=0.6;
+D[6]=0.6;
+D[7]=0.6;
+D[8]=0.6;
+
+R[4]=4;
+R[5]=4.25;
+R[6]=4.5;
+R[7]=4.75;
+R[8]=5;
+
+D[9]=0.7;
+D[10]=0.7;
+D[11]=0.7;
+D[12]=0.7;
+D[13]=0.7;
+
+R[9]=3.25;
+R[10]=3.5;
+R[11]=3.75;
+R[12]=4;
+R[13]=4.25;
+
+M[1]=10000;
+M[2]=100000;
+M[3]=1000000;
+M[4]=10000000;
+M[5]=100000000;
+M[6]=1000000000;
+
+timlim=14400;
+exec[1]=default
+exec[2]=nopresolve_dpa
+exec[3]=benders
+exec[4]=psclp_pre_branch
+exec[5]=psclp_nodnc
+exec[6]=psclp_pre
+exec[7]=psclp_nodc
+exec[8]=psclp_noda
+
+maindir=results
+mkdir ${maindir}
+for((i=4; i<=8;i++));
+do
+   dir[i]=${maindir}/${exec[i]};
+   mkdir ${dir[i]}
+done
+
+datadir=../TESTDATA
+f_datadir=${datadir}/f_data
+c_datadir=${datadir}/c_data
+
+for((k=1; k<=6;k++));
+do
+   for((i=2; i<=5;i++));
+   do
+      for((j=0; j<=13;j++));
+      do
+         for((l=2; l<=5;l++));
+         do
+            DD=${D[j]};
+            RR=$(awk -v r=${R[j]} -v n=${N[i]} 'BEGIN{print r*(100/n)^(0.5)}');
+
+            f_name=${f_datadir}/n5000_f10_100_s$l.dat
+            c_name=${c_datadir}/m200000000_d1_100_D1_s$l.dat
+
+            workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
+         
+#echo "${workname} ${f_name} ${c_name}"
+         
+            for((p=5; p<=8;p++));
+            do
+               bsub -J ${workname} -q batch -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+#echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+            done
+         done
+      done
+   done
+done

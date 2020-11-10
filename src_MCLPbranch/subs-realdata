@@ -1,0 +1,59 @@
+file[1]=Bronx
+file[2]=Kings
+file[3]=NewYork
+file[4]=SanFrancisco
+
+R[1]=600
+R[2]=800
+R[3]=400
+R[4]=600
+
+M[1]=3839
+M[2]=7730
+M[3]=2713
+M[4]=5137
+
+P[1]=50;
+P[2]=60;
+P[3]=70;
+P[4]=80;
+P[5]=90;
+P[6]=100;
+
+timlim=7200;
+exec[1]=presolve_branch_real
+para[1]=1
+exec[2]=default_real
+para[2]=1
+
+mkdir realdata
+for((i=1; i<=1;i++));
+do
+   dir[i]=realdata/${exec[i]};
+   mkdir ${dir[i]}
+done
+
+seed[1]=201610271
+seed[2]=124798032
+seed[3]=325789234
+seed[4]=190853410
+seed[5]=984615417
+
+datadir=../TESTDATA
+
+for((i=1; i<=4;i++));
+do
+   f_name=${datadir}/${file[i]}.dat
+   c_name=${datadir}/${file[i]}.dat
+   for((j=1; j<=6;j++));
+   do
+      workname=${file[i]}_${P[j]}   
+      for((p=2; p<=2;p++));
+      do
+         for((q=1; q<=1;q++));
+         do
+            bsub -J ${workname} -q batch -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}_${seed[q]}.err -o ./${dir[p]}/${workname}_${seed[q]}.out -x "./${exec[p]} ${f_name} ${c_name} ${M[i]} ${M[i]} ${para[p]} $timlim ${R[i]} ${P[j]} ${seed[q]}"
+         done
+      done
+   done
+done
