@@ -42,7 +42,7 @@ M[2]=50000;
 M[3]=100000;
 M[4]=500000;
 M[5]=1000000;
-M[6]=5000000;
+M[6]=1500000;
 M[7]=2000000;
 M[8]=4000000;
 M[9]=6000000;
@@ -61,10 +61,11 @@ exec[3]=mclp_nodnc
 exec[4]=mclp_nodc
 exec[5]=mclp_pre
 exec[6]=mclp_nopre
+exec[7]=mclp_nodpa
 
 maindir=random-all
 mkdir ${maindir}
-for((i=1; i<=6;i++));
+for((i=1; i<=7;i++));
 do
    dir[i]=${maindir}/${exec[i]};
    mkdir ${dir[i]}
@@ -92,10 +93,10 @@ do
          
 #echo "${workname} ${f_name} ${c_name}"
          
-            for((p=6; p<=6;p++));
+            for((p=7; p<=7;p++));
             do
-#               bsub -J ${workname} -q batch -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
-echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               bsub -J ${workname} -q batch -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+#echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
             done
          done
       done
