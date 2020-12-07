@@ -4,7 +4,7 @@ N[3]=500;
 N[4]=700;
 N[5]=900;
 N[6]=600;
-N[7]=800;
+N[7]=500;
 N[8]=1000;
 N[9]=1500;
 N[10]=2000;
@@ -75,7 +75,7 @@ c_datadir=${datadir}/c_data
 
 for((k=1; k<=6;k++));
 do
-   for((i=8; i<=10;i++));
+   for((i=7; i<=10;i++));
    do
       for((j=0; j<=13;j++));
       do
@@ -93,7 +93,7 @@ do
          
             for((p=4; p<=4;p++));
             do
-               bsub -J ${workname} -q batch -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               bsub -J ${workname} -q batch -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
 #echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
             done
          done
