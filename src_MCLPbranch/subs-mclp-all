@@ -93,10 +93,10 @@ do
          
 #echo "${workname} ${f_name} ${c_name}"
          
-            for((p=7; p<=7;p++));
+            for((p=1; p<=1;p++));
             do
-               bsub -J ${workname} -q batch -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
-#echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+#bsub -J ${workname} -q batch -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
             done
          done
       done

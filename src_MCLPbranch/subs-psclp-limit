@@ -91,7 +91,7 @@ do
          
 #echo "${workname} ${f_name} ${c_name}"
          
-            for((p=4; p<=4;p++));
+            for((p=5; p<=6;p++));
             do
                bsub -J ${workname} -q batch -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
 #echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
