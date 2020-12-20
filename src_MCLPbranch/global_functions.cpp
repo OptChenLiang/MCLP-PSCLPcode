@@ -44,11 +44,6 @@ void read_file(instance *inst)
    inst->y_location= (double *) calloc(inst->n_locations, sizeof(double));
 
    //If customer file exists,  
-   //If customer file exists,  
-   if( inst->coordinates_loaded == true)
-   {
-      inst->demand = (double *) calloc(inst->n_clients, sizeof(double));
-      inst->x_client= (double *) calloc(inst->n_clients, sizeof(double));
    if( inst->coordinates_loaded == true)
    {
       inst->demand = (double *) calloc(inst->n_clients, sizeof(double));
