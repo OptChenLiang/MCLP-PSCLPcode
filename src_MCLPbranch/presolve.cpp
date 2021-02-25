@@ -395,7 +395,7 @@ void DualParallelAggr(instance *inst)
                if(inst->coordinates_loaded==true)
                   it->second->demand = inst->demand[i];
                else
-                  it->second->demand = (rand() % (100-10+1))+ 10;
+                  it->second->demand += (rand() % (100-10+1))+ 10;
             }
             else
             {

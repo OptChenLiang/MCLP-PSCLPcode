@@ -58,10 +58,11 @@ exec[3]=psclp_nodnc
 exec[4]=psclp_nodc
 exec[5]=psclp_pre
 exec[6]=psclp_nodpa
+exec[7]=psclp_nopre
 
 maindir=random-all
 mkdir ${maindir}
-for((i=1; i<=6;i++));
+for((i=1; i<=7;i++));
 do
    dir[i]=${maindir}/${exec[i]};
    mkdir ${dir[i]}
@@ -71,7 +72,7 @@ datadir=../TESTDATA
 f_datadir=${datadir}/f_data
 c_datadir=${datadir}/c_data
 
-for((k=1; k<=6;k++));
+for((k=1; k<=16;k++));
 do
    for((i=1; i<=1;i++));
    do
@@ -89,7 +90,7 @@ do
          
 #echo "${workname} ${f_name} ${c_name}"
          
-            for((p=6; p<=6;p++));
+            for((p=4; p<=4;p++));
             do
                bsub -J ${workname} -q batch -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
 #echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"

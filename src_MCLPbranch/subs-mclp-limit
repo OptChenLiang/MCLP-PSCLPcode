@@ -47,10 +47,10 @@ M[5]=100000000;
 M[6]=1000000000;
 
 timlim=14400;
-exec[1]=default
-exec[2]=nopresolve_dpa
-exec[3]=mclp_pre_branch
-exec[4]=benders
+exec[1]=mclp_c_pre_branch
+exec[2]=mclp_pre_branch
+exec[3]=nopresolve_dpa
+exec[4]=mclp_pre_branch
 exec[5]=mclp_nodnc
 exec[6]=mclp_pre
 exec[7]=mclp_nodc
@@ -59,7 +59,7 @@ exec[9]=mclp_nodpa
 
 maindir=results
 mkdir ${maindir}
-for((i=9; i<=9;i++));
+for((i=1; i<=2;i++));
 do
    dir[i]=${maindir}/${exec[i]};
    mkdir ${dir[i]}
@@ -69,9 +69,9 @@ datadir=../TESTDATA
 f_datadir=${datadir}/f_data
 c_datadir=${datadir}/c_data
 
-for((k=1; k<=6;k++));
+for((k=1; k<=5;k++));
 do
-   for((i=1; i<=4;i++));
+   for((i=2; i<=5;i++));
    do
       for((j=0; j<=13;j++));
       do
@@ -80,16 +80,16 @@ do
             DD=${D[j]};
             RR=$(awk -v r=${R[j]} -v n=${N[i]} 'BEGIN{print r*(100/n)^(0.5)}');
 
-            f_name=${f_datadir}/n${N[i]}_f10_100_s$l.dat
+            f_name=../TESTDATA/n2500s$l.dat
             c_name=${c_datadir}/m200000000_d1_100_D1_s$l.dat
 
             workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
          
 #echo "${workname} ${f_name} ${c_name}"
          
-            for((p=9; p<=9;p++));
+            for((p=1; p<=2;p++));
             do
-               bsub -J ${workname} -q batch -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
 #echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
             done
          done
