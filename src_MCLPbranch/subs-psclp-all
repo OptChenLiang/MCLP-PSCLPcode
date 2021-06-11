@@ -51,7 +51,7 @@ M[14]=30000000;
 M[15]=35000000;
 M[16]=40000000;
 
-timlim=14400;
+timlim=200;
 exec[1]=psclp_pre_branch
 exec[2]=psclp_noda
 exec[3]=psclp_nodnc
@@ -60,7 +60,7 @@ exec[5]=psclp_pre
 exec[6]=psclp_nodpa
 exec[7]=psclp_nopre
 
-maindir=random-all
+maindir=random-all-new
 mkdir ${maindir}
 for((i=1; i<=7;i++));
 do
@@ -72,27 +72,27 @@ datadir=../TESTDATA
 f_datadir=${datadir}/f_data
 c_datadir=${datadir}/c_data
 
-for((k=1; k<=16;k++));
+for((p=6; p<=6;p++));
 do
-   for((i=1; i<=1;i++));
+   for((k=1; k<=16;k++));
    do
-      for((j=0; j<=13;j++));
+      for((i=1; i<=1;i++));
       do
-         for((l=1; l<=5;l++));
+         for((j=0; j<=13;j++));
          do
-            DD=${D[j]};
-            RR=$(awk -v r=${R[j]} -v n=${N[i]} 'BEGIN{print r*(100/n)^(0.5)}');
+            for((l=1; l<=5;l++));
+            do
+               DD=${D[j]};
+               RR=$(awk -v r=${R[j]} -v n=${N[i]} 'BEGIN{print r*(100/n)^(0.5)}');
 
-            f_name=${f_datadir}/n${N[i]}_f10_100_s$l.dat
-            c_name=${c_datadir}/m200000000_d1_100_D1_s$l.dat
+               f_name=${f_datadir}/n${N[i]}_f10_100_s$l.dat
+               c_name=${c_datadir}/m200000000_d1_100_D1_s$l.dat
 
-            workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
+               workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
          
 #echo "${workname} ${f_name} ${c_name}"
          
-            for((p=4; p<=4;p++));
-            do
-               bsub -J ${workname} -q batch -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               bsub -J ${workname} -q batch -R "span[ptile=1]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
 #echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
             done
          done

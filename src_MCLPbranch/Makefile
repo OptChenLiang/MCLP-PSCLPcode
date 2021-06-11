@@ -35,7 +35,7 @@ CPLEXINCDIR   = include
 EXINC         = include
 EXSRCC        = ./
 
-CFLAGS  = $(COPT) -I$(CPLEXINCDIR) -g -O2
+CFLAGS  = $(COPT) -I$(CPLEXINCDIR) -O2
 
 
 #------------------------------------------------------------

@@ -32,10 +32,11 @@ exec[4]=mclp_nodnc
 exec[5]=mclp_nodpa
 exec[6]=mclp_noda
 exec[7]=mclp_pre
+exec[8]=mclp_nopre
 
-maindir=ZDS-final-new
+maindir=ZDS-final-new-new
 mkdir ${maindir}
-for((i=1; i<=2;i++));
+for((i=2; i<=8;i++));
 do
    dir[i]=${maindir}/${exec[i]};
    mkdir ${dir[i]}
@@ -45,24 +46,24 @@ f_datadir=../DATA/ReVelle_3_2
 c_datadir=../DATA/ReVelle_3_2
 
 
-for((i=2; i<=17;i++)); # N
+for((p=8; p<=8;p++));
 do
-   for((j=1; j<=3;j++));  #R
+   for((i=2; i<=17;i++)); # N
    do
-      for((k=1; k<=3;k++)); # P
+      for((j=1; j<=3;j++));  #R
       do
-         for((l=1; l<=5;l++));  #SEED
+         for((k=1; k<=3;k++)); # P
          do
-            f_name=../TESTDATA/n2500s$l.dat
-            c_name=../TESTDATA/n2500s$l.dat
-
-            workname=n${N[i]}_m${N[i]}_r${R[j]}_d${D[k]}_s${l}
-         
-            #echo "${workname} ${f_name} ${c_name}"
-            
-            for((p=1; p<=2;p++));
+            for((l=1; l<=5;l++));  #SEED
             do
-            bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./${exec[p]} ${f_name} ${c_name} ${N[i]} ${N[i]} $timlim ${R[j]} ${D[k]}"
+               f_name=../TESTDATA/n2500s$l.dat
+               c_name=../TESTDATA/n2500s$l.dat
+
+               workname=n${N[i]}_m${N[i]}_r${R[j]}_d${D[k]}_s${l}
+         
+               #echo "${workname} ${f_name} ${c_name}"
+            
+               bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./${exec[p]} ${f_name} ${c_name} ${N[i]} ${N[i]} $timlim ${R[j]} ${D[k]}"
 #echo "./${exec[p]} ${f_name} ${c_name} ${N[i]} ${N[i]} $timlim ${R[j]} ${D[k]}"
             done
          done

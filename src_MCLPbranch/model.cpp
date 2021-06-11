@@ -25,6 +25,10 @@ void build_model(instance *inst)
 
 	//opening the environment
 	inst->env=CPXopenCPLEX(&(inst->status));
+   int version;
+   CPXversionnumber(inst->env, &version);
+   printf ("CPLEX version is %d \n", version);
+
 	if(inst->status!=0)
 	{
 		printf("cannot open CPLEX environment\n");
@@ -604,10 +608,21 @@ mycutcallback (CPXCENVptr env,
    CPXgetcallbacknodeinfo(env, cbdata, wherefrom, 0, CPX_CALLBACK_INFO_NODE_DEPTH, &depth);
    long nodeindex = 10;
    CPXgetcallbacknodeinfo(env, cbdata, wherefrom, 0, CPX_CALLBACK_INFO_NODE_SEQNUM_LONG, &nodeindex);
-   if(inst->nodeindex == nodeindex)
-      return 0;
+   int nodesize = inst->nodes.size();
+   if(nodeindex >= nodesize)
+   {
+      for(int i = 0; i< nodeindex - nodesize + 1; i++)
+      {
+         inst->nodes.push_back(false);
+      }
+
+   }
    else
-      inst->nodeindex = nodeindex;
+   {
+      if( inst->nodes[nodeindex] == true)
+         return 0;
+   }
+   inst->nodes[nodeindex] = true;
    /*
    int isvarbranch = 0;
    int nodebranch = 1;

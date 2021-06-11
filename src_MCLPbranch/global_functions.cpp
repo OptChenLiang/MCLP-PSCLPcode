@@ -123,7 +123,7 @@ void read_file(instance *inst)
             if(inst->data[i]->locations.size() > 0)
                ratio = ratio + inst->data[i]->demand;
          }
-         inst->COVERING_DEMAND = (int)ceil(inst->COVERING_DEMAND * ratio);
+         inst->COVERING_DEMAND = ceil(inst->COVERING_DEMAND * ratio);
          cout<<"BUDGET: "<<inst->COVERING_DEMAND<<endl;
       }
 
@@ -136,7 +136,7 @@ void read_file(instance *inst)
          double ratio = 0;
          for(int i = 0; i<inst->n_locations; i++)
             ratio += inst->covers[i]->demand;
-         inst->BUDGET = (int)floor(inst->BUDGET * ratio);
+         inst->BUDGET = floor(inst->BUDGET * ratio);
          cout<<"BUDGET: "<<inst->BUDGET<<endl;
       }
    }

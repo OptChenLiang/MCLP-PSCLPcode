@@ -181,6 +181,7 @@ typedef struct {
    char* sign;
 
    long nodeindex;
+   vector<bool> nodes;
 
 	bool coordinates_loaded;
 	double *x_location;

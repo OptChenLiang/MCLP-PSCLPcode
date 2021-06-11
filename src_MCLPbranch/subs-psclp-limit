@@ -53,17 +53,17 @@ M[6]=1000000000;
 timlim=14400;
 exec[1]=psclp_c_pre_branch
 exec[2]=psclp_pre_branch
-exec[3]=benders
-exec[4]=psclp_pre_branch
-exec[5]=psclp_nodnc
-exec[6]=psclp_pre
+exec[3]=psclp_pre
+exec[4]=benders
+exec[5]=psclp_pre_branch
+exec[6]=psclp_nodnc
 exec[7]=psclp_nodc
 exec[8]=psclp_noda
 exec[9]=psclp_nodpa
 
-maindir=results
+maindir=results-limit
 mkdir ${maindir}
-for((i=1; i<=2;i++));
+for((i=5; i<=8;i++));
 do
    dir[i]=${maindir}/${exec[i]};
    mkdir ${dir[i]}
@@ -73,27 +73,27 @@ datadir=../TESTDATA
 f_datadir=${datadir}/f_data
 c_datadir=${datadir}/c_data
 
-for((k=1; k<=5;k++));
+for((p=5; p<=8;p++));
 do
-   for((i=7; i<=10;i++));
+   for((k=1; k<=5;k++));
    do
-      for((j=0; j<=13;j++));
+      for((i=7; i<=10;i++));
       do
-         for((l=1; l<=5;l++));
+         for((j=0; j<=13;j++));
          do
-            DD=${D[j]};
-            RR=$(awk -v r=${R[j]} -v n=${N[i]} 'BEGIN{print r*(100/n)^(0.5)}');
+            for((l=1; l<=5;l++));
+            do
+               DD=${D[j]};
+               RR=$(awk -v r=${R[j]} -v n=${N[i]} 'BEGIN{print r*(100/n)^(0.5)}');
 
-            f_name=../TESTDATA/n2500s$l.dat
-            c_name=${c_datadir}/m200000000_d1_100_D1_s$l.dat
+               f_name=../TESTDATA/n2500s$l.dat
+               c_name=${c_datadir}/m200000000_d1_100_D1_s$l.dat
 
-            workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
+               workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
          
 #echo "${workname} ${f_name} ${c_name}"
          
-            for((p=1; p<=2;p++));
-            do
-               bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
 #echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
             done
          done
