@@ -1,0 +1,149 @@
+/*
+ *		Main.cpp
+ *		Created on: 01/12/2017
+ *		Author: Fabio Furini
+ */
+
+
+
+
+#include "global_functions.h"
+#include "global_variables.h"
+#include "struct.h"
+#include "read.h"
+#include "PSCLP.h"
+#include "PSCLP_BEN.h"
+
+int main(int argc, char** argv) {
+
+	instance inst;
+	mystr inst1;
+#if NODPA
+   inst1.isDpa = false;
+#else
+   inst1.isDpa = true;
+#endif
+#if NODC
+   inst1.isDc = false;
+#else
+   inst1.isDc = true;
+#endif
+   inst1.isPSCLP = true;
+	inst.algorithm = 2;
+#if NODA
+   inst1.isDa = false;
+#else
+   inst1.isDa = true;
+#endif
+
+
+   inst1.input_file_f = (char *) calloc(1000, sizeof(char)); 
+   inst1.input_file_c = (char *) calloc(1000, sizeof(char)); 
+
+	////////////////////////////////////////////////////////////////////////////////////////
+	if (argc >= 8)
+	{
+		/*Param1*/strcpy(inst1.input_file_f, argv[1]);
+		/*Param2*/strcpy(inst1.input_file_c, argv[2]);
+      /*Param3*/inst1.n_locations=atoi(argv[3]);             
+      /*Param4*/inst1.n_clients=atoll(argv[4]);
+		/*Param5*/inst.timelimit=atof(argv[5]);
+		/*Param6*/inst1.RADIUS=atof(argv[6]);
+      cout << "***RADIUS " << inst1.RADIUS << endl;
+      if( inst1.isPSCLP )
+      {
+         inst1.COVERING_DEMAND=atof(argv[7]);
+         cout << "***BUDGET " << inst1.COVERING_DEMAND << endl;
+      }
+      else
+      {
+         inst1.BUDGET=atof(argv[7]);
+         cout << "***BUDGET " << inst1.BUDGET << endl;
+      }
+      inst1.seed = -1;
+      if (argc >= 9)
+         inst1.seed=atof(argv[8]);
+
+	}
+	else
+	{
+		cout << "ERROR NUMBER STANDARD PARAMETERS" << endl;
+		cout << "Param1:\t instance name\n";
+		cout << "Param2:\t algorithm\n";
+		cout << "Param3:\t time limit\n";
+		cout << "Param4:\t RADIUS\n";
+		cout << "Param5:\t BUDGET\n";
+
+		exit(-1);
+	}
+	////////////////////////////////////////////////////////////////////////////////////////
+
+
+   inst1.coordinates_loaded = false;
+	inst.cohordinates_loaded=false;
+
+	cout << "***RADIUS\t" << inst1.RADIUS << endl;
+	cout << "***BUDGET\t" << inst1.COVERING_DEMAND << endl;
+
+
+	/////////////////////////////////////////////////////////////////////////////////////////
+	clock_t time_start=clock();
+
+	read_file(&inst1);
+	READ_NEW_FILE1(&inst, &inst1);
+   cout<<"presolve_dpa: "<<inst1.presolve_dpa_time<<endl;
+   cout<<"presolve_dc: "<<inst1.presolve_dc_time<<endl;
+   inst1.presolve_time = inst1.presolve_dpa_time
+      + inst1.presolve_dc_time;
+   cout<<"Presolve Time: "<<inst1.presolve_time<<endl;
+
+	clock_t time_end=clock();
+	double inst_generation_time=(double)(time_end-time_start)/(double)CLOCKS_PER_SEC;
+
+	cout << "\n\nREADING TIME:\t" << inst_generation_time << endl;
+	/////////////////////////////////////////////////////////////////////////////////////////
+
+
+	inst.number_of_CPU=1;
+	cout << "\n***NUMBER OF CPUs\t" << inst.number_of_CPU << endl;
+
+
+	if(inst.algorithm==1)
+	{
+		cout << "\n\n----------->>>>>>COMPACT MODEL\n";
+
+		///////////////////////////
+		build_model_CFL(&inst);
+		solve_model_CFL(&inst);
+		clean_model_CFL(&inst);
+		///////////////////////////
+
+	}
+
+
+
+	if(inst.algorithm==2)
+	{
+		cout << "\n\n----------->>>>>>BRANCH-AND-BENDERS-CUT\n";
+
+		//this bender an advanced  implementation of the bender (it generates cuts using combinatorial algorithms) *** in addition there is the possibility of activating an  initial cut loop
+
+		///////////////////////////
+		build_model_CFL_BEN_2(&inst);
+		solve_model_CFL_BEN_2(&inst, &inst1);
+		clean_model_CFL_BEN_2(&inst);
+		///////////////////////////
+
+	}
+
+	free(inst1.input_file_f);
+	free(inst1.input_file_c);
+   free_data(&inst1);
+
+	free_data(&inst);
+
+	printf("\nDONE!\n");
+
+	return 1;
+}
+
