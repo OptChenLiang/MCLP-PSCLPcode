@@ -373,7 +373,7 @@ void DualParallelAggr(mystr *inst)
                if(inst->coordinates_loaded==true)
                   pair->demand = inst->demand[i];
                else
-                  pair->demand = (rand() % (100-10+1))+ 10;
+                  pair->demand = (rand() % 100)+ 1;
             }
             else
             {
@@ -381,7 +381,7 @@ void DualParallelAggr(mystr *inst)
                if(inst->coordinates_loaded == true)
                   pair->cost = inst->demand[i];
                else
-                  pair->cost = (rand() % (100-10+1))+ 10;
+                  pair->cost = (rand() % 100)+ 1;
             }
             inst->data.push_back(pair);
             mymap.insert({ local_dummy, pair});
@@ -395,7 +395,7 @@ void DualParallelAggr(mystr *inst)
                if(inst->coordinates_loaded==true)
                   it->second->demand = inst->demand[i];
                else
-                  it->second->demand += (rand() % (100-10+1))+ 10;
+                  it->second->demand += (rand() % 100)+ 1;
             }
             else
             {
@@ -403,7 +403,7 @@ void DualParallelAggr(mystr *inst)
                if(inst->coordinates_loaded == true)
                   it->second->cost += inst->demand[i];
                else
-                  it->second->cost += (rand() % (100-10+1))+ 10;
+                  it->second->cost += (rand() % 100)+ 1;
             }
          }
    time_presolveend=clock();
@@ -427,7 +427,7 @@ void DualParallelAggr(mystr *inst)
             if(inst->coordinates_loaded==true)
                pair->demand = inst->demand[i];
             else
-               pair->demand = (rand() % (100-10+1))+ 10;
+               pair->demand = (rand() % 100)+ 1;
          }
          else
          {
@@ -435,7 +435,7 @@ void DualParallelAggr(mystr *inst)
             if(inst->coordinates_loaded==true)
                pair->cost = inst->demand[i];
             else
-               pair->cost = (rand() % (100-10+1))+ 10;
+               pair->cost = (rand() % 100)+ 1;
          }
          inst->data.push_back(pair);
          n_data++;

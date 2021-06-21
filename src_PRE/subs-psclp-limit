@@ -53,8 +53,8 @@ M[6]=1000000000;
 timlim=14400;
 exec[1]=psclp_c_pre_branch
 exec[2]=psclp_pre_branch
-exec[3]=psclp_pre
-exec[4]=benders
+exec[3]=benders
+exec[4]=psclp_pre
 exec[5]=psclp_pre_branch
 exec[6]=psclp_nodnc
 exec[7]=psclp_nodc
@@ -63,7 +63,7 @@ exec[9]=psclp_nodpa
 
 maindir=results-limit
 mkdir ${maindir}
-for((i=5; i<=8;i++));
+for((i=4; i<=4;i++));
 do
    dir[i]=${maindir}/${exec[i]};
    mkdir ${dir[i]}
@@ -73,9 +73,9 @@ datadir=../TESTDATA
 f_datadir=${datadir}/f_data
 c_datadir=${datadir}/c_data
 
-for((p=5; p<=8;p++));
+for((p=4; p<=4;p++));
 do
-   for((k=6; k<=6;k++));
+   for((k=4; k<=6;k++));
    do
       for((i=7; i<=10;i++));
       do
@@ -92,8 +92,8 @@ do
                workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
          
 #echo "${workname} ${f_name} ${c_name}"
-         
-               bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+        
+               bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
 #echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
             done
          done
