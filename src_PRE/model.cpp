@@ -144,12 +144,15 @@ void build_model(instance *inst)
          {
             for(int j = i+1; j<size; j++)
             {
-               if(IsSubSet(locations, inst->data[j]->locations))
+               if(IsSubSet32(inst->data, i, j))
                {
-                  RemoveSubSet(locations, inst->data[j]->locations);
-                  inst->rmatval[counter] = 1.0;
-                  inst->rmatind[counter] = inst->data[j]->pos;
-                  counter++;
+                  if(IsSubSet(locations, inst->data[j]->locations))
+                  {
+                     RemoveSubSet(locations, inst->data[j]->locations);
+                     inst->rmatval[counter] = 1.0;
+                     inst->rmatind[counter] = inst->data[j]->pos;
+                     counter++;
+                  }
                }
                if(locations.size() < 2)
                   break;

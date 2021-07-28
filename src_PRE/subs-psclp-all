@@ -62,7 +62,7 @@ exec[7]=psclp_nopre
 
 maindir=T1
 mkdir ${maindir}
-for((i=1; i<=5;i++));
+for((i=1; i<=7;i++));
 do
    dir[i]=${maindir}/${exec[i]};
    mkdir ${dir[i]}
@@ -74,7 +74,7 @@ c_datadir=${datadir}/c_data
 
 for((p=1; p<=5;p++));
 do
-   for((k=1; k<=13;k++));
+   for((k=7; k<=7;k++));
    do
       for((i=1; i<=1;i++));
       do
@@ -92,7 +92,7 @@ do
          
 #echo "${workname} ${f_name} ${c_name}"
          
-            bsub -J ${workname} -q batch -R "span[ptile=1]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+            bsub -J ${workname} -q batch -R "span[ptile=1]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
 #echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
             done
          done

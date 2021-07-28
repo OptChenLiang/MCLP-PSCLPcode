@@ -18,7 +18,7 @@
 #include <unordered_map>
 #include <cstddef>
 #include <functional>
-#include "../include/cplex/cplex.h"
+#include "../include/cplex.h"
 
 using namespace std;
 //Covering relationship and aggregation information

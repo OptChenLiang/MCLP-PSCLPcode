@@ -10,6 +10,8 @@ bool CompforDNC(MyPair* a, MyPair *b);
 bool CompforIndex(MyPair* a, MyPair *b);
 bool CompEQ(MyPair* a, MyPair *b);
 
+bool IsSubSet32(vector<MyPair*> &a, int i, int j);
+
 //Set a contains Set b ?
 bool IsSubSet(vector<int> &a, vector<int> &b);
 

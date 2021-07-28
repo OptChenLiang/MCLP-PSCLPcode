@@ -27,6 +27,7 @@ class MyPair
 public:
    vector<int> locations; 
    vector<long long> clients;
+   unsigned int sign;
    double demand;
    double cost;
    int index;

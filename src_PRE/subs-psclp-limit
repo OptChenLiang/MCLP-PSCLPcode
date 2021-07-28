@@ -50,7 +50,7 @@ M[4]=10000000;
 M[5]=100000000;
 M[6]=1000000000;
 
-timlim=14400;
+timlim=10000;
 exec[1]=psclp_c_pre_branch
 exec[2]=psclp_pre_branch
 exec[3]=benders
@@ -61,9 +61,9 @@ exec[7]=psclp_nodc
 exec[8]=psclp_noda
 exec[9]=psclp_nodpa
 
-maindir=results-limit
+maindir=T3
 mkdir ${maindir}
-for((i=4; i<=4;i++));
+for((i=4; i<=9;i++));
 do
    dir[i]=${maindir}/${exec[i]};
    mkdir ${dir[i]}
@@ -73,7 +73,7 @@ datadir=../TESTDATA
 f_datadir=${datadir}/f_data
 c_datadir=${datadir}/c_data
 
-for((p=4; p<=4;p++));
+for((p=4; p<=9;p++));
 do
    for((k=4; k<=6;k++));
    do

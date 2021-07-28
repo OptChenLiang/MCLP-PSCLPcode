@@ -46,10 +46,10 @@ M[4]=10000000;
 M[5]=100000000;
 M[6]=1000000000;
 
-timlim=14400;
+timlim=10000;
 exec[1]=mclp_c_pre_branch
-exec[2]=mclp_pre_branch
-exec[3]=nopresolve_dpa
+exec[2]=nopresolve_dpa
+exec[3]=mclp_nopre
 exec[4]=mclp_pre_branch
 exec[5]=mclp_nodnc
 exec[6]=mclp_pre
@@ -57,9 +57,9 @@ exec[7]=mclp_nodc
 exec[8]=mclp_noda
 exec[9]=mclp_nodpa
 
-maindir=results-limit
+maindir=T3
 mkdir ${maindir}
-for((i=4; i<=8;i++));
+for((i=4; i<=9;i++));
 do
    dir[i]=${maindir}/${exec[i]};
    mkdir ${dir[i]}
@@ -69,9 +69,9 @@ datadir=../TESTDATA
 f_datadir=${datadir}/f_data
 c_datadir=${datadir}/c_data
 
-for((p=4; p<=8;p++));
+for((p=4; p<=9;p++));
 do
-   for((k=6; k<=6;k++));
+   for((k=4; k<=6;k++));
    do
       for((i=2; i<=5;i++));
       do
@@ -89,7 +89,7 @@ do
          
 #echo "${workname} ${f_name} ${c_name}"
          
-               bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
 #echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
             done
          done

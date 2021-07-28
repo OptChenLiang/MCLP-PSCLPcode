@@ -18,8 +18,8 @@ CPLEXLIBDIR   = lib/
 
 CCLNDIRS  = -L$(CPLEXLIBDIR) -L$(CONCERTLIBDIR)
 CLNDIRS   = -L$(CPLEXLIBDIR)
-CCLNFLAGS = -lconcert -lilocplex -lcplex -lm -lpthread
-CLNFLAGS  = -lcplex -lm -lpthread
+CCLNFLAGS = -lconcert -lilocplex -lcplex -lm -lpthread -ldl
+CLNFLAGS  = -lcplex -lm -lpthread -ldl
 JAVA      = java  -d64 -Djava.library.path=$(CPLEXDIR)/bin/x86-64_linux -classpath $(CPLEXJARDIR):
 
 
@@ -93,6 +93,7 @@ MCLP_C_NODPA = -DBRANCH=1 -DCUT=1 -DBIN=0 -DDA=1 -DBEN1=0 -DDNC=1 -DDC=1
 PSCLP_C_NODPA = -DBRANCH=1 -DCUT=1 -DBIN=0 -DDA=1 -DBEN1=0 -DDNC=1 -DDC=1 -DPSCLP=1
 
 mclp_nopre: main.cpp global_functions.o model.o presolve.o
+	echo "$(CCC) $(CFLAGS) $(CLNDIRS) $(MCLP_NOPRE) -o $@ $^ $(CLNFLAGS)"
 	$(CCC) $(CFLAGS) $(CLNDIRS) $(MCLP_NOPRE) -o $@ $^ $(CLNFLAGS)
 
 psclp_nopre: main.cpp global_functions.o model.o presolve.o

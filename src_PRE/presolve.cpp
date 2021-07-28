@@ -144,10 +144,18 @@ bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
       size = b[i]->locations.size();
       for(int k = 0; k<size; k++)
       {
+         a[b[i]->locations[k]]->sign |= 1 << i%32;
          a[b[i]->locations[k]]->locations.push_back(i);
       }
    }
    return true;
+}
+
+bool IsSubSet32(vector<MyPair*> &a, int i, int j)
+{
+   if( ( a[i]->sign | a[j]->sign) == a[i]->sign )
+      return true;
+   return false;
 }
 
 bool IsSubSet(vector<int> &a, vector<int> &b)
@@ -230,9 +238,22 @@ void DominatedColumns(instance* inst)
       {
          if(inst->covers[j]->isdeleted == true)
             continue;
-         if(IsSubSet(inst->covers[i]->locations, inst->covers[j]->locations))
+         if( inst->covers[j]->locations.size() > 0)
          {
-            inst->covers[j]->isdeleted = true;
+            if( IsSubSet32(inst->covers, i, j))
+            {
+               if(IsSubSet(inst->covers[i]->locations, inst->covers[j]->locations))
+               {
+                  inst->covers[j]->isdeleted = true;
+               }
+            }
+         }
+         else
+         {
+            if(IsSubSet(inst->covers[i]->locations, inst->covers[j]->locations))
+            {
+               inst->covers[j]->isdeleted = true;
+            }
          }
       }
    }
@@ -243,10 +264,12 @@ void DominatedColumns(instance* inst)
    {
       lsize = inst->data[i]->locations.size();
       ncounter = 0;
+      inst->data[i]->sign = 0;
       for(int j = 0; j<lsize; j++)
       {
          if(inst->covers[inst->data[i]->locations[j]]->isdeleted == false)
          {
+            inst->data[i]->sign &= 1 << ((inst->data[i]->locations[j])%32);
             inst->data[i]->locations[ncounter] = inst->data[i]->locations[j]; 
             ncounter++;
          }
