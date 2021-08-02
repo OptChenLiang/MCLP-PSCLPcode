@@ -57,7 +57,7 @@ exec[7]=mclp_nodc
 exec[8]=mclp_noda
 exec[9]=mclp_nodpa
 
-maindir=T3
+maindir=T3-32
 mkdir ${maindir}
 for((i=4; i<=9;i++));
 do
@@ -69,7 +69,7 @@ datadir=../TESTDATA
 f_datadir=${datadir}/f_data
 c_datadir=${datadir}/c_data
 
-for((p=4; p<=9;p++));
+for((p=4; p<=4;p++));
 do
    for((k=4; k<=6;k++));
    do

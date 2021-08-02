@@ -157,7 +157,6 @@ void read_file(instance *inst)
    //Dominated columns
    if(inst->isDc)
    {
-      cout<<"aaaa"<<endl;
       inst->isfind = false;
       DominatedColumns(inst);
       int n_deleted = 0;

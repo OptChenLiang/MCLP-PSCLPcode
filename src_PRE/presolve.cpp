@@ -3,6 +3,27 @@
 #define MAXFACILITY 2500
 #define MAXCLIENT (MAXFACILITY*MAXFACILITY) 
 
+void Print(vector<int>* vec)
+{
+   int size = vec->size(); 
+   cout << "size: "<< size<<". ";
+   for(int j = 0; j<size; j++)
+   {
+      cout<<(*vec)[j]<<" ";
+   }
+   cout<<endl;
+};
+   
+void Print(unsigned int sign)
+{
+   for(int i = 0; i< 32; i++)
+   {
+      cout << (sign % 2);
+      sign = sign/2;
+   }
+   cout <<endl;
+}
+
 double distance(double x1,double y1,double x2, double y2)
 {
 	double distancex = (x2 - x1)*(x2 - x1);
@@ -137,6 +158,7 @@ bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
    for(int i = 0; i<size; i++)
    {
       a[i]->locations.clear();
+      a[i]->sign = 0;
    }
    for(int i = 0; i<bsize; i++)
    {      
@@ -144,7 +166,7 @@ bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
       size = b[i]->locations.size();
       for(int k = 0; k<size; k++)
       {
-         a[b[i]->locations[k]]->sign |= 1 << i%32;
+         a[b[i]->locations[k]]->sign |= (1 << (i%32));
          a[b[i]->locations[k]]->locations.push_back(i);
       }
    }
@@ -230,6 +252,7 @@ void DominatedColumns(instance* inst)
    clock_t time_presolvestart=clock();
    int asize = inst->covers.size();
    sort(inst->covers.begin(), inst->covers.end(), CompforDNC);
+
    for(int i = 0; i<asize; i++)
    {
       if(inst->covers[i]->isdeleted == true)

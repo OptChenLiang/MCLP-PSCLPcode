@@ -34,7 +34,7 @@ exec[6]=mclp_noda
 exec[7]=mclp_pre
 exec[8]=mclp_nopre
 
-maindir=T2
+maindir=T2-32
 mkdir ${maindir}
 for((i=2; i<=8;i++));
 do
@@ -42,7 +42,7 @@ do
    mkdir ${dir[i]}
 done
 
-for((p=2; p<=8;p++));
+for((p=2; p<=2;p++));
 do
    for((i=2; i<=17;i++)); # N
    do
