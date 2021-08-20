@@ -24,7 +24,7 @@ void Print(unsigned int sign)
    }
    cout <<endl;
 }
-//Calculate square of Euclidean distance
+//Calculate square of Euclidean distance of (x1,y1) and (x2,y2)
 double distance(double x1,double y1,double x2, double y2)
 {
 	double distancex = (x2 - x1)*(x2 - x1);
