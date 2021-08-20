@@ -171,7 +171,7 @@ void read_file(instance *inst)
       cout<<"n_deleted_columns: "<<n_deleted<<endl;
       
       if(inst->isfind)
-         //Reimplement isomorphic aggregation if domination presolving succeed
+         //Reimplement isomorphic aggregation if domination presolving succeeds
          DualParallelAggr2(inst);
       
       cout<<"n_deleted_rows: "<<size1 - inst->n_data<<endl;
