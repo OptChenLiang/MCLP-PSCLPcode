@@ -25,16 +25,16 @@ using namespace std;
 class MyPair
 {
 public:
-   vector<int> locations; 
-   vector<long long> clients;
+   vector<int> locations; /* Vector of facilities covering the client */
+   vector<long long> clients; /* Vector of covered clients */
    unsigned int sign;
-   double demand;
-   double cost;
-   int index;
+   double demand; /* Client demand */
+   double cost; /* Facility cost */
+   int index; 
    vector<int> fronts;
    vector<int> same;
    vector<int> nexts;
-   bool isdeleted;
+   bool isdeleted; /* Is the facility/client deleted by presolving */
    int pos;
    MyPair(int ind)
    {
