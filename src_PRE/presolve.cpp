@@ -3,6 +3,7 @@
 #define MAXFACILITY 2500
 #define MAXCLIENT (MAXFACILITY*MAXFACILITY) 
 
+//Vector print function
 void Print(vector<int>* vec)
 {
    int size = vec->size(); 
@@ -13,7 +14,7 @@ void Print(vector<int>* vec)
    }
    cout<<endl;
 };
-   
+//Sign vector print function
 void Print(unsigned int sign)
 {
    for(int i = 0; i< 32; i++)
@@ -23,7 +24,7 @@ void Print(unsigned int sign)
    }
    cout <<endl;
 }
-
+//Calculate square of Euclidean distance
 double distance(double x1,double y1,double x2, double y2)
 {
 	double distancex = (x2 - x1)*(x2 - x1);
@@ -48,7 +49,7 @@ bool Comp(MyPair* a, MyPair *b)
       return false;
    return false;
 }
-
+//Sort clients with increasing sizes of coverage facilities
 bool CompforDNC(MyPair* a, MyPair *b)
 {
    int size1 = a->locations.size();
@@ -66,12 +67,12 @@ bool CompforDNC(MyPair* a, MyPair *b)
    }
    return false;
 }
-
+//Sort clients by indices
 bool CompforIndex(MyPair* a, MyPair *b)
 {
    return a->index < b->index;
 }
-
+//Sort clients by lexicographical order; 
 bool CompEQ(MyPair* a, MyPair *b)
 {
    int size1 = a->locations.size();
@@ -87,7 +88,7 @@ bool CompEQ(MyPair* a, MyPair *b)
    }
    return true;
 }
-// Set bound in node presolving
+//Set bound in node presolving
 bool setbound(instance* inst, int pos, char sign, char method)
 {
    assert(pos >= 0 && pos <= inst->validlocations + inst->data.size());
@@ -151,6 +152,7 @@ bool setbound(instance* inst, int pos, char sign, char method)
    return true;
 }
 
+//Calculate coverage relations of clients and facilities
 bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
 {
    int size = a.size();
@@ -172,14 +174,14 @@ bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
    }
    return true;
 }
-
+//Determine inclusive relations of  support signature in 32-bit
 bool IsSubSet32(vector<MyPair*> &a, int i, int j)
 {
    if( ( a[i]->sign | a[j]->sign) == a[i]->sign )
       return true;
    return false;
 }
-
+//Determine inclusive relations of coverage facilities
 bool IsSubSet(vector<int> &a, vector<int> &b)
 {
    int size1 = a.size();
@@ -212,6 +214,7 @@ bool IsSubSet(vector<int> &a, vector<int> &b)
    return true;
 }
 
+//Remove inclusive subset in nonzero cancellation 
 bool RemoveSubSet(vector<int> &a, vector<int> &b)
 {
    int size1 = a.size();
@@ -246,7 +249,7 @@ bool RemoveSubSet(vector<int> &a, vector<int> &b)
    a.erase(a.begin() + n_locations, a.end());
    return true;
 }
-
+//Domination presolving
 void DominatedColumns(instance* inst)
 {
    clock_t time_presolvestart=clock();
@@ -302,7 +305,7 @@ void DominatedColumns(instance* inst)
    clock_t time_presolveend=clock();
    inst->presolve_dc_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
 }
-
+//Reimplement isomorphic aggregation if domination presolving succeeds
 void DualParallelAggr2(instance* inst)
 {
    inst->isfind = false;
@@ -345,7 +348,7 @@ void DualParallelAggr2(instance* inst)
    CalculateCovers(inst->covers, inst->data);
    return;
 }
-
+//Isomorphic aggregation
 void DualParallelAggr(instance *inst)
 {
    if(inst->coordinates_loaded == false)
@@ -495,7 +498,7 @@ void DualParallelAggr(instance *inst)
    delete[] totalarray;
    inst->n_data = inst->data.size();
 }
-
+//Singleton aggregation
 void DualAggr(instance* inst)
 {
    int csize = inst->data.size();
@@ -522,6 +525,7 @@ void DualAggr(instance* inst)
    inst->data.erase(inst->data.begin()+inst->n_data, inst->data.end()); 
 }
 
+//Node presolving of nonoverlap fixing
 void NodePresolveInit(instance* inst)
 {
    int i = 0, j = 0;
