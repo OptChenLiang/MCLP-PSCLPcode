@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
       }
       inst.seed = -1;
       if (argc >= 9)
-         inst.seed=atof(argv[8]); /* Random seed (optional)*/
+         inst.seed=atof(argv[8]); /* Random seed (optional) */
 	}
 	else
 	{
