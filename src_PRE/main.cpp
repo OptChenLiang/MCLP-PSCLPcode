@@ -5,7 +5,7 @@
 int main(int argc, char** argv) {
    
 	instance inst;
-
+// Presolving settings  
 #if BRANCH
    inst.isBranch = true;
 #else
@@ -47,12 +47,13 @@ int main(int argc, char** argv) {
    inst.isPSCLP = false;
 #endif
 
-   //Input locations file and clients file
+   
 	inst.input_file_f = (char *) calloc(1000, sizeof(char));
 	inst.input_file_c = (char *) calloc(1000, sizeof(char));
 	////////////////////////////////////////////////////////////////////////////////////////
 	if (argc >= 8)
 	{
+      //Input locations file, clients file and other solving parameters
       strcpy(inst.input_file_f, argv[1]);
       strcpy(inst.input_file_c, argv[2]);
       inst.n_locations=atoi(argv[3]);
@@ -72,10 +73,11 @@ int main(int argc, char** argv) {
       }
       inst.seed = -1;
       if (argc >= 9)
-         inst.seed=atof(argv[8]);
+         inst.seed=atof(argv[8]); /* Random seed (optional)*/
 	}
 	else
 	{
+		//Error input
 		cout << "ERROR NUMBER STANDARD PARAMETERS" << endl;
 		cout << "Param1:\t facility filename\n";
       cout << "Param2:\t client filename(can be NULL)\n";
@@ -109,6 +111,7 @@ int main(int argc, char** argv) {
    //Clean MIP model
    clean_model(&inst);
 
+   //Free memory of input data files
    free(inst.input_file_f);
    free(inst.input_file_c);
 
