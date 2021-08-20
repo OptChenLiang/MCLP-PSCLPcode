@@ -10,29 +10,30 @@ bool CompforDNC(MyPair* a, MyPair *b);
 bool CompforIndex(MyPair* a, MyPair *b);
 bool CompEQ(MyPair* a, MyPair *b);
 
+//Determine inclusive relations of  support signature in 32-bit
 bool IsSubSet32(vector<MyPair*> &a, int i, int j);
 
-//Set a contains Set b ?
+//Determine inclusive relations of coverage facilities
 bool IsSubSet(vector<int> &a, vector<int> &b);
 
-//Remove the elements of Set a in Set b?
+//Remove the elements of Set b in Set a in nonzero cancellation 
 bool RemoveSubSet(vector<int> &a, vector<int> &b);
 
 //Calculate J(i) based on I(j)
 bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b);
 
-//Dual parallel aggregation (and generate random data)
+//Isomorphic aggregation and generate random data
 void DualParallelAggr(instance *inst);
 
-//Dual parallel aggregation
+//Reimplement isomorphic aggregation if domination presolving succeeds
 void DualParallelAggr2(instance* inst);
 
-//Dominated columns
+//Domination presolving
 void DominatedColumns(instance* inst);
 
-//Dual aggregation
+//Singleton aggregation
 void DualAggr(instance* inst);
 
-//Node presolve
+//Node presolving of nonoverlap fixing
 void NodePresolve(instance* inst, double bestobj);
 #endif
