@@ -152,7 +152,7 @@ bool setbound(instance* inst, int pos, char sign, char method)
    return true;
 }
 
-//Calculate coverage relations of clients and facilities
+//Calculate J(i) based on I(j)
 bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
 {
    int size = a.size();
@@ -214,7 +214,7 @@ bool IsSubSet(vector<int> &a, vector<int> &b)
    return true;
 }
 
-//Remove inclusive subset in nonzero cancellation 
+//Remove the elements of Set b in Set a in nonzero cancellation 
 bool RemoveSubSet(vector<int> &a, vector<int> &b)
 {
    int size1 = a.size();
@@ -348,7 +348,7 @@ void DualParallelAggr2(instance* inst)
    CalculateCovers(inst->covers, inst->data);
    return;
 }
-//Isomorphic aggregation
+//Isomorphic aggregation and generate random data
 void DualParallelAggr(instance *inst)
 {
    if(inst->coordinates_loaded == false)
