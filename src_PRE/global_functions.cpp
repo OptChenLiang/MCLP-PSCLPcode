@@ -4,8 +4,8 @@
 //Read facility and client files if files exist.
 void read_file(instance *inst)
 {
-   cout << "INSTANCE_f " << inst->input_file_f << endl;
-   cout << "INSTANCE_c " << inst->input_file_c << endl;
+   cout << "INSTANCE_f " << inst->input_file_f << endl; /* Facility file */
+   cout << "INSTANCE_c " << inst->input_file_c << endl; /* Client file */
 
    ifstream in_f(inst->input_file_f);
    ifstream in_c(inst->input_file_c);
@@ -51,7 +51,8 @@ void read_file(instance *inst)
       inst->y_client= (double *) calloc(inst->n_clients, sizeof(double));
    }
 
-   MyPair* mypair;
+   //Generate client pointer
+   MyPair* mypair; 
    vector<int> vec;
    char dummy_char;
    int dummy_int;
@@ -98,13 +99,13 @@ void read_file(instance *inst)
       }
    }
 
-   cout<<"RADIUS: "<<inst->RADIUS<<endl;
+   cout<<"RADIUS: "<<inst->RADIUS<<endl; /* Coverage radius */
 	//////////////////////////
    //Initialize statistics
    inst->num_easy = 0;
    inst->num_col = 0;
    inst->num_row = 0;
-   inst->presolve_time = 0.0;
+   inst->presolve_time = 0.0; 
    inst->presolve_dpa_time = 0.0;
    inst->presolve_dnc_time = 0.0;
    inst->presolve_dc_time = 0.0;
@@ -112,32 +113,34 @@ void read_file(instance *inst)
    //Dual parallel aggregation
    //If the customer file does not exits, generate randomly the coordinates of locations of customers.
    DualParallelAggr(inst);
+   //PSCLP model
    if(inst->isPSCLP)
    {
       if(inst->COVERING_DEMAND <= 1+1e-8)
       {
          //Calculate total valid demand of customers (covered by at least one potential facilities).
-         double ratio = 0;
+         double TotalDemand = 0;
          for(int i = 0; i<inst->data.size(); i++)
          {
             if(inst->data[i]->locations.size() > 0)
-               ratio = ratio + inst->data[i]->demand;
+               TotalDemand += inst->data[i]->demand;
          }
-         inst->COVERING_DEMAND = ceil(inst->COVERING_DEMAND * ratio);
-         cout<<"BUDGET: "<<inst->COVERING_DEMAND<<endl;
+         inst->COVERING_DEMAND = ceil(inst->COVERING_DEMAND * TotalDemand);
+         cout<<"BUDGET: "<<inst->COVERING_DEMAND<<endl; /* The required coverage demand */
       }
 
    }
+   //MCLP model
    else
    {
       if(inst->BUDGET < 1)
       {
          //Calculate total valid cost of facilities.
-         double ratio = 0;
+         double TotalCost = 0;
          for(int i = 0; i<inst->n_locations; i++)
-            ratio += inst->covers[i]->demand;
-         inst->BUDGET = floor(inst->BUDGET * ratio);
-         cout<<"BUDGET: "<<inst->BUDGET<<endl;
+            TotalCost += inst->covers[i]->demand;
+         inst->BUDGET = floor(inst->BUDGET * TotalCost);
+         cout<<"BUDGET: "<<inst->BUDGET<<endl; /* The required coverage budget */
       }
    }
    
