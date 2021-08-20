@@ -16,14 +16,14 @@ int CPXPUBLIC mycutcallback_FAKE(CPXCENVptr env,void *cbdata,int wherefrom,void 
 	return 0;
 }
 
-/*****************************************************************/
+//Build MCLP or PSCLP model
 void build_model(instance *inst)
 /*****************************************************************/
 {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// * setting the CPLEX environment
+	//Set the CPLEX environment
 
-	//opening the environment
+	//Open the environment
 	inst->env=CPXopenCPLEX(&(inst->status));
    int version;
    CPXversionnumber(inst->env, &version);
@@ -35,7 +35,7 @@ void build_model(instance *inst)
 		exit(-1);
 	}
 
-	//opening the pointer to the problem
+	//Open the pointer to the problem
 	inst->lp=CPXcreateprob(inst->env,&(inst->status),"MCLP");
 	if(inst->status!=0)
 	{
@@ -45,7 +45,7 @@ void build_model(instance *inst)
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// * creating the variables *
+	//Create the facility variables 
    inst->ccnt=inst->n_locations+inst->n_data;
    inst->obj=(double*) calloc(inst->ccnt,sizeof(double));
 	inst->lb=(double*) calloc(inst->ccnt,sizeof(double));
@@ -77,6 +77,7 @@ void build_model(instance *inst)
 	}
    inst->validlocations = counter;
 	cout << "\n*** CONTINUOUS Z VARIABLES\n";
+   //Create the client variables 
    int size = inst->n_data;
    for ( int i = 0; i < size; i++ )
    {
@@ -92,6 +93,7 @@ void build_model(instance *inst)
 		sprintf(inst->colname[counter], "z%d",i);
 		counter++;
 	}
+	//Add variables into CPLEX
 	inst->status=CPXnewcols(inst->env,inst->lp,counter,inst->obj,inst->lb,inst->ub,inst->c_type,inst->colname);
    printf("locations:%d cols: %d\n", inst->validlocations, counter);
 	if(inst->status!=0)
@@ -111,7 +113,7 @@ void build_model(instance *inst)
 	free(inst->colname);
 
 
-	// * setting the objective function in the minimization form
+	//Set the objective function in the minimization form in PSCLP (or maximization form in MCLP)
    if(inst->isPSCLP)
       CPXchgobjsen(inst->env,inst->lp,CPX_MIN);
    else
@@ -119,11 +121,11 @@ void build_model(instance *inst)
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
    int nrows = 0;
-   sort(inst->data.begin(), inst->data.end(), CompforDNC);
+   sort(inst->data.begin(), inst->data.end(), CompforDNC); /* Sort clients for nonzero cancellation */
 	for ( int i = 0; i < size; i++ )
 	{
       assert(inst->data[i]->isdeleted == false);
-		// * creating the covering  constraint *
+		//creating covering constraint
 		inst->rcnt=1;
 		inst->nzcnt=inst->data[i]->locations.size()+1;
 		inst->rhs=(double*) calloc(inst->rcnt,sizeof(double));
@@ -136,14 +138,17 @@ void build_model(instance *inst)
 		inst->rmatval=(double*) calloc(inst->nzcnt+1,sizeof(double));
 
 		int counter=0;
+     
       if(inst->isDnc)
       {
+	 //Do nonzero cancellation presolving
          clock_t time_presolvestart = clock();
          vector<int> locations = inst->data[i]->locations;
          if(inst->data[i]->locations.size() > 2 )
          {
             for(int j = i+1; j<size; j++)
             {
+	       //Decide inclusive relations of support signatures. If true, then decide inclusive relations of coverage facilities  
                if(IsSubSet32(inst->data, i, j))
                {
                   if(IsSubSet(locations, inst->data[j]->locations))
@@ -182,7 +187,7 @@ void build_model(instance *inst)
       inst->rmatval[counter] = -1.0;
       inst->rmatind[counter++]= inst->data[i]->pos;
       inst->rmatbeg[0]=0;
-
+      //Add covering constraint
       inst->status=CPXaddrows(inst->env,inst->lp,0,inst->rcnt,counter,inst->rhs,inst->sense,inst->rmatbeg,inst->rmatind,inst->rmatval,NULL,NULL);
       if(inst->status!=0)
       {
@@ -201,7 +206,8 @@ void build_model(instance *inst)
    /////////////////////////////////////////////////////////////////////////////////////////////////////////
    if(inst->isPSCLP)
    {
-      // * creating the demand constraint *
+      //PSCLP model
+      //create the demand constraint in PSCLP
       inst->rcnt=1;
       inst->nzcnt=inst->n_data+inst->covers.size()+inst->singlecover.size();
       counter = 0;
@@ -233,7 +239,8 @@ void build_model(instance *inst)
    }
    else
    {
-      // * creating the budget constraint *
+      //MCLP model
+      //Create the budget constraint in MCLP
       inst->rcnt=1;
       inst->nzcnt=inst->n_locations;
       inst->rhs=(double*) calloc(inst->rcnt,sizeof(double));
@@ -272,7 +279,7 @@ void build_model(instance *inst)
 
 //#ifdef write_prob
    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // * writing the created ILP model on a file *
+   //Write the created ILP model on a file
 	inst->status=CPXwriteprob(inst->env,inst->lp,"problem.lp",NULL);
 	if(inst->status!=0) {
 		printf("error in CPXwriteprob\n");
@@ -280,6 +287,7 @@ void build_model(instance *inst)
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 //#endif
+   //Statistics
    cout<<"DNCNNZ= " << CPXgetnumnz( inst->env, inst->lp ) <<endl;;
 
    cout<<"presolve_dpa: "<<inst->presolve_dpa_time<<endl;
@@ -292,13 +300,13 @@ void build_model(instance *inst)
    inst->n_data = inst->data.size();
 }
 
-/*****************************************************************/
+//Solve PSCLP or MCLP model using CPLEX
 void solve_model(instance *inst)
 /*****************************************************************/
 {
 	CPXsetintparam (inst->env, CPX_PARAM_SCRIND, CPX_ON);
    
-   // * Reset random seed if necessary *
+   //Reset random seed if necessary
    if(inst->seed != -1)
    {
       inst->status = CPXsetintparam (inst->env, CPX_PARAM_RANDOMSEED, inst->seed);
@@ -308,14 +316,14 @@ void solve_model(instance *inst)
       }
    }
 
-	// * Set relative tolerance *
+	//Set relative tolerance
 	inst->status = CPXsetdblparam (inst->env, CPX_PARAM_EPAGAP, 0.0);
 	if (inst->status)
 	{
 	   printf ("error for CPX_PARAM_EPAGAP\n");
 	}
 	
-	// * Set a tolerance *
+	//Set a tolerance
 	inst->status = CPXsetdblparam (inst->env, CPX_PARAM_EPGAP, 0.0);
 	if (inst->status)
    {
@@ -336,14 +344,14 @@ void solve_model(instance *inst)
 	//		printf ("error for CPX_PARAM_EPRHS\n");
 	//	}
 
-	// * Set number of CPU*
+	//Set number of CPU
 	inst->status = CPXsetintparam (inst->env, CPX_PARAM_THREADS, inst->number_of_CPU);
 	if (inst->status)
 	{
 		printf ("error for CPX_PARAM_EPRHS\n");
 	}
 
-	// * Set time limit *
+	//Set time limitation
    if(inst->presolve_time > inst->timelimit)
       inst->status = CPXsetdblparam (inst->env, CPX_PARAM_TILIM, 1);
    else
@@ -360,7 +368,7 @@ void solve_model(instance *inst)
 	inst->status = CPXsetintparam (inst->env, CPXPARAM_MIP_Cuts_Covers, -1);
    */
 #if 0
-   // * Set node limit *
+   //Set node limitation
 	inst->status = CPXsetintparam (inst->env, CPX_PARAM_NODELIM, 0);
 	if (inst->status)
 	{
@@ -427,7 +435,7 @@ void solve_model(instance *inst)
 //#endif
 
 	///////////////////////////////////////////////////////////////////////////////////
-	// * solving the MIP model
+	//Solve the PSCLP or MCLP model
 	clock_t time_start=clock();
 
 	cout << "\nCPXmipopt:\n";
@@ -449,6 +457,7 @@ void solve_model(instance *inst)
 
 	int cur_numrows=CPXgetnumrows(inst->env,inst->lp);
 #if 0
+   
    int* indices=(int*) calloc(inst->n_locations+inst->data.size(),sizeof(int));
    int* priority=(int*) calloc(inst->n_locations+inst->data.size(),sizeof(int));
 
@@ -482,7 +491,7 @@ void solve_model(instance *inst)
 
 	bool sol_found=true;
 
-	// * getting the solution
+	//Get the solution
 
    int size = 0;
    size = inst->n_data;
@@ -505,6 +514,7 @@ void solve_model(instance *inst)
 	int open_facilities=-1;
 	int satisfied_clients=-1;
 
+	//Calculate numbers of opened facilities and covered clients
 	if(sol_found){
 
 		open_facilities=0;
@@ -583,7 +593,7 @@ void solve_model(instance *inst)
 }
 
 
-/*****************************************************************/
+//Close CPLEX environments
 void clean_model(instance *inst)
 /*****************************************************************/
 {
@@ -594,7 +604,7 @@ void clean_model(instance *inst)
 	if(inst->status!=0) {printf("error in CPXcloseCPLEX\n");exit(-1);}
 }
          
-// * Node presolving callback *
+//Node presolving callback of nonoverlap fixing
 static int CPXPUBLIC
 mycutcallback (CPXCENVptr env,
       void       *cbdata,
