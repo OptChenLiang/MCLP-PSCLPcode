@@ -112,7 +112,7 @@ void read_file(instance *inst)
    inst->presolve_node_time = 0.0;
    //Dual parallel aggregation
    //If the customer file does not exits, generate randomly the coordinates of locations of customers.
-   DualParallelAggr(inst);
+   DualParallelAggr(inst); /* Generate coordinates of locations and do isomorphic aggregation */
    //PSCLP model
    if(inst->isPSCLP)
    {
@@ -150,14 +150,14 @@ void read_file(instance *inst)
    inst->n_location = (int*) calloc(inst->data.size() + inst->covers.size(), sizeof(int));
    
    int size1 = inst->n_data;
-   cout<<"Row1: "<<inst->n_data<<endl;
+   cout<<"Row1: "<<inst->n_data<<endl; 
    cout<<"presolve_dpa1: "<<inst->presolve_dpa_time<<endl;
    // Calculate J(i), i in I
    CalculateCovers(inst->covers, inst->data);
 
    inst->isfind = true;
    inst->validlocations = inst->n_locations;
-   //Dominated columns
+   //Do domination presolving
    if(inst->isDc)
    {
       inst->isfind = false;
@@ -171,7 +171,7 @@ void read_file(instance *inst)
       cout<<"n_deleted_columns: "<<n_deleted<<endl;
       
       if(inst->isfind)
-         //Reimplement dual parallel aggregation if dominated columns presolving succeed
+         //Reimplement isomorphic aggregation if domination presolving succeed
          DualParallelAggr2(inst);
       
       cout<<"n_deleted_rows: "<<size1 - inst->n_data<<endl;
@@ -179,10 +179,11 @@ void read_file(instance *inst)
    }
    if(inst->isDa)
    {
-      //Reimplement dual aggregations after dominated columns presolving
+      //Reimplement singleton aggregation after domination presolving
       DualAggr(inst);
    }
    //////////////////////////////////
+   //Calculate statistics after presolving
    int nnz = 0;
    double mindemand = 1e+20;
    double maxdemand = 0;
@@ -199,11 +200,11 @@ void read_file(instance *inst)
          meandemand += inst->data[i]->demand/inst->data.size();
       }
    }
-   //Statistics after presolving
-   cout<<"mindemand: "<< mindemand<<" maxdemand: "<<maxdemand<<" meandemand: "<<meandemand<<endl;
+   
+   cout<<"mindemand: "<< mindemand<<" maxdemand: "<<maxdemand<<" meandemand: "<<meandemand<<endl; /* Minimal/maximal/average client demand*/
    nnz += inst->validlocations;
-   cout<<"DPANNZ= "<<nnz<<endl;
-   cout<<"Row2: "<<inst->n_data<<endl;
+   cout<<"DPANNZ= "<<nnz<<endl; /* Number of nonzeros in model after presolving */
+   cout<<"Row2: "<<inst->n_data<<endl; /* Number of clients after presolving */
 }
 //Free intermediate variables
 /*****************************************************************/
