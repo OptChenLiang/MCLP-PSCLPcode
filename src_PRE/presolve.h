@@ -2,7 +2,7 @@
 #define PRESOLVE__H
 #include "global_variables.h"
 
-//Calculate the distance between (x1,y1) and (x2,y2)
+//Calculate square of Euclidean distance of (x1,y1) and (x2,y2)
 double distance(double x1,double y1,double x2, double y2);
 
 bool Comp(MyPair* a, MyPair *b);
