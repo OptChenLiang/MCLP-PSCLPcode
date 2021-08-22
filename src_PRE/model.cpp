@@ -5,7 +5,7 @@
 #define write_prob
 
 extern double presolve_time;
-extern double presolve_dnc_time;
+extern double presolve_NC_time;
 
 //Empty callback for a fair comparison with Benders
 int CPXPUBLIC mycutcallback_FAKE(CPXCENVptr env,void *cbdata,int wherefrom,void *cbhandle,int *useraction_p)
@@ -171,7 +171,7 @@ void build_model(instance *inst)
             inst->rmatind[counter++] = inst->covers[locations[k]]->pos;
          }
          clock_t time_presolveend=clock();
-         inst->presolve_dnc_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
+         inst->presolve_NC_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
       }
       else
       {
@@ -290,12 +290,12 @@ void build_model(instance *inst)
    //Statistics
    cout<<"DNCNNZ= " << CPXgetnumnz( inst->env, inst->lp ) <<endl;;
 
-   cout<<"presolve_dpa: "<<inst->presolve_dpa_time<<endl;
-   cout<<"presolve_dnc: "<<inst->presolve_dnc_time<<endl;
-   cout<<"presolve_dc: "<<inst->presolve_dc_time<<endl;
-   inst->presolve_time = inst->presolve_dpa_time
-      + inst->presolve_dnc_time
-      + inst->presolve_dc_time;
+   cout<<"presolve_IA: "<<inst->presolve_IA_time<<endl;
+   cout<<"presolve_NC: "<<inst->presolve_NC_time<<endl;
+   cout<<"presolve_D: "<<inst->presolve_D_time<<endl;
+   inst->presolve_time = inst->presolve_IA_time
+      + inst->presolve_NC_time
+      + inst->presolve_D_time;
    cout<<"Presolve Time: "<<inst->presolve_time<<endl;
    inst->n_data = inst->data.size();
 }
@@ -573,7 +573,7 @@ void solve_model(instance *inst)
 	cout << "***satisfied_clients\t" << satisfied_clients << endl;
 
    //Statistics output
-	cout << "\n\nSTAT:\tobjval\t" << setw(16) << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients <<"\tnodecount\t"<<inst->nodecount<<"\tpresolve_time\t"<<inst->presolve_dpa_time <<"\tsolve_time\t"<< solution_time<<"\ttotal_time\t"<<inst->presolve_time+solution_time<<"\ttotal_time_minus_presolve_time\t "<<inst->presolve_time+solution_time<< endl << endl;
+	cout << "\n\nSTAT:\tobjval\t" << setw(16) << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients <<"\tnodecount\t"<<inst->nodecount<<"\tpresolve_time\t"<<inst->presolve_IA_time <<"\tsolve_time\t"<< solution_time<<"\ttotal_time\t"<<inst->presolve_time+solution_time<<"\ttotal_time_minus_presolve_time\t "<<inst->presolve_time+solution_time<< endl << endl;
 
    cout<<"presolve_node_time "<<inst->presolve_node_time<<endl;
    

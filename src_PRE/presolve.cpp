@@ -250,7 +250,7 @@ bool RemoveSubSet(vector<int> &a, vector<int> &b)
    return true;
 }
 //Domination presolving
-void DominatedColumns(instance* inst)
+void Domination(instance* inst)
 {
    clock_t time_presolvestart=clock();
    int asize = inst->covers.size();
@@ -303,10 +303,10 @@ void DominatedColumns(instance* inst)
       inst->data[i]->locations.erase(inst->data[i]->locations.begin()+ncounter, inst->data[i]->locations.end());
    }
    clock_t time_presolveend=clock();
-   inst->presolve_dc_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
+   inst->presolve_D_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
 }
 //Reimplement isomorphic aggregation if domination presolving succeeds
-void DualParallelAggr2(instance* inst)
+void IA2(instance* inst)
 {
    inst->isfind = false;
    clock_t time_presolvestart;
@@ -333,7 +333,7 @@ void DualParallelAggr2(instance* inst)
       }
    }
    time_presolveend = clock();
-   inst->presolve_dpa_time += (double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
+   inst->presolve_IA_time += (double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
    int ncounter = 0;
    for(int i = 0; i<inst->n_data; i++)
    {
@@ -349,7 +349,7 @@ void DualParallelAggr2(instance* inst)
    return;
 }
 //Isomorphic aggregation and generate random data
-void DualParallelAggr(instance *inst)
+void IA(instance *inst)
 {
    if(inst->coordinates_loaded == false)
       cout<< "Randomly generate!"<<endl;
@@ -489,8 +489,8 @@ void DualParallelAggr(instance *inst)
       }
    }
    time_presolveend=clock();
-   inst->presolve_dpa_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
-   cout<< inst->presolve_dpa_time <<endl;
+   inst->presolve_IA_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
+   cout<< inst->presolve_IA_time <<endl;
    for(int i = 0; i<n_data; i++)
    {
       delete[] totalarray[i];
@@ -499,7 +499,7 @@ void DualParallelAggr(instance *inst)
    inst->n_data = inst->data.size();
 }
 //Singleton aggregation
-void DualAggr(instance* inst)
+void SA(instance* inst)
 {
    int csize = inst->data.size();
    inst->n_data = 0;

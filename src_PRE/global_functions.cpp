@@ -106,13 +106,13 @@ void read_file(instance *inst)
    inst->num_col = 0;
    inst->num_row = 0;
    inst->presolve_time = 0.0; 
-   inst->presolve_dpa_time = 0.0;
-   inst->presolve_dnc_time = 0.0;
-   inst->presolve_dc_time = 0.0;
+   inst->presolve_IA_time = 0.0;
+   inst->presolve_NC_time = 0.0;
+   inst->presolve_D_time = 0.0;
    inst->presolve_node_time = 0.0;
    //Dual parallel aggregation
    //If the customer file does not exits, generate randomly the coordinates of locations of customers.
-   DualParallelAggr(inst); /* Generate coordinates of locations and do isomorphic aggregation */
+   IA(inst); /* Generate coordinates of locations and do isomorphic aggregation */
    //PSCLP model
    if(inst->isPSCLP)
    {
@@ -151,7 +151,7 @@ void read_file(instance *inst)
    
    int size1 = inst->n_data;
    cout<<"Row1: "<<inst->n_data<<endl; 
-   cout<<"presolve_dpa1: "<<inst->presolve_dpa_time<<endl;
+   cout<<"presolve_IA1: "<<inst->presolve_IA_time<<endl;
    // Calculate J(i), i in I
    CalculateCovers(inst->covers, inst->data);
 
@@ -161,7 +161,7 @@ void read_file(instance *inst)
    if(inst->isDc)
    {
       inst->isfind = false;
-      DominatedColumns(inst);
+      Domination(inst);
       int n_deleted = 0;
       for ( int i = 0; i < inst->n_locations; i++ )
       {
@@ -172,7 +172,7 @@ void read_file(instance *inst)
       
       if(inst->isfind)
          //Reimplement isomorphic aggregation if domination presolving succeeds
-         DualParallelAggr2(inst);
+         IA2(inst);
       
       cout<<"n_deleted_rows: "<<size1 - inst->n_data<<endl;
       inst->validlocations = inst->covers.size() - n_deleted;
@@ -180,7 +180,7 @@ void read_file(instance *inst)
    if(inst->isDa)
    {
       //Reimplement singleton aggregation after domination presolving
-      DualAggr(inst);
+      SA(inst);
    }
    //////////////////////////////////
    //Calculate statistics after presolving

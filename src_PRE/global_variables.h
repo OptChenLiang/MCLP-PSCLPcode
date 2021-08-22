@@ -212,9 +212,9 @@ typedef struct {
 	int counter_l;
 
    double presolve_time; /* Total presolving time */
-   double presolve_dpa_time; /* Presolving time of isomorphic aggregation */
-   double presolve_dnc_time; /* Presolving time of nonzero cancellation */
-   double presolve_dc_time; /* Presolving time of domination presolving */
+   double presolve_IA_time; /* Presolving time of isomorphic aggregation */
+   double presolve_NC_time; /* Presolving time of nonzero cancellation */
+   double presolve_D_time; /* Presolving time of domination presolving */
    double presolve_node_time; /* Prsolving time of nonoverlap fixing presolving */
 
    long num_easy;
