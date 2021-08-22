@@ -110,7 +110,6 @@ void read_file(instance *inst)
    inst->presolve_NC_time = 0.0;
    inst->presolve_D_time = 0.0;
    inst->presolve_node_time = 0.0;
-   //Dual parallel aggregation
    //If the customer file does not exits, generate randomly the coordinates of locations of customers.
    IA(inst); /* Generate coordinates of locations and do isomorphic aggregation */
    //PSCLP model
