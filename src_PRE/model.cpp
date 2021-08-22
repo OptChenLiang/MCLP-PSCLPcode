@@ -2,7 +2,7 @@
 #include "presolve.h"
 #include <iomanip>
 
-#define write_prob
+//#define write_prob
 
 extern double presolve_time;
 extern double presolve_NC_time;
@@ -139,16 +139,16 @@ void build_model(instance *inst)
 
 		int counter=0;
      
-      if(inst->isDnc)
+      if(inst->isNC)
       {
-	 //Do nonzero cancellation presolving
+	      //Do nonzero cancellation
          clock_t time_presolvestart = clock();
          vector<int> locations = inst->data[i]->locations;
          if(inst->data[i]->locations.size() > 2 )
          {
             for(int j = i+1; j<size; j++)
             {
-	       //Decide inclusive relations of support signatures. If true, then decide inclusive relations of coverage facilities  
+               //Decide inclusive relations of support signatures. If true, then decide inclusive relations of coverage facilities  
                if(IsSubSet32(inst->data, i, j))
                {
                   if(IsSubSet(locations, inst->data[j]->locations))
@@ -277,7 +277,7 @@ void build_model(instance *inst)
    free(inst->sense);
 
 
-//#ifdef write_prob
+#ifdef write_prob
    /////////////////////////////////////////////////////////////////////////////////////////////////////////
    //Write the created ILP model on a file
 	inst->status=CPXwriteprob(inst->env,inst->lp,"problem.lp",NULL);
@@ -286,7 +286,7 @@ void build_model(instance *inst)
 		exit(-1);
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-//#endif
+#endif
    //Statistics
    cout<<"DNCNNZ= " << CPXgetnumnz( inst->env, inst->lp ) <<endl;;
 
@@ -361,49 +361,6 @@ void solve_model(instance *inst)
 		printf ("error for CPX_PARAM_EPRHS\n");
 	}
 
-   /*
-	inst->status = CPXsetintparam (inst->env, CPXPARAM_MIP_Cuts_ZeroHalfCut, -1);
-	inst->status = CPXsetintparam (inst->env, CPXPARAM_MIP_Cuts_Gomory, -1);
-	inst->status = CPXsetintparam (inst->env, CPXPARAM_MIP_Cuts_LiftProj, -1);
-	inst->status = CPXsetintparam (inst->env, CPXPARAM_MIP_Cuts_Covers, -1);
-   */
-#if 0
-   //Set node limitation
-	inst->status = CPXsetintparam (inst->env, CPX_PARAM_NODELIM, 0);
-	if (inst->status)
-	{
-		printf ("error for CPX_PARAM_EPRHS\n");
-	}
-#endif
-
-	//	if(inst->option==1000)
-	//	{
-	//		solve_LP(inst);
-	//	}
-	//
-	//	if(inst->option==2)
-	//	{
-	//
-	//		//this is the only only one necessary to avoid the removal of all continuous variables
-	//		CPXsetintparam(inst->env, CPX_PARAM_PREIND, CPX_OFF);
-	//
-	//
-	////				CPXsetintparam(inst->env, CPX_PARAM_AGGIND, CPX_OFF);
-	////				CPXsetintparam(inst->env, CPX_PARAM_BNDSTRENIND, CPX_OFF);
-	////				CPXsetintparam(inst->env, CPX_PARAM_COEREDIND, CPX_OFF);
-	////				CPXsetintparam(inst->env, CPX_PARAM_RELAXPREIND, CPX_OFF);
-	////				CPXsetintparam(inst->env, CPX_PARAM_REDUCE, CPX_OFF);
-	////				CPXsetintparam(inst->env, CPX_PARAM_PREPASS, CPX_OFF);
-	////				CPXsetintparam(inst->env, CPX_PARAM_REPEATPRESOLVE, CPX_OFF);
-	//
-	//		cout << "***********\n\n AUTOMATIC BENDER'S DECOMPOSITION\n\n";
-	//
-	//		inst->status = CPXsetintparam (inst->env, CPXPARAM_Benders_Strategy, 3);
-	//		if (inst->status)
-	//		{
-	//			printf ("error for CPX_PARAM_EPRHS\n");
-	//		}
-	//	}
    //inst->status = CPXsetintparam (inst->env, CPXPARAM_MIP_Strategy_Search, CPX_MIPSEARCH_TRADITIONAL);
    //inst->status = CPXsetintparam (inst->env, Preprocessing_Linear, CPX_OFF);
    inst->status = CPXsetintparam (inst->env, CPXPARAM_Preprocessing_Linear, 0);

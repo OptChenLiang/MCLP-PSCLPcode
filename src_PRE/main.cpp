@@ -22,24 +22,24 @@ int main(int argc, char** argv) {
    inst.isBin = false;
 #endif
 #if DPA
-   inst.isDpa = true;
+   inst.isIA = true;
 #else
-   inst.isDpa = false;
+   inst.isIA = false;
 #endif
 #if DA
-   inst.isDa = true;
+   inst.isSA = true;
 #else
-   inst.isDa = false;
+   inst.isSA = false;
 #endif
 #if DC
-   inst.isDc = true;
+   inst.isDom = true;
 #else
-   inst.isDc = false;
+   inst.isDom = false;
 #endif
 #if DNC
-   inst.isDnc = true;
+   inst.isNC = true;
 #else
-   inst.isDnc = false;
+   inst.isNC = false;
 #endif
 #if PSCLP
    inst.isPSCLP = true;

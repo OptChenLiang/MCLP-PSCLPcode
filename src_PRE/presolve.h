@@ -5,7 +5,6 @@
 //Calculate square of Euclidean distance of (x1,y1) and (x2,y2)
 double distance(double x1,double y1,double x2, double y2);
 
-bool Comp(MyPair* a, MyPair *b);
 bool CompforDNC(MyPair* a, MyPair *b);
 bool CompforIndex(MyPair* a, MyPair *b);
 bool CompEQ(MyPair* a, MyPair *b);

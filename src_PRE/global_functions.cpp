@@ -158,7 +158,7 @@ void read_file(instance *inst)
    inst->isfind = true;
    inst->validlocations = inst->n_locations;
    //Do domination presolving
-   if(inst->isDc)
+   if(inst->isDom)
    {
       inst->isfind = false;
       Domination(inst);
@@ -177,7 +177,7 @@ void read_file(instance *inst)
       cout<<"n_deleted_rows: "<<size1 - inst->n_data<<endl;
       inst->validlocations = inst->covers.size() - n_deleted;
    }
-   if(inst->isDa)
+   if(inst->isSA)
    {
       //Reimplement singleton aggregation after domination presolving
       SA(inst);
@@ -206,6 +206,7 @@ void read_file(instance *inst)
    cout<<"DPANNZ= "<<nnz<<endl; /* Number of nonzeros in model after presolving */
    cout<<"Row2: "<<inst->n_data<<endl; /* Number of clients after presolving */
 }
+
 //Free intermediate variables
 /*****************************************************************/
 void free_data(instance *inst)

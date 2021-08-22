@@ -14,6 +14,7 @@ void Print(vector<int>* vec)
    }
    cout<<endl;
 };
+
 //Sign vector print function
 void Print(unsigned int sign)
 {
@@ -24,6 +25,7 @@ void Print(unsigned int sign)
    }
    cout <<endl;
 }
+
 //Calculate square of Euclidean distance of (x1,y1) and (x2,y2)
 double distance(double x1,double y1,double x2, double y2)
 {
@@ -32,23 +34,6 @@ double distance(double x1,double y1,double x2, double y2)
 	return  distancex + distancey;
 }
 
-bool Comp(MyPair* a, MyPair *b)
-{
-   int size1 = a->locations.size();
-   int size2 = b->locations.size();
-   for( int i = 0; i < size1 && i< size2; i++)
-   {
-      if( a->locations[i] < b->locations[i] )
-         return true;
-      else if( a->locations[i] > b->locations[i] )
-         return false;
-   }
-   if(size1 < size2 )
-      return true;
-   else 
-      return false;
-   return false;
-}
 //Sort clients with increasing sizes of coverage facilities
 bool CompforDNC(MyPair* a, MyPair *b)
 {
@@ -67,11 +52,13 @@ bool CompforDNC(MyPair* a, MyPair *b)
    }
    return false;
 }
+
 //Sort clients by indices
 bool CompforIndex(MyPair* a, MyPair *b)
 {
    return a->index < b->index;
 }
+
 //Sort clients by lexicographical order; 
 bool CompEQ(MyPair* a, MyPair *b)
 {
@@ -88,6 +75,7 @@ bool CompEQ(MyPair* a, MyPair *b)
    }
    return true;
 }
+
 //Set bound in node presolving
 bool setbound(instance* inst, int pos, char sign, char method)
 {
@@ -174,6 +162,7 @@ bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
    }
    return true;
 }
+
 //Determine inclusive relations of  support signature in 32-bit
 bool IsSubSet32(vector<MyPair*> &a, int i, int j)
 {
@@ -181,6 +170,7 @@ bool IsSubSet32(vector<MyPair*> &a, int i, int j)
       return true;
    return false;
 }
+
 //Determine inclusive relations of coverage facilities
 bool IsSubSet(vector<int> &a, vector<int> &b)
 {
@@ -249,6 +239,7 @@ bool RemoveSubSet(vector<int> &a, vector<int> &b)
    a.erase(a.begin() + n_locations, a.end());
    return true;
 }
+
 //Domination presolving
 void Domination(instance* inst)
 {
@@ -305,7 +296,8 @@ void Domination(instance* inst)
    clock_t time_presolveend=clock();
    inst->presolve_D_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
 }
-//Reimplement isomorphic aggregation if domination presolving succeeds
+
+//Implement isomorphic aggregation again if domination presolving succeeds 
 void IA2(instance* inst)
 {
    inst->isfind = false;
@@ -348,6 +340,7 @@ void IA2(instance* inst)
    CalculateCovers(inst->covers, inst->data);
    return;
 }
+
 //Isomorphic aggregation and generate random data
 void IA(instance *inst)
 {
@@ -360,7 +353,7 @@ void IA(instance *inst)
    MyPair* pair;
    int local_dummy_a[MAXFACILITY];
    int **totalarray;
-   if(inst->isDpa)
+   if(inst->isIA)
       totalarray = new int*[inst->n_locations*inst->n_locations];
    else
       totalarray = new int*[inst->n_clients];
@@ -401,7 +394,7 @@ void IA(instance *inst)
             }
          }
       }
-      if(inst->isDpa)
+      if(inst->isIA)
       {
          local_dummy.a = local_dummy_a;
          local_dummy.len = len;
@@ -498,6 +491,7 @@ void IA(instance *inst)
    delete[] totalarray;
    inst->n_data = inst->data.size();
 }
+
 //Singleton aggregation
 void SA(instance* inst)
 {
