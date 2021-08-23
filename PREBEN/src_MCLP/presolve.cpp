@@ -254,7 +254,7 @@ void Domination(mystr* inst)
       inst->data[i]->locations.erase(inst->data[i]->locations.begin()+ncounter, inst->data[i]->locations.end());
    }
    clock_t time_presolveend=clock();
-   inst->presolve_dc_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
+   inst->presolve_D_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
 }
 
 void IA2(mystr* inst)
@@ -284,7 +284,7 @@ void IA2(mystr* inst)
       }
    }
    time_presolveend = clock();
-   inst->presolve_dpa_time += (double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
+   inst->presolve_IA_time += (double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
    int ncounter = 0;
    for(int i = 0; i<inst->n_data; i++)
    {
@@ -407,7 +407,7 @@ void IA(mystr *inst)
             }
          }
    time_presolveend=clock();
-   inst->presolve_dpa_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
+   inst->presolve_IA_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
       }
       else
       {
@@ -441,7 +441,7 @@ void IA(mystr *inst)
          n_data++;
       }
    }
-   cout<< inst->presolve_dpa_time <<endl;
+   cout<< inst->presolve_IA_time <<endl;
    for(int i = 0; i<n_data; i++)
    {
       delete[] totalarray[i];
