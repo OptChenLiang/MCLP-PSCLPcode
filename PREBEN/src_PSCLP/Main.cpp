@@ -18,19 +18,19 @@ int main(int argc, char** argv) {
 
 	instance inst;
 	mystr inst1;
-#if NODPA
+#if NOIA
    inst1.isIA = false;
 #else
    inst1.isIA = true;
 #endif
-#if NODC
+#if NOD
    inst1.isD = false;
 #else
    inst1.isD = true;
 #endif
    inst1.isPSCLP = true;
 	inst.algorithm = 2;
-#if NODA
+#if NOSA
    inst1.isSA = false;
 #else
    inst1.isSA = true;
