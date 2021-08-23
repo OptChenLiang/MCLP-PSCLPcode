@@ -77,13 +77,13 @@ public:
       cout<<endl;
    }
 };
-
+//Hash key storing coverage facilities of a client in isomorphic aggregation
 struct MyArray
 { 
    int* a;
    int len;
 };
-
+//Hash function
 struct MyArray_hasher
 { 
    size_t operator ()(MyArray const& r) const
@@ -95,7 +95,7 @@ struct MyArray_hasher
       return t;
    }
 };
-
+//Decide identify whether two clients have isomorphic coverage relations
 struct MyArray_equal
 {
    bool operator()(MyArray const& lhs, MyArray const& rhs) const
@@ -112,7 +112,7 @@ struct MyArray_equal
       return true;
    }
 };
-
+//Hash function when reimplementing isomorphic aggregation if domination presolving succeeds
 struct MyVector_hasher
 { 
    size_t operator ()(vector<int> const& r) const
@@ -124,7 +124,7 @@ struct MyVector_hasher
       return t;
    }
 };
-
+//Decide identify whether two clients have isomorphic coverage relations when reimplementing isomorphic aggregation if domination presolving succeeds
 struct MyVector_equal
 {
    bool operator()(vector<int> const& lhs, vector<int> const& rhs) const
