@@ -22,7 +22,7 @@ bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b);
 //Isomorphic aggregation (and generate random data)
 void IA(mystr *inst);
 
-//Repeating isomorphic aggregation when domination presolving succeeds
+//Reimplement isomorphic aggregation when domination presolving succeeds
 void IA2(mystr* inst);
 
 //Domination presolving
