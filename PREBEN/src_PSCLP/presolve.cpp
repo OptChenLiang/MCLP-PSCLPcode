@@ -217,7 +217,7 @@ bool RemoveSubSet(vector<int> &a, vector<int> &b)
    return true;
 }
 
-void DominatedColumns(mystr* inst)
+void Domination(mystr* inst)
 {
    clock_t time_presolvestart=clock();
    int asize = inst->covers.size();
@@ -254,10 +254,10 @@ void DominatedColumns(mystr* inst)
       inst->data[i]->locations.erase(inst->data[i]->locations.begin()+ncounter, inst->data[i]->locations.end());
    }
    clock_t time_presolveend=clock();
-   inst->presolve_dc_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
+   inst->presolve_D_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
 }
 
-void DualParallelAggr2(mystr* inst)
+void IA2(mystr* inst)
 {
    inst->isfind = false;
    clock_t time_presolvestart;
@@ -284,7 +284,7 @@ void DualParallelAggr2(mystr* inst)
       }
    }
    time_presolveend = clock();
-   inst->presolve_dpa_time += (double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
+   inst->presolve_IA_time += (double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
    int ncounter = 0;
    for(int i = 0; i<inst->n_data; i++)
    {
@@ -300,7 +300,7 @@ void DualParallelAggr2(mystr* inst)
    return;
 }
 
-void DualParallelAggr(mystr *inst)
+void IA(mystr *inst)
 {
    if(inst->coordinates_loaded == false)
       cout<< "Randomly generate!"<<endl;
@@ -311,7 +311,7 @@ void DualParallelAggr(mystr *inst)
    MyPair* pair;
    int local_dummy_a[MAXFACILITY];
    int **totalarray;
-   if(inst->isDpa)
+   if(inst->isIA)
       totalarray = new int*[inst->n_locations*inst->n_locations];
    else
       totalarray = new int*[inst->n_clients];
@@ -352,7 +352,7 @@ void DualParallelAggr(mystr *inst)
             }
          }
       }
-      if(inst->isDpa)
+      if(inst->isIA)
       {
          local_dummy.a = local_dummy_a;
          local_dummy.len = len;
@@ -440,8 +440,8 @@ void DualParallelAggr(mystr *inst)
       }
    }
    time_presolveend=clock();
-   inst->presolve_dpa_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
-   cout<< inst->presolve_dpa_time <<endl;
+   inst->presolve_IA_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
+   cout<< inst->presolve_IA_time <<endl;
    for(int i = 0; i<n_data; i++)
    {
       delete[] totalarray[i];
@@ -450,7 +450,7 @@ void DualParallelAggr(mystr *inst)
    inst->n_data = inst->data.size();
 }
 
-void DualAggr(mystr* inst)
+void SA(mystr* inst)
 {
    int csize = inst->data.size();
    inst->n_data = 0;
