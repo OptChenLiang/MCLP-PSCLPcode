@@ -257,7 +257,7 @@ void DominatedColumns(mystr* inst)
    inst->presolve_dc_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
 }
 
-void DualParallelAggr2(mystr* inst)
+void IA2(mystr* inst)
 {
    inst->isfind = false;
    clock_t time_presolvestart;
@@ -300,7 +300,7 @@ void DualParallelAggr2(mystr* inst)
    return;
 }
 
-void DualParallelAggr(mystr *inst)
+void IA(mystr *inst)
 {
    if(inst->coordinates_loaded == false)
       cout<< "Randomly generate!"<<endl;
@@ -450,7 +450,7 @@ void DualParallelAggr(mystr *inst)
    inst->n_data = inst->data.size();
 }
 
-void DualAggr(mystr* inst)
+void SA(mystr* inst)
 {
    int csize = inst->data.size();
    inst->n_data = 0;
