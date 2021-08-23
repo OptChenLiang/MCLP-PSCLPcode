@@ -18,7 +18,8 @@ int main(int argc, char** argv) {
 
 	instance inst;
 	mystr inst1;
-#if NOIA
+//Presolving settings
+#if NOIA 
    inst1.isIA = false;
 #else
    inst1.isIA = true;
@@ -90,6 +91,7 @@ int main(int argc, char** argv) {
 
 	read_file(&inst1);
 	READ_NEW_FILE1(&inst, &inst1);
+   //Presolving time statistics
    cout<<"presolve_IA: "<<inst1.presolve_IA_time<<endl;
    cout<<"presolve_D: "<<inst1.presolve_D_time<<endl;
    inst1.presolve_time = inst1.presolve_IA_time
