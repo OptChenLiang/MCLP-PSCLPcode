@@ -217,7 +217,7 @@ bool RemoveSubSet(vector<int> &a, vector<int> &b)
    return true;
 }
 
-void DominatedColumns(mystr* inst)
+void Domination(mystr* inst)
 {
    clock_t time_presolvestart=clock();
    int asize = inst->covers.size();
