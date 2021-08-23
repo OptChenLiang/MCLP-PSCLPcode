@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 #else
    inst1.isSA = true;
 #endif
-
+   //Input facilities file and clients file
    inst1.input_file_f = (char *) calloc(1000, sizeof(char)); 
    inst1.input_file_c = (char *) calloc(1000, sizeof(char)); 
 
