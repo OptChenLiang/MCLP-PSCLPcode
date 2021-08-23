@@ -217,10 +217,9 @@ typedef struct {
    bool isBranch;
    bool isCut;
    bool isBin;
-   bool isDpa;
-   bool isDa;
-   bool isDc;
-   bool isDnc;
+   bool isIA;
+   bool isSA;
+   bool isD;
    bool isPSCLP;
 } mystr;
 
