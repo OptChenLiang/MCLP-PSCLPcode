@@ -2,7 +2,7 @@
 #include "presolve.h"
 #include "read.h"
 
-//Read facility and client files if files exist.
+//Read facility and client files if files exist
 void read_file(mystr *inst)
 {
    cout << "INSTANCE_f " << inst->input_file_f << endl;
