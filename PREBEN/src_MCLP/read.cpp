@@ -203,7 +203,7 @@ void read_file(mystr *inst)
       inst->n_locations = inst->covers.size();
       
       if(inst->isfind)
-         //Repeating isomorphic aggregation if domination presolving succeeds
+         //Reimplement isomorphic aggregation if domination presolving succeeds
          IA2(inst);
       
       cout<<"n_deleted_rows: "<<size1 - inst->n_data<<endl;
@@ -211,7 +211,7 @@ void read_file(mystr *inst)
    }
    if(inst->isSA)
    {
-      //Repeating singleton aggregations after domination presolving succeeds
+      //Reimplement singleton aggregations after domination presolving succeeds
       SA(inst);
    }
    //////////////////////////////////
