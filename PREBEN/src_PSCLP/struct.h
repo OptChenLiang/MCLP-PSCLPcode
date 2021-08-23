@@ -77,13 +77,13 @@ public:
       cout<<endl;
    }
 };
-
+//Hash key storing coverage facilities of a client in isomorphic aggregation
 struct MyArray
 { 
    int* a;
    int len;
 };
-
+//Hash function
 struct MyArray_hasher
 { 
    size_t operator ()(MyArray const& r) const
@@ -95,7 +95,7 @@ struct MyArray_hasher
       return t;
    }
 };
-
+//Decide identify whether two clients have isomorphic coverage relations
 struct MyArray_equal
 {
    bool operator()(MyArray const& lhs, MyArray const& rhs) const
@@ -112,7 +112,7 @@ struct MyArray_equal
       return true;
    }
 };
-
+//Hash function when reimplementing isomorphic aggregation if domination presolving succeeds
 struct MyVector_hasher
 { 
    size_t operator ()(vector<int> const& r) const
@@ -124,7 +124,7 @@ struct MyVector_hasher
       return t;
    }
 };
-
+//Decide identify whether two clients have isomorphic coverage relations when reimplementing isomorphic aggregation if domination presolving succeeds
 struct MyVector_equal
 {
    bool operator()(vector<int> const& lhs, vector<int> const& rhs) const
@@ -141,40 +141,41 @@ struct MyVector_equal
       return true;
    }
 };
-//MCLP instance
+//PSCLP instance
 typedef struct {
 ////////////////////
    vector<MyPair*> data;  //Rows(Clients) information
    vector<MyPair*> covers;  //Columns(Facilities) informaion
    vector<int> singlecover;  
+	
+   int n_data; /* Number of clients after presolving */
 
-   int n_data;
+	
+   int algorithm; /* Solving settings */
+   char *input_file_f; /* Facility file */
+   char *input_file_c; /* Client file */
+   int n_locations; /* Number of facilities */
+   long long n_clients; /* Number of clients */
 
-	int algorithm;
-	char *input_file_f;
-	char *input_file_c;
-	int n_locations;
-	long long n_clients;
+   double *demand; /*Demand vector of clients */
+   double *fixed_cost; /* Cost vector of facilities */
 
-	double *demand;
-	double *fixed_cost;
+
 
    bool findsolution;
-	double RADIUS;
+	double RADIUS; /* Coverage radius */
    double sumvalid;
-	double COVERING_DEMAND;
-	double BUDGET;
+	double COVERING_DEMAND; /* The required coverage demand */
+	double BUDGET; /* The required coverage budget */
    
-   bool isfind;
-   int validlocations;
+   bool isfind; /* Does domination presolving succeed */
+   int validlocations; /* Number of facilities after domination presolving */
 
-	double timelimit;  //Time limitation
-
-	int seed;  //Random seed
-
-	int number_of_CPU;
+	double timelimit;  /* Time limitation */
+	int seed;  /* Random seed */
+	int number_of_CPU; /* Number of CPUs */
    
-   int* n_location;
+   int* n_location; /*Vector of numbers of coverage facilities */
 
    int numchg;
    int* chgind;
@@ -183,13 +184,13 @@ typedef struct {
    long nodeindex;
 
 	bool coordinates_loaded;
-	double *x_location;
-	double *y_location;
+	double *x_location; /*X coordinates of facilities */
+   	double *y_location; /*Y coordinates of facilities */
 
-	double *x_client;
-	double *y_client;
-
-	/////////////////////////////////////CPLEX/////////////////////////////////////
+   	double *x_client; /*X coordinates of clients */
+   	double *y_client; /*Y coordinates of clients */
+	
+	//CPLEX related variables and environments
 	CPXENVptr env;
 	CPXLPptr lp;
 	int status,ccnt,rcnt,nzcnt;
@@ -204,11 +205,11 @@ typedef struct {
 	int counter_c;
 	int counter_l;
 
-   double presolve_time;
-   double presolve_dpa_time;
-   double presolve_dnc_time;
-   double presolve_dc_time;
-   double presolve_node_time;
+
+   double presolve_time; /* Total presolving time */
+   double presolve_IA_time; /* Presolving time of isomorphic aggregation */
+   double presolve_D_time; /* Presolving time of domination presolving */
+   double presolve_node_time; /* Prsolving time of nonoverlap fixing presolving */
 
    long num_easy;
    long num_col;
@@ -216,12 +217,11 @@ typedef struct {
 
    bool isBranch;
    bool isCut;
-   bool isBin;
-   bool isDpa;
-   bool isDa;
-   bool isDc;
-   bool isDnc;
-   bool isPSCLP;
+   bool isBin; /*Set client variables binary or not */
+   bool isIA; /* Do isomorphic aggregation or not */
+   bool isSA; /* Do singleton aggregation or not */
+   bool isD; /* Do domination presolving or not */
+   bool isPSCLP; /* Is solving model a PSCLP (or a MCLP) */
 } mystr;
 
 
