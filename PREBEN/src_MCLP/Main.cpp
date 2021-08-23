@@ -18,22 +18,22 @@ int main(int argc, char** argv) {
 
 	instance inst;
 	mystr inst1;
-#if NODPA
-   inst1.isDpa = false;
+#if NOIA
+   inst1.isIA = false;
 #else
-   inst1.isDpa = true;
+   inst1.isIA = true;
 #endif
-#if NODC
-   inst1.isDc = false;
+#if NOD
+   inst1.isD = false;
 #else
-   inst1.isDc = true;
+   inst1.isD = true;
 #endif
    inst1.isPSCLP = false;
 	inst.algorithm = 2;
-#if NODA
-   inst1.isDa = false;
+#if NOSA
+   inst1.isSA = false;
 #else
-   inst1.isDa = true;
+   inst1.isSA = true;
 #endif
 
    inst1.input_file_f = (char *) calloc(1000, sizeof(char)); 
@@ -90,10 +90,10 @@ int main(int argc, char** argv) {
 
 	read_file(&inst1);
 	READ_NEW_FILE1(&inst, &inst1);
-   cout<<"presolve_dpa: "<<inst1.presolve_dpa_time<<endl;
-   cout<<"presolve_dc: "<<inst1.presolve_dc_time<<endl;
-   inst1.presolve_time = inst1.presolve_dpa_time
-      + inst1.presolve_dc_time;
+   cout<<"presolve_IA: "<<inst1.presolve_IA_time<<endl;
+   cout<<"presolve_D: "<<inst1.presolve_D_time<<endl;
+   inst1.presolve_time = inst1.presolve_IA_time
+      + inst1.presolve_D_time;
    cout<<"Presolve Time: "<<inst1.presolve_time<<endl;
 
 	clock_t time_end=clock();
