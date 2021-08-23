@@ -815,7 +815,7 @@ void solve_model_CFL_BEN_2(instance *inst, mystr* inst1)
 
 
    //cout << "\n\nSTAT:\tobjval\t" << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients << "\ttime\t"<< solution_time<< endl << endl;
-	cout << "\n\nSTAT:\tobjval\t" << setw(16) << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients <<"\tnodecount\t"<<inst->nodecount<<"\tpresolve_time\t"<<inst1->presolve_dpa_time <<"\tsolve_time\t"<< solution_time<<"\ttotal_time\t"<<inst1->presolve_dpa_time+solution_time<<"\ttotal_time_minus_presolve_time\t "<<solution_time<< endl << endl;
+	cout << "\n\nSTAT:\tobjval\t" << setw(16) << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients <<"\tnodecount\t"<<inst->nodecount<<"\tpresolve_time\t"<<inst1->presolve_IA_time <<"\tsolve_time\t"<< solution_time<<"\ttotal_time\t"<<inst1->presolve_IA_time+solution_time<<"\ttotal_time_minus_presolve_time\t "<<solution_time<< endl << endl;
 
 
 
