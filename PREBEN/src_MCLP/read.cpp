@@ -106,9 +106,8 @@ void read_file(mystr *inst)
    inst->num_col = 0;
    inst->num_row = 0;
    inst->presolve_time = 0.0;
-   inst->presolve_dpa_time = 0.0;
-   inst->presolve_dnc_time = 0.0;
-   inst->presolve_dc_time = 0.0;
+   inst->presolve_IA_time = 0.0;
+   inst->presolve_D_time = 0.0;
    inst->presolve_node_time = 0.0;
  
    //Implement isomorphic aggregations
@@ -151,7 +150,7 @@ void read_file(mystr *inst)
    
    int size1 = inst->n_data;
    cout<<"Row1: "<<inst->n_data<<endl;
-   cout<<"presolve_dpa1: "<<inst->presolve_dpa_time<<endl;
+   cout<<"presolve_IA1: "<<inst->presolve_IA_time<<endl;
    // Calculate J(i), i in I
    CalculateCovers(inst->covers, inst->data);
 
