@@ -20,16 +20,16 @@ bool RemoveSubSet(vector<int> &a, vector<int> &b);
 bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b);
 
 //Isomorphic aggregation (and generate random data)
-void DualParallelAggr(mystr *inst);
+void IA(mystr *inst);
 
 //Reimplementing isomorphic aggregation when domination presolving succeeds
-void DualParallelAggr2(mystr* inst);
+void IA2(mystr* inst);
 
 //Domination presolving
-void DominatedColumns(mystr* inst);
+void Domination(mystr* inst);
 
 //Singleton aggregation
-void DualAggr(mystr* inst);
+void SA(mystr* inst);
 
 //Node presolving
 void NodePresolve(mystr* inst, double bestobj);
