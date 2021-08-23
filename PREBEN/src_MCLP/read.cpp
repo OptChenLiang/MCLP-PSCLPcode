@@ -266,7 +266,7 @@ void free_data(mystr *inst)
 
 }
 
-/*****************************************************************/
+//Build data structures based on read data
 void READ_NEW_FILE1(instance *inst, mystr* inst1)
 /*****************************************************************/
 {
