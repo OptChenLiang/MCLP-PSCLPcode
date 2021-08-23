@@ -55,7 +55,7 @@ int n_cuts_BEN_FRAC_CFL_2=0;
 
 //#define LIFTING
 
-/*****************************************************************/
+//Benders callback for integer solution 
 int CPXPUBLIC mycutcallback_CFL_BEN_2(CPXCENVptr env,void *cbdata,int wherefrom,void *cbhandle,int *useraction_p)
 /*****************************************************************/
 {
@@ -283,7 +283,7 @@ int CPXPUBLIC mycutcallback_CFL_BEN_2(CPXCENVptr env,void *cbdata,int wherefrom,
 
 
 
-/*****************************************************************/
+//Benders callback for fractional solution 
 int CPXPUBLIC myusercutcallback_CFL_BEN_2(CPXCENVptr env,void *cbdata,int wherefrom,void *cbhandle,int *useraction_p)
 /*****************************************************************/
 {
@@ -507,7 +507,7 @@ int CPXPUBLIC myusercutcallback_CFL_BEN_2(CPXCENVptr env,void *cbdata,int wheref
 
 
 
-/*****************************************************************/
+//Build Benders master problem
 void build_model_CFL_BEN_2(instance *inst)
 /*****************************************************************/
 {
@@ -640,7 +640,7 @@ void build_model_CFL_BEN_2(instance *inst)
 }
 
 
-/*****************************************************************/
+//Solve PSCLP using Benders decomposition
 void solve_model_CFL_BEN_2(instance *inst, mystr* inst1)
 /*****************************************************************/
 {
@@ -873,7 +873,7 @@ void solve_model_CFL_BEN_2(instance *inst, mystr* inst1)
 }
 
 
-/*****************************************************************/
+//Close CPLEX environment
 void clean_model_CFL_BEN_2(instance *inst)
 /*****************************************************************/
 {
