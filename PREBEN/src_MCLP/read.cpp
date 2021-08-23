@@ -110,9 +110,9 @@ void read_file(mystr *inst)
    inst->presolve_dnc_time = 0.0;
    inst->presolve_dc_time = 0.0;
    inst->presolve_node_time = 0.0;
-   //Dual parallel aggregation
+   //Isomorphic aggregation
    //If the customer file does not exits, generate randomly the coordinates of locations of customers.
-   DualParallelAggr(inst);
+   IA(inst);
    if(inst->isPSCLP)
    {
       if(inst->COVERING_DEMAND <= 1+1e-8)
@@ -155,11 +155,11 @@ void read_file(mystr *inst)
 
    inst->isfind = true;
    inst->validlocations = inst->n_locations;
-   //Dominated columns
+   //Domination presolving
    if(inst->isDc)
    {
       inst->isfind = false;
-      DominatedColumns(inst);
+      Domination(inst);
       int n_deleted = 0;
       int j = 0;
       for ( int i = 0; i < inst->n_locations; i++ )
@@ -201,16 +201,16 @@ void read_file(mystr *inst)
       inst->n_locations = inst->covers.size();
       
       if(inst->isfind)
-         //Reimplement dual parallel aggregation if dominated columns presolving succeed
-         DualParallelAggr2(inst);
+         //Repeating isomorphic aggregation if domination presolving succeeds
+         IA2(inst);
       
       cout<<"n_deleted_rows: "<<size1 - inst->n_data<<endl;
       inst->validlocations = inst->covers.size() - n_deleted;
    }
    if(inst->isDa)
    {
-      //Reimplement dual aggregations after dominated columns presolving
-      DualAggr(inst);
+      //Repeating singleton aggregations after domination presolving succeeds
+      SA(inst);
    }
    //////////////////////////////////
    int nnz = 0;
