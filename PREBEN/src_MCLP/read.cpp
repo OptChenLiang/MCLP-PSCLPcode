@@ -2,7 +2,7 @@
 #include "presolve.h"
 #include "read.h"
 
-//Read facility and client files if files exist
+//Read facility and client files if files exist and implement presolving methods
 void read_file(mystr *inst)
 {
    cout << "INSTANCE_f " << inst->input_file_f << endl;
@@ -110,9 +110,11 @@ void read_file(mystr *inst)
    inst->presolve_dnc_time = 0.0;
    inst->presolve_dc_time = 0.0;
    inst->presolve_node_time = 0.0;
-   //Isomorphic aggregation
-   //If the customer file does not exits, generate randomly the coordinates of locations of customers.
+ 
+   //Implement isomorphic aggregations
    IA(inst);
+	
+
    if(inst->isPSCLP)
    {
       if(inst->COVERING_DEMAND <= 1+1e-8)
@@ -156,7 +158,7 @@ void read_file(mystr *inst)
    inst->isfind = true;
    inst->validlocations = inst->n_locations;
    //Domination presolving
-   if(inst->isDc)
+   if(inst->isD)
    {
       inst->isfind = false;
       Domination(inst);
@@ -207,7 +209,7 @@ void read_file(mystr *inst)
       cout<<"n_deleted_rows: "<<size1 - inst->n_data<<endl;
       inst->validlocations = inst->covers.size() - n_deleted;
    }
-   if(inst->isDa)
+   if(inst->isSA)
    {
       //Repeating singleton aggregations after domination presolving succeeds
       SA(inst);
