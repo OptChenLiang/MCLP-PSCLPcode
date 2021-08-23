@@ -17,15 +17,15 @@ void comb_solve_model_CFL_BEN_2_AUX(instance *inst);
 void load_N_value_2(instance *inst,bool rounding);
 /*****************************************************************/
 
-/*****************************************************************/
+//Build Benders master problem
 void build_model_CFL_BEN_2(instance *inst);
 /*****************************************************************/
 
-/*****************************************************************/
+//Solve PSCLP using Benders decomposition
 void solve_model_CFL_BEN_2(instance *inst, mystr* inst1);
 /*****************************************************************/
 
-/*****************************************************************/
+//Close CPLEX environment
 void clean_model_CFL_BEN_2(instance *inst);
 /*****************************************************************/
 
