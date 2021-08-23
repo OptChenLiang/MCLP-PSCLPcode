@@ -18,6 +18,7 @@ int main(int argc, char** argv) {
 
 	instance inst;
 	mystr inst1;
+//Presolving settings
 #if NOIA
    inst1.isIA = false;
 #else
@@ -67,6 +68,7 @@ int main(int argc, char** argv) {
 	}
 	else
 	{
+		//Error input
 		cout << "ERROR NUMBER STANDARD PARAMETERS" << endl;
 		cout << "Param1:\t instance name\n";
 		cout << "Param2:\t algorithm\n";
@@ -138,6 +140,7 @@ int main(int argc, char** argv) {
 
 	}
 
+	//Free memory
 	free(inst1.input_file_f);
 	free(inst1.input_file_c);
    free_data(&inst1);
