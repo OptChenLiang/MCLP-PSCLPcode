@@ -1,7 +1,4 @@
 N[1]=100;
-N[2]=200;
-N[3]=300;
-N[4]=400;
 
 D[0]=0.1;
 D[1]=0.1;
@@ -55,15 +52,15 @@ M[15]=35000000;
 M[16]=40000000;
 
 timlim=10000;
-exec[1]=mclp_pre_branch
-exec[2]=mclp_noda
-exec[3]=mclp_nodnc
-exec[4]=mclp_nodc
-exec[5]=mclp_pre
-exec[6]=mclp_nopre
-exec[7]=mclp_nodpa
+exec[1]=MCLP_None
+exec[2]=MCLP_All
+exec[3]=MCLP_NoSA
+exec[4]=MCLP_NoIA
+exec[5]=MCLP_NoNC
+exec[6]=MCLP_NoDom
+exec[7]=MCLP_NoNF
 
-maindir=T1-32
+maindir=T1
 mkdir ${maindir}
 for((i=1; i<=7;i++));
 do
@@ -71,32 +68,30 @@ do
    mkdir ${dir[i]}
 done
 
-datadir=../TESTDATA
-f_datadir=${datadir}/f_data
-c_datadir=${datadir}/c_data
-
-for((p=1; p<=1; p++));
+#Settings
+for((p=1; p<=7; p++));
 do
+   #Number of customers
    for((k=1; k<=16; k++));
    do
+      #Number of facities
       for((i=1; i<=1; i++));
       do
+         #Different radius and budget
          for((j=0; j<=13;j++));
          do
+            #Random data
             for((l=1; l<=5;l++));
             do
                DD=${D[j]};
                RR=$(awk -v r=${R[j]} -v n=${N[i]} 'BEGIN{print r*(100/n)^(0.5)}');
 
-               f_name=${f_datadir}/n${N[i]}_f10_100_s$l.dat
-               c_name=${c_datadir}/m200000000_d1_100_D1_s$l.dat
+               f_name=../TESTDATA/f_data/n${N[i]}_f10_100_s$l.dat
 
                workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
          
-#echo "${workname} ${f_name} ${c_name}"
-         
-#               bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
-echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               #bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
             done
          done
       done

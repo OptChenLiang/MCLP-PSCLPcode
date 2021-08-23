@@ -77,7 +77,7 @@ bool CompEQ(MyPair* a, MyPair *b)
 }
 
 //Set bound in node presolving
-bool setbound(instance* inst, int pos, char sign, char method)
+bool setbound(instance* inst, int pos, char sign)
 {
    assert(pos >= 0 && pos <= inst->validlocations + inst->data.size());
    if(sign == 'L')
@@ -88,21 +88,7 @@ bool setbound(instance* inst, int pos, char sign, char method)
          inst->chgind[inst->numchg] = pos;
          inst->sign[inst->numchg] = 'L';
          inst->numchg++;
-         switch (method)
-         {
-            case 'e':
-               inst->num_easy++;
-               break;
-            case 'c':
-               inst->num_col++;
-               break;
-            case 'r':
-               inst->num_row++;
-               break;
-            default:
-               assert(0);
-               break;
-         }
+         inst->nfix++;
       }
       else
          return false;
@@ -115,22 +101,7 @@ bool setbound(instance* inst, int pos, char sign, char method)
          inst->chgind[inst->numchg] = pos;
          inst->sign[inst->numchg] = 'G';
          inst->numchg++;
-         //todo
-         switch (method)
-         {
-            case 'e':
-               inst->num_easy++;
-               break;
-            case 'c':
-               inst->num_col++;
-               break;
-            case 'r':
-               inst->num_row++;
-               break;
-            default:
-               assert(0);
-               break;
-         }
+         inst->nfix++;
       }
       else 
          return false;
@@ -539,7 +510,7 @@ void NodePresolveInit(instance* inst)
          {
             posj = inst->covers[inst->data[i]->locations[j]]->pos;
             assert(posj >= 0);
-            setbound(inst, posj, 'L', 'e');
+            setbound(inst, posj, 'L');
          }
       }
       else 

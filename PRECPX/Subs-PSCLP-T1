@@ -52,13 +52,13 @@ M[15]=35000000;
 M[16]=40000000;
 
 timlim=10000;
-exec[1]=psclp_pre_branch
-exec[2]=psclp_noda
-exec[3]=psclp_nodnc
-exec[4]=psclp_nodc
-exec[5]=psclp_pre
-exec[6]=psclp_nodpa
-exec[7]=psclp_nopre
+exec[1]=PSCLP_None
+exec[2]=PSCLP_All
+exec[3]=PSCLP_NoSA
+exec[4]=PSCLP_NoIA
+exec[5]=PSCLP_NoNC
+exec[6]=PSCLP_NoDom
+exec[7]=PSCLP_NoNF
 
 maindir=T1
 mkdir ${maindir}
@@ -68,35 +68,33 @@ do
    mkdir ${dir[i]}
 done
 
-datadir=../TESTDATA
-f_datadir=${datadir}/f_data
-c_datadir=${datadir}/c_data
-
-for((p=1; p<=5;p++));
+#Settings
+for((p=1; p<=7;p++));
 do
-   for((k=7; k<=7;k++));
+   #Number of customers
+   for((k=1; k<=16;k++));
    do
+      #Number of facities
       for((i=1; i<=1;i++));
       do
+         #Different radius and covering demand
          for((j=0; j<=13;j++));
          do
+            #Random data
             for((l=1; l<=5;l++));
             do
                DD=${D[j]};
                RR=$(awk -v r=${R[j]} -v n=${N[i]} 'BEGIN{print r*(100/n)^(0.5)}');
 
-               f_name=${f_datadir}/n${N[i]}_f10_100_s$l.dat
-               c_name=${c_datadir}/m200000000_d1_100_D1_s$l.dat
+               f_name=../TESTDATA/f_data/n${N[i]}_f10_100_s$l.dat
 
                workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
          
-#echo "${workname} ${f_name} ${c_name}"
-         
-            bsub -J ${workname} -q batch -R "span[ptile=1]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
-#echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               #bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+
             done
          done
       done
-
    done
 done

@@ -21,22 +21,22 @@ int main(int argc, char** argv) {
 #else
    inst.isBin = false;
 #endif
-#if DPA
+#if IA
    inst.isIA = true;
 #else
    inst.isIA = false;
 #endif
-#if DA
+#if SA
    inst.isSA = true;
 #else
    inst.isSA = false;
 #endif
-#if DC
+#if Dom
    inst.isDom = true;
 #else
    inst.isDom = false;
 #endif
-#if DNC
+#if NC
    inst.isNC = true;
 #else
    inst.isNC = false;

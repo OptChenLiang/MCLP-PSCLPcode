@@ -534,9 +534,7 @@ void solve_model(instance *inst)
 
    cout<<"presolve_node_time "<<inst->presolve_node_time<<endl;
    
-   cout<<"num_easy "<<inst->num_easy<<endl;
-   cout<<"num_col "<<inst->num_col<<endl;
-   cout<<"num_row "<<inst->num_row<<endl;
+   cout<<"nfix "<<inst->nfix<<endl;
 
 	free(inst->x);
 	free(inst->lb);

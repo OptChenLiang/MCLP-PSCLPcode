@@ -102,9 +102,7 @@ void read_file(instance *inst)
    cout<<"RADIUS: "<<inst->RADIUS<<endl; /* Coverage radius */
 	//////////////////////////
    //Initialize statistics
-   inst->num_easy = 0;
-   inst->num_col = 0;
-   inst->num_row = 0;
+   inst->nfix = 0;
    inst->presolve_time = 0.0; 
    inst->presolve_IA_time = 0.0;
    inst->presolve_NC_time = 0.0;
