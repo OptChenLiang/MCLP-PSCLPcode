@@ -88,8 +88,9 @@ int main(int argc, char** argv) {
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	clock_t time_start=clock();
-
+	//Read facility and client files if files exist and implement presolving methods
 	read_file(&inst1);
+	//Build data structures based on readed data
 	READ_NEW_FILE1(&inst, &inst1);
    //Presolving time statistics
    cout<<"presolve_IA: "<<inst1.presolve_IA_time<<endl;
