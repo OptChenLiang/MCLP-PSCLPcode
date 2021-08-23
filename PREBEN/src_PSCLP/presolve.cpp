@@ -129,7 +129,7 @@ bool setbound(mystr* inst, int pos, char sign, char method)
       assert(0);
    return true;
 }
-
+//Calculate J(i) based on I(j)
 bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
 {
    int size = a.size();
@@ -149,7 +149,7 @@ bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
    }
    return true;
 }
-
+//Set a contains Set b ?
 bool IsSubSet(vector<int> &a, vector<int> &b)
 {
    int size1 = a.size();
@@ -181,7 +181,7 @@ bool IsSubSet(vector<int> &a, vector<int> &b)
    }
    return true;
 }
-
+//Remove the elements of Set a in Set b?
 bool RemoveSubSet(vector<int> &a, vector<int> &b)
 {
    int size1 = a.size();
@@ -216,7 +216,7 @@ bool RemoveSubSet(vector<int> &a, vector<int> &b)
    a.erase(a.begin() + n_locations, a.end());
    return true;
 }
-
+//Domination presolving
 void Domination(mystr* inst)
 {
    clock_t time_presolvestart=clock();
@@ -256,7 +256,7 @@ void Domination(mystr* inst)
    clock_t time_presolveend=clock();
    inst->presolve_D_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
 }
-
+//Reimplementing isomorphic aggregation when domination presolving succeeds
 void IA2(mystr* inst)
 {
    inst->isfind = false;
@@ -299,7 +299,7 @@ void IA2(mystr* inst)
    CalculateCovers(inst->covers, inst->data);
    return;
 }
-
+//Isomorphic aggregation (and generate random data)
 void IA(mystr *inst)
 {
    if(inst->coordinates_loaded == false)
@@ -449,7 +449,7 @@ void IA(mystr *inst)
    delete[] totalarray;
    inst->n_data = inst->data.size();
 }
-
+//Singleton aggregation
 void SA(mystr* inst)
 {
    int csize = inst->data.size();
@@ -502,7 +502,7 @@ void NodePresolveInit(mystr* inst)
          inst->data[i]->isdeleted = false;
    }
 }
-
+//Node presolving
 void NodePresolve(mystr* inst, double bestobj)
 {
    NodePresolveInit(inst);
