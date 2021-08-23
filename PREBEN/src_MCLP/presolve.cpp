@@ -311,7 +311,7 @@ void IA(mystr *inst)
    MyPair* pair;
    int local_dummy_a[MAXFACILITY];
    int **totalarray;
-   if(inst->isDpa)
+   if(inst->isIA)
       totalarray = new int*[inst->n_locations*inst->n_locations];
    else
       totalarray = new int*[inst->n_clients];
@@ -351,7 +351,7 @@ void IA(mystr *inst)
             }
          }
       }
-      if(inst->isDpa)
+      if(inst->isIA)
       {
    time_presolvestart=clock();
          local_dummy.a = local_dummy_a;
