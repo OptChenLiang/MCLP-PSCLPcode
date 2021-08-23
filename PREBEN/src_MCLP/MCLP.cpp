@@ -119,7 +119,7 @@ void build_model_DFL(instance *inst)
 	free(inst->colname);
 
 
-	// * setting the objective function in the minimization form
+	// * setting the objective function in the maximization form
 	CPXchgobjsen(inst->env_DFL,inst->lp_DFL,CPX_MAX);
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
