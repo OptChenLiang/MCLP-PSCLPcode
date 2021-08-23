@@ -29,24 +29,26 @@ using namespace std;
 
 typedef struct {
 
-	int algorithm;
-	char *input_file;
-	int n_locations;
-	int n_clients;
+	int algorithm; /* Solving settings */
+	char *input_file; 
+	int n_locations; /* Number of facilities */
+	int n_clients; /* Number of clients */
 
-	int *demand;
-	int *fixed_cost;
-	double *singleton;
 
-	double RADIUS;
-	double COVERING_DEMAND;
-	double BUDGET;
+	int *demand; /*Demand vector of clients */
+	int *fixed_cost; /* Cost vector of facilities */
+	double *singleton; /* Singleton nodes */
+ 
+	double RADIUS; /* Coverage radius */
+	double COVERING_DEMAND; /* The required coverage demand */
+	double BUDGET; /* The required coverage budget */
 
-	double timelimit;
 
-	int seed;
+	double timelimit; /* Time limitation */
 
-	int number_of_CPU;
+	int seed; /* Random seed */
+
+	int number_of_CPU; /* Number of CPUs */
 
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -60,15 +62,18 @@ typedef struct {
 	///////////////////////////////////////////////////////////////////////////////
 
 	bool cohordinates_loaded;
-	double *x_location;
-	double *y_location;
 
-	double *x_client;
-	double *y_client;
 
+
+	double *x_location; /*X coordinates of facilities */
+   	double *y_location; /*Y coordinates of facilities */
+
+   	double *x_client; /*X coordinates of clients */
+   	double *y_client; /*Y coordinates of clients */
+	
 	bool *cliets_OK;
 
-	/////////////////////////////////////CPLEX/////////////////////////////////////
+	//CPLEX related variables and environments
 	CPXENVptr env_CFL,env_CFL_BEN,env_CFL_BEN_FACETS,env_CFL_BEN_2,env_DFL_BEN_2,env_CFL_BEN_AUX,env_CFL_BEN_FACETS_AUX,env_CFL_MOD,env_CFL_penalty,env_DFL,env_DFL_penalty,env_DFL_MOD,env_CFL2,env_CFL_CVAR,env_DFL_CVAR,env_CFL_CONS,env_DFL_CONS,env_CFL_GAMMA,env_DFL_GAMMA,env_CFL_EXP;
 	CPXLPptr  lp_CFL,lp_CFL_BEN,lp_CFL_BEN_FACETS,lp_CFL_BEN_2,lp_DFL_BEN_2,lp_CFL_BEN_AUX,lp_CFL_BEN_FACETS_AUX,lp_CFL_MOD,lp_CFL_penalty,lp_DFL,lp_DFL_penalty,lp_DFL_MOD,lp_CFL2,lp_CFL_CVAR,lp_DFL_CVAR,lp_CFL_CONS,lp_DFL_CONS,lp_CFL_GAMMA,lp_DFL_GAMMA,lp_CFL_EXP;
 	int status,ccnt,rcnt,nzcnt;
