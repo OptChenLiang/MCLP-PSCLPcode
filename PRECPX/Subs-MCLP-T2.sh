@@ -55,8 +55,8 @@ do
             #Random data
             for((l=1; l<=5;l++));
             do
-               f_name=../TESTDATA/n2500s$l.dat
-               c_name=../TESTDATA/n2500s$l.dat
+               f_name=../TESTDATA/f_data_2500/n2500s$l.dat
+               c_name=../TESTDATA/f_data_2500/n2500s$l.dat
 
                workname=n${N[i]}_m${N[i]}_r${R[j]}_d${D[k]}_s${l}
          

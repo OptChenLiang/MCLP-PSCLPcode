@@ -29,12 +29,9 @@ to compile and generate the executable files in a new created directory "bin/" i
 As for whether to use presolving methods, see the parameters of executable files in "How to run the solver".
 
 ## Data sets
-G
-For all testsets, 
-For testset T1
-For testsets T2 and T3, the  
-Directory "data/" contains all data files used in our paper, including eight social networks files "MSG.txt", "GNU.txt", "HEP.txt",
-"ENRON.txt", "FACEBOOK.txt", "DEEZER.txt", "TWITTER.txt", "EPINIONS.txt". The download links of these networkss are
+In directory "TESTDATA/", we provide some facility information.
+Directory "f_data_100/" contains coordinates of 100 facilities.
+Directory "f_data_2500/" contains coordinates of 2500 facilities.
 
 ## How to run the solver
 For a given executable file [EXE], the solver can be run in the main directory as
