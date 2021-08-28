@@ -10,24 +10,6 @@ double distance(double x1,double y1,double x2, double y2)
 	return  distancex + distancey;
 }*/
 
-bool Comp(MyPair* a, MyPair *b)
-{
-   int size1 = a->locations.size();
-   int size2 = b->locations.size();
-   for( int i = 0; i < size1 && i< size2; i++)
-   {
-      if( a->locations[i] < b->locations[i] )
-         return true;
-      else if( a->locations[i] > b->locations[i] )
-         return false;
-   }
-   if(size1 < size2 )
-      return true;
-   else 
-      return false;
-   return false;
-}
-
 bool CompforDNC(MyPair* a, MyPair *b)
 {
    int size1 = a->locations.size();
@@ -66,8 +48,9 @@ bool CompEQ(MyPair* a, MyPair *b)
    }
    return true;
 }
-// Set bound in node presolving
-bool setbound(mystr* inst, int pos, char sign, char method)
+
+//Set bound in node presolving
+bool setbound(mystr* inst, int pos, char sign)
 {
    assert(pos >= 0 && pos <= inst->validlocations + inst->data.size());
    if(sign == 'L')
@@ -78,21 +61,7 @@ bool setbound(mystr* inst, int pos, char sign, char method)
          inst->chgind[inst->numchg] = pos;
          inst->sign[inst->numchg] = 'L';
          inst->numchg++;
-         switch (method)
-         {
-            case 'e':
-               inst->num_easy++;
-               break;
-            case 'c':
-               inst->num_col++;
-               break;
-            case 'r':
-               inst->num_row++;
-               break;
-            default:
-               assert(0);
-               break;
-         }
+         inst->nfix++;
       }
       else
          return false;
@@ -105,22 +74,7 @@ bool setbound(mystr* inst, int pos, char sign, char method)
          inst->chgind[inst->numchg] = pos;
          inst->sign[inst->numchg] = 'G';
          inst->numchg++;
-         //todo
-         switch (method)
-         {
-            case 'e':
-               inst->num_easy++;
-               break;
-            case 'c':
-               inst->num_col++;
-               break;
-            case 'r':
-               inst->num_row++;
-               break;
-            default:
-               assert(0);
-               break;
-         }
+         inst->nfix++;
       }
       else 
          return false;
@@ -130,6 +84,7 @@ bool setbound(mystr* inst, int pos, char sign, char method)
    return true;
 }
 
+//Calculate J(i) based on I(j)
 bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
 {
    int size = a.size();
@@ -137,6 +92,7 @@ bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
    for(int i = 0; i<size; i++)
    {
       a[i]->locations.clear();
+      a[i]->sign = 0;
    }
    for(int i = 0; i<bsize; i++)
    {      
@@ -144,10 +100,19 @@ bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
       size = b[i]->locations.size();
       for(int k = 0; k<size; k++)
       {
+         a[b[i]->locations[k]]->sign |= (1 << (i%32));
          a[b[i]->locations[k]]->locations.push_back(i);
       }
    }
    return true;
+}
+
+//Determine inclusive relations of  support signature in 32-bit
+bool IsSubSet32(vector<MyPair*> &a, int i, int j)
+{
+   if( ( a[i]->sign | a[j]->sign) == a[i]->sign )
+      return true;
+   return false;
 }
 
 bool IsSubSet(vector<int> &a, vector<int> &b)
@@ -222,6 +187,7 @@ void Domination(mystr* inst)
    clock_t time_presolvestart=clock();
    int asize = inst->covers.size();
    sort(inst->covers.begin(), inst->covers.end(), CompforDNC);
+   
    for(int i = 0; i<asize; i++)
    {
       if(inst->covers[i]->isdeleted == true)
@@ -230,9 +196,22 @@ void Domination(mystr* inst)
       {
          if(inst->covers[j]->isdeleted == true)
             continue;
-         if(IsSubSet(inst->covers[i]->locations, inst->covers[j]->locations))
+         if( inst->covers[j]->locations.size() > 0)
          {
-            inst->covers[j]->isdeleted = true;
+            if( IsSubSet32(inst->covers, i, j))
+            {
+               if(IsSubSet(inst->covers[i]->locations, inst->covers[j]->locations))
+               {
+                  inst->covers[j]->isdeleted = true;
+               }
+            }
+         }
+         else
+         {
+            if(IsSubSet(inst->covers[i]->locations, inst->covers[j]->locations))
+            {
+               inst->covers[j]->isdeleted = true;
+            }
          }
       }
    }
@@ -243,10 +222,12 @@ void Domination(mystr* inst)
    {
       lsize = inst->data[i]->locations.size();
       ncounter = 0;
+      inst->data[i]->sign = 0;
       for(int j = 0; j<lsize; j++)
       {
          if(inst->covers[inst->data[i]->locations[j]]->isdeleted == false)
          {
+            inst->data[i]->sign &= 1 << ((inst->data[i]->locations[j])%32);
             inst->data[i]->locations[ncounter] = inst->data[i]->locations[j]; 
             ncounter++;
          }
@@ -495,7 +476,7 @@ void NodePresolveInit(mystr* inst)
          {
             posj = inst->covers[inst->data[i]->locations[j]]->pos;
             assert(posj >= 0);
-            setbound(inst, posj, 'L', 'e');
+            setbound(inst, posj, 'L');
          }
       }
       else 

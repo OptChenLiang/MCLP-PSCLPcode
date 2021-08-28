@@ -27,6 +27,7 @@ class MyPair
 public:
    vector<int> locations; 
    vector<long long> clients;
+   unsigned int sign;
    double demand;
    double cost;
    int index;
@@ -188,37 +189,35 @@ typedef struct {
 	bool coordinates_loaded;
 
 	
-	double *x_location; /*X coordinates of facilities */
-   	double *y_location; /*Y coordinates of facilities */
+   double *x_location; /*X coordinates of facilities */
+   double *y_location; /*Y coordinates of facilities */
 
-   	double *x_client; /*X coordinates of clients */
-   	double *y_client; /*Y coordinates of clients */
+   double *x_client; /*X coordinates of clients */
+   double *y_client; /*Y coordinates of clients */
 
-	//CPLEX related variables and environments
-	CPXENVptr env;
-	CPXLPptr lp;
-	int status,ccnt,rcnt,nzcnt;
-	int* rmatbeg, *rmatind,*cmatbeg, *cmatind;
-	double* rmatval,*cmatval,*x,*pi,*obj, *lb, *ub,*rhs;
-	char *c_type,* sense;
-	char **colname;
-	double objval,bestobjval;
-	int lpstat,nodecount;
-	///////////////////////////////////////////////////////////////////////////////
+   //CPLEX related variables and environments
+   CPXENVptr env;
+   CPXLPptr lp;
+   int status,ccnt,rcnt,nzcnt;
+   int* rmatbeg, *rmatind,*cmatbeg, *cmatind;
+   double* rmatval,*cmatval,*x,*pi,*obj, *lb, *ub,*rhs;
+   char *c_type,* sense;
+   char **colname;
+   double objval,bestobjval;
+   int lpstat,nodecount;
+   ///////////////////////////////////////////////////////////////////////////////
 
-	int counter_c;
-	int counter_l;
+   int counter_c;
+   int counter_l;
 
 
-	
+
    double presolve_time; /* Total presolving time */
    double presolve_IA_time; /* Presolving time of isomorphic aggregation */
    double presolve_D_time; /* Presolving time of domination presolving */
    double presolve_node_time; /* Prsolving time of nonoverlap fixing presolving */
 
-   long num_easy;
-   long num_col;
-   long num_row;
+   long nfix;
 
    bool isBranch;
    bool isCut;

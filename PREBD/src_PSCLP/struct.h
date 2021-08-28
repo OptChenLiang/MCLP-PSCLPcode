@@ -27,6 +27,7 @@ class MyPair
 public:
    vector<int> locations; 
    vector<long long> clients;
+   unsigned int sign;
    double demand;
    double cost;
    int index;
@@ -211,9 +212,7 @@ typedef struct {
    double presolve_D_time; /* Presolving time of domination presolving */
    double presolve_node_time; /* Prsolving time of nonoverlap fixing presolving */
 
-   long num_easy;
-   long num_col;
-   long num_row;
+   long nfix;
 
    bool isBranch;
    bool isCut;

@@ -66,8 +66,9 @@ bool CompEQ(MyPair* a, MyPair *b)
    }
    return true;
 }
-// Set bound in node presolving
-bool setbound(mystr* inst, int pos, char sign, char method)
+
+//Set bound in node presolving
+bool setbound(mystr* inst, int pos, char sign)
 {
    assert(pos >= 0 && pos <= inst->validlocations + inst->data.size());
    if(sign == 'L')
@@ -78,21 +79,7 @@ bool setbound(mystr* inst, int pos, char sign, char method)
          inst->chgind[inst->numchg] = pos;
          inst->sign[inst->numchg] = 'L';
          inst->numchg++;
-         switch (method)
-         {
-            case 'e':
-               inst->num_easy++;
-               break;
-            case 'c':
-               inst->num_col++;
-               break;
-            case 'r':
-               inst->num_row++;
-               break;
-            default:
-               assert(0);
-               break;
-         }
+         inst->nfix++;
       }
       else
          return false;
@@ -105,22 +92,7 @@ bool setbound(mystr* inst, int pos, char sign, char method)
          inst->chgind[inst->numchg] = pos;
          inst->sign[inst->numchg] = 'G';
          inst->numchg++;
-         //todo
-         switch (method)
-         {
-            case 'e':
-               inst->num_easy++;
-               break;
-            case 'c':
-               inst->num_col++;
-               break;
-            case 'r':
-               inst->num_row++;
-               break;
-            default:
-               assert(0);
-               break;
-         }
+         inst->nfix++;
       }
       else 
          return false;
@@ -129,6 +101,7 @@ bool setbound(mystr* inst, int pos, char sign, char method)
       assert(0);
    return true;
 }
+
 //Calculate J(i) based on I(j)
 bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
 {
@@ -137,6 +110,7 @@ bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
    for(int i = 0; i<size; i++)
    {
       a[i]->locations.clear();
+      a[i]->sign = 0;
    }
    for(int i = 0; i<bsize; i++)
    {      
@@ -144,11 +118,21 @@ bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
       size = b[i]->locations.size();
       for(int k = 0; k<size; k++)
       {
+         a[b[i]->locations[k]]->sign |= (1 << (i%32));
          a[b[i]->locations[k]]->locations.push_back(i);
       }
    }
    return true;
 }
+
+//Determine inclusive relations of  support signature in 32-bit
+bool IsSubSet32(vector<MyPair*> &a, int i, int j)
+{
+   if( ( a[i]->sign | a[j]->sign) == a[i]->sign )
+      return true;
+   return false;
+}
+
 //Set a contains Set b ?
 bool IsSubSet(vector<int> &a, vector<int> &b)
 {
@@ -181,6 +165,7 @@ bool IsSubSet(vector<int> &a, vector<int> &b)
    }
    return true;
 }
+
 //Remove the elements of Set a in Set b?
 bool RemoveSubSet(vector<int> &a, vector<int> &b)
 {
@@ -216,12 +201,14 @@ bool RemoveSubSet(vector<int> &a, vector<int> &b)
    a.erase(a.begin() + n_locations, a.end());
    return true;
 }
+
 //Domination presolving
 void Domination(mystr* inst)
 {
    clock_t time_presolvestart=clock();
    int asize = inst->covers.size();
    sort(inst->covers.begin(), inst->covers.end(), CompforDNC);
+
    for(int i = 0; i<asize; i++)
    {
       if(inst->covers[i]->isdeleted == true)
@@ -230,9 +217,22 @@ void Domination(mystr* inst)
       {
          if(inst->covers[j]->isdeleted == true)
             continue;
-         if(IsSubSet(inst->covers[i]->locations, inst->covers[j]->locations))
+         if( inst->covers[j]->locations.size() > 0)
          {
-            inst->covers[j]->isdeleted = true;
+            if( IsSubSet32(inst->covers, i, j))
+            {
+               if(IsSubSet(inst->covers[i]->locations, inst->covers[j]->locations))
+               {
+                  inst->covers[j]->isdeleted = true;
+               }
+            }
+         }
+         else
+         {
+            if(IsSubSet(inst->covers[i]->locations, inst->covers[j]->locations))
+            {
+               inst->covers[j]->isdeleted = true;
+            }
          }
       }
    }
@@ -243,10 +243,12 @@ void Domination(mystr* inst)
    {
       lsize = inst->data[i]->locations.size();
       ncounter = 0;
+      inst->data[i]->sign = 0;
       for(int j = 0; j<lsize; j++)
       {
          if(inst->covers[inst->data[i]->locations[j]]->isdeleted == false)
          {
+            inst->data[i]->sign &= 1 << ((inst->data[i]->locations[j])%32);
             inst->data[i]->locations[ncounter] = inst->data[i]->locations[j]; 
             ncounter++;
          }
@@ -256,6 +258,7 @@ void Domination(mystr* inst)
    clock_t time_presolveend=clock();
    inst->presolve_D_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
 }
+
 //Reimplementing isomorphic aggregation when domination presolving succeeds
 void IA2(mystr* inst)
 {
@@ -299,6 +302,7 @@ void IA2(mystr* inst)
    CalculateCovers(inst->covers, inst->data);
    return;
 }
+
 //Isomorphic aggregation (and generate random data)
 void IA(mystr *inst)
 {
@@ -449,6 +453,7 @@ void IA(mystr *inst)
    delete[] totalarray;
    inst->n_data = inst->data.size();
 }
+
 //Singleton aggregation
 void SA(mystr* inst)
 {
@@ -495,7 +500,7 @@ void NodePresolveInit(mystr* inst)
          {
             posj = inst->covers[inst->data[i]->locations[j]]->pos;
             assert(posj >= 0);
-            setbound(inst, posj, 'L', 'e');
+            setbound(inst, posj, 'L');
          }
       }
       else 
