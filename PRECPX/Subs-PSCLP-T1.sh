@@ -1,3 +1,12 @@
+timlim=10000;
+exec[0]=0 #None
+exec[1]=1 #All
+exec[2]=2 #NO SIN_AGG
+exec[3]=3 #NO ISO_AGG
+exec[4]=4 #NO NON_CAN
+exec[5]=5 #NO DOM
+exec[6]=6 #NO NON_FIX
+
 N[1]=100;
 
 D[0]=0.5;
@@ -51,16 +60,7 @@ M[14]=30000000;
 M[15]=35000000;
 M[16]=40000000;
 
-timlim=10000;
-exec[1]=PSCLP_None
-exec[2]=PSCLP_All
-exec[3]=PSCLP_NoSA
-exec[4]=PSCLP_NoIA
-exec[5]=PSCLP_NoNC
-exec[6]=PSCLP_NoDom
-exec[7]=PSCLP_NoNF
-
-maindir=T1
+maindir=T1-PSCLP
 mkdir ${maindir}
 for((i=1; i<=7;i++));
 do
@@ -69,15 +69,15 @@ do
 done
 
 #Settings
-for((p=1; p<=7;p++));
+for((p=0; p<=6; p++));
 do
    #Number of customers
-   for((k=1; k<=16;k++));
+   for((k=1; k<=16; k++));
    do
       #Number of facities
-      for((i=1; i<=1;i++));
+      for((i=1; i<=1; i++));
       do
-         #Different radius and covering demand
+         #Different radius and budget
          for((j=0; j<=13;j++));
          do
             #Random data
@@ -89,10 +89,8 @@ do
                f_name=../TESTDATA/f_data/n${N[i]}_f10_100_s$l.dat
 
                workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
-         
-               #bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
-               echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
-
+               #bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./PSCLP ${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               echo "./PSCLP ${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
             done
          done
       done

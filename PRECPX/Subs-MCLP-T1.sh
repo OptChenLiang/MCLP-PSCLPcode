@@ -1,3 +1,12 @@
+timlim=10000;
+exec[0]=0 #None
+exec[1]=1 #All
+exec[2]=2 #NO SIN_AGG
+exec[3]=3 #NO ISO_AGG
+exec[4]=4 #NO NON_CAN
+exec[5]=5 #NO DOM
+exec[6]=6 #NO NON_FIX
+
 N[1]=100;
 
 D[0]=0.1;
@@ -51,16 +60,8 @@ M[14]=30000000;
 M[15]=35000000;
 M[16]=40000000;
 
-timlim=10000;
-exec[1]=MCLP_None
-exec[2]=MCLP_All
-exec[3]=MCLP_NoSA
-exec[4]=MCLP_NoIA
-exec[5]=MCLP_NoNC
-exec[6]=MCLP_NoDom
-exec[7]=MCLP_NoNF
+maindir=T1-MCLP
 
-maindir=T1
 mkdir ${maindir}
 for((i=1; i<=7;i++));
 do
@@ -69,7 +70,7 @@ do
 done
 
 #Settings
-for((p=1; p<=7; p++));
+for((p=0; p<=6; p++));
 do
    #Number of customers
    for((k=1; k<=16; k++));
@@ -89,9 +90,8 @@ do
                f_name=../TESTDATA/f_data/n${N[i]}_f10_100_s$l.dat
 
                workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
-         
-               #bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
-               echo "./${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               #bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./MCLP ${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               echo "./MCLP ${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
             done
          done
       done

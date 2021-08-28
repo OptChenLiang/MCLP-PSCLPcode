@@ -86,10 +86,7 @@ void build_model(instance *inst)
       assert(inst->data[i]->isdeleted == false);
       inst->lb[counter]=0.0;
 		inst->ub[counter]=1.0;
-      if(inst->isBin)
-         inst->c_type[counter]='B';
-      else
-         inst->c_type[counter]='C';
+      inst->c_type[counter]='B';
 		sprintf(inst->colname[counter], "z%d",i);
 		counter++;
 	}

@@ -5,75 +5,40 @@
 int main(int argc, char** argv) {
    
 	instance inst;
-// Presolving settings  
-#if BRANCH
-   inst.isBranch = true;
-#else
-   inst.isBranch = false;
-#endif
-#if CUT
-   inst.isCut = true;
-#else
-   inst.isCut = false;
-#endif
-#if BIN
-   inst.isBin = true;
-#else
-   inst.isBin = false;
-#endif
-#if IA
-   inst.isIA = true;
-#else
-   inst.isIA = false;
-#endif
-#if SA
-   inst.isSA = true;
-#else
-   inst.isSA = false;
-#endif
-#if Dom
-   inst.isDom = true;
-#else
-   inst.isDom = false;
-#endif
-#if NC
-   inst.isNC = true;
-#else
-   inst.isNC = false;
-#endif
 #if PSCLP
    inst.isPSCLP = true;
 #else
    inst.isPSCLP = false;
 #endif
-
    
 	inst.input_file_f = (char *) calloc(1000, sizeof(char));
 	inst.input_file_c = (char *) calloc(1000, sizeof(char));
 	////////////////////////////////////////////////////////////////////////////////////////
+   int exec = 0;
 	if (argc >= 8)
 	{
+      exec = atoi(argv[1]);
       //Input locations file, clients file and other solving parameters
-      strcpy(inst.input_file_f, argv[1]);
-      strcpy(inst.input_file_c, argv[2]);
-      inst.n_locations=atoi(argv[3]);
-      inst.n_clients=atoll(argv[4]);
-      inst.timelimit=atof(argv[5]);
-      inst.RADIUS=atof(argv[6]);
+      strcpy(inst.input_file_f, argv[2]);
+      strcpy(inst.input_file_c, argv[3]);
+      inst.n_locations=atoi(argv[4]);
+      inst.n_clients=atoll(argv[5]);
+      inst.timelimit=atof(argv[6]);
+      inst.RADIUS=atof(argv[7]);
       cout << "***RADIUS " << inst.RADIUS << endl;
       if(inst.isPSCLP)
       {
-         inst.COVERING_DEMAND=atof(argv[7]);
+         inst.COVERING_DEMAND=atof(argv[8]);
          cout << "***BUDGET " << inst.COVERING_DEMAND << endl;
       }
       else
       {
-         inst.BUDGET=atof(argv[7]);
+         inst.BUDGET=atof(argv[8]);
          cout << "***BUDGET " << inst.BUDGET << endl;
       }
       inst.seed = -1;
-      if (argc >= 9)
-         inst.seed=atof(argv[8]); /* Random seed (optional) */
+      if (argc >= 10)
+         inst.seed=atof(argv[9]); /* Random seed (optional) */
 	}
 	else
 	{
@@ -92,6 +57,39 @@ int main(int argc, char** argv) {
 		cout << "Param8:\t seed(optional)\n";
 		exit(-1);
 	}
+   inst.isBranch = true;
+   inst.isCut = true;
+   inst.isIA = true;
+   inst.isSA = true;
+   inst.isDom = true;
+   inst.isNC = true;
+   switch (exec)
+   {
+      case 0: //NO_PRE
+         inst.isCut = false;
+         inst.isIA = false;
+         inst.isSA = false;
+         inst.isDom = false;
+         inst.isNC = false;
+         break;
+      case 1: //ALL
+         break;
+      case 2: //NO_SIN_AGG
+         inst.isIA = false;
+         break;
+      case 3: //NO_ISO_AGG
+         inst.isSA = false;
+         break;
+      case 4: //NO_NON_CAN
+         inst.isNC = false;
+         break;
+      case 5: //NO_DOM
+         inst.isDom = false;
+         break;
+      case 6: //NO_NON_FIX
+         inst.isCut = false;
+         break; 
+   }
 	/////////////////////////////////////////////////////////////////////////////////////////
    // Read file and presolve
 	clock_t time_start=clock();
