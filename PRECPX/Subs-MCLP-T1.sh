@@ -63,7 +63,7 @@ M[16]=40000000;
 maindir=T1-MCLP
 
 mkdir ${maindir}
-for((i=1; i<=7;i++));
+for((i=0; i<=6;i++));
 do
    dir[i]=${maindir}/${exec[i]};
    mkdir ${dir[i]}

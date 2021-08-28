@@ -19,51 +19,38 @@ int main(int argc, char** argv) {
 	instance inst;
 	mystr inst1;
 //Presolving settings
-#if NOIA
-   inst1.isIA = false;
-#else
-   inst1.isIA = true;
-#endif
-#if NOD
-   inst1.isD = false;
-#else
-   inst1.isD = true;
-#endif
    inst1.isPSCLP = true;
 	inst.algorithm = 2;
-#if NOSA
-   inst1.isSA = false;
-#else
-   inst1.isSA = true;
-#endif
-
+   
    //Input facilities file and clients file
    inst1.input_file_f = (char *) calloc(1000, sizeof(char)); 
    inst1.input_file_c = (char *) calloc(1000, sizeof(char)); 
 
 	////////////////////////////////////////////////////////////////////////////////////////
-	if (argc >= 8)
+   int exec = 0;
+	if (argc >= 9)
 	{
-		/*Param1*/strcpy(inst1.input_file_f, argv[1]);
-		/*Param2*/strcpy(inst1.input_file_c, argv[2]);
-      /*Param3*/inst1.n_locations=atoi(argv[3]);             
-      /*Param4*/inst1.n_clients=atoll(argv[4]);
-		/*Param5*/inst.timelimit=atof(argv[5]);
-		/*Param6*/inst1.RADIUS=atof(argv[6]);
+      /*Param1*/exec = atoi(argv[1]);
+		/*Param2*/strcpy(inst1.input_file_f, argv[2]);
+		/*Param3*/strcpy(inst1.input_file_c, argv[3]);
+      /*Param4*/inst1.n_locations=atoi(argv[4]);             
+      /*Param5*/inst1.n_clients=atoll(argv[5]);
+		/*Param6*/inst.timelimit=atof(argv[6]);
+		/*Param7*/inst1.RADIUS=atof(argv[7]);
       cout << "***RADIUS " << inst1.RADIUS << endl;
       if( inst1.isPSCLP )
       {
-         inst1.COVERING_DEMAND=atof(argv[7]);
+         inst1.COVERING_DEMAND=atof(argv[8]);
          cout << "***BUDGET " << inst1.COVERING_DEMAND << endl;
       }
       else
       {
-         inst1.BUDGET=atof(argv[7]);
+         inst1.BUDGET=atof(argv[8]);
          cout << "***BUDGET " << inst1.BUDGET << endl;
       }
       inst1.seed = -1;
-      if (argc >= 9)
-         inst1.seed=atof(argv[8]);
+      if (argc >= 10)
+         inst1.seed=atof(argv[9]);
 
 	}
 	else
@@ -78,6 +65,23 @@ int main(int argc, char** argv) {
 
 		exit(-1);
 	}
+   
+   inst1.isIA = true;
+   inst1.isSA = true;
+   inst1.isD = true;
+   switch (exec)
+   {
+      case 0: //NO_PRE
+         inst1.isIA = false;
+         inst1.isSA = false;
+         inst1.isD = false;
+         break;
+      case 1: //ALL
+         inst1.isIA = true;
+         inst1.isSA = true;
+         inst1.isD = true;
+         break;
+   }
 	////////////////////////////////////////////////////////////////////////////////////////
 
 

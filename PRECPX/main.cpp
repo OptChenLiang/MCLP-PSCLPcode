@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
 	inst.input_file_c = (char *) calloc(1000, sizeof(char));
 	////////////////////////////////////////////////////////////////////////////////////////
    int exec = 0;
-	if (argc >= 8)
+	if (argc >= 9)
 	{
       exec = atoi(argv[1]);
       //Input locations file, clients file and other solving parameters
