@@ -55,13 +55,13 @@ do
             #Random data
             for((l=1; l<=5;l++));
             do
-               f_name=../TESTDATA/n2500_s$l.dat
-               c_name=../TESTDATA/n2500_s$l.dat
+               f_name=../TESTDATA/n2500s$l.dat
+               c_name=../TESTDATA/n2500s$l.dat
 
                workname=n${N[i]}_m${N[i]}_r${R[j]}_d${D[k]}_s${l}
          
                #bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./MCLP ${exec[p]} ${f_name} ${c_name} ${N[i]} ${N[i]} $timlim ${R[j]} ${D[k]}"
-               echo "./MCLP ${exec[p]} ${f_name} ${c_name} ${N[i]} ${N[i]} $timlim ${R[j]} ${D[k]}"
+               echo "./bin/MCLPCPX ${exec[p]} ${f_name} ${c_name} ${N[i]} ${N[i]} $timlim ${R[j]} ${D[k]}"
             done
          done
       done

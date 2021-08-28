@@ -5,7 +5,7 @@
 int main(int argc, char** argv) {
    
 	instance inst;
-#if PSCLP
+#ifdef PSCLP
    inst.isPSCLP = true;
 #else
    inst.isPSCLP = false;
@@ -44,17 +44,15 @@ int main(int argc, char** argv) {
 	{
 		//Error input
 		cout << "ERROR NUMBER STANDARD PARAMETERS" << endl;
-		cout << "Param1:\t facility filename\n";
-      cout << "Param2:\t client filename(can be NULL)\n";
-      cout << "Param3:\t n_facilities\n";
-      cout << "Param4:\t n_clients\n";
-		cout << "Param5:\t time limit\n";
-		cout << "Param6:\t RADIUS\n";
-      if(inst.isPSCLP)
-         cout << "Param7:\t DEMAND(<=1 percentage, >1 real number)\n";
-      else
-         cout << "Param7:\t BUDGET(<=1 percentage, >1 real number)\n";
-		cout << "Param8:\t seed(optional)\n";
+      cout << "Param1:\t settings\n";
+		cout << "Param2:\t file of facilities\n";
+      cout << "Param3:\t customers file (can be NULL and then generate customers randomly when running the code)\n";
+      cout << "Param4:\t number of facilities\n";
+      cout << "Param5:\t number of customers\n";
+		cout << "Param6:\t time limitation in seconds\n";
+		cout << "Param7:\t covering radius\n";
+		cout << "Param8:\t budget in the MCLP or covering demand in the PSCLP, <= 1 means percentage\n";
+		cout << "Param9:\t  CPXPARAM_RandomSeed for CPLEX\n";
 		exit(-1);
 	}
    inst.isBranch = true;

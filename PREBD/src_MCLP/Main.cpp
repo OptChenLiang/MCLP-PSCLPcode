@@ -56,12 +56,15 @@ int main(int argc, char** argv) {
 	{
 		//Error input
 		cout << "ERROR NUMBER STANDARD PARAMETERS" << endl;
-		cout << "Param1:\t instance name\n";
-		cout << "Param2:\t algorithm\n";
-		cout << "Param3:\t time limit\n";
-		cout << "Param4:\t RADIUS\n";
-		cout << "Param5:\t BUDGET\n";
-
+      cout << "Param1:\t settings\n";
+		cout << "Param2:\t file of facilities\n";
+      cout << "Param3:\t customers file (can be NULL and then generate customers randomly when running the code)\n";
+      cout << "Param4:\t number of facilities\n";
+      cout << "Param5:\t number of customers\n";
+		cout << "Param6:\t time limitation in seconds\n";
+		cout << "Param7:\t covering radius\n";
+		cout << "Param8:\t budget in the MCLP or covering demand in the PSCLP, <= 1 means percentage\n";
+		cout << "Param9:\t  CPXPARAM_RandomSeed for CPLEX\n";
 		exit(-1);
 	}
    
