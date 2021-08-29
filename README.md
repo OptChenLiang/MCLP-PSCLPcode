@@ -7,16 +7,15 @@ Efficient presolving methods for solving maximal covering and partial set coveri
 To solve the maximal covering location problem (MCLP) and partial set covering location problem (PSCLP), the branch-and-cut 
 algorithm is used in the paper combined with five proposed presolving methods, i.e., 
 
-1. singleton aggregation (`SIN_AGG` ), 
+1. singleton aggregation (`SIN_AGG`), 
 2. isomorphic aggregation (`ISO_AGG`),
 3. nonzero cancellation (`NON_CAN`),
 4. domination (`DOM`), and
 5. nonoverlap fixing (`NON_FIX`), 
 
-for both the MCLP and PSCLP.
 
 The directory `PRECPX/` includes all source files and header files for solving the MCLP and PSCLP using CPLEX (`CPX`);
-the directory `PREBD` includes all source files and header files for solving the MCLP and PSCLP using the Benders Decomposition (`BD`);
+the directory `PREBD` includes all source files and header files for solving the MCLP and PSCLP using the Benders decomposition (`BD`);
 the directory `TESTDATA/` contains the related data sets in the paper; . 
 Note that, to compile and run the code, the CPLEX libraries and header files are required, which given in directories  `lib/` and `include/`.
 
@@ -29,39 +28,39 @@ make
 
  in directory `PRECPX/` or `PREBD/` to compile and generate the executable files in a new created directory `bin/` in the corresponding directory. 
 
-- `PRECPX/bin/MCLPCPX`   to solve the MCLP using CPLEX
-- `PRECPX/bin/PSCLPCPX`  to solve the PSCLP using CPLEX
-- `PREBD/bin/MCLPBD`     to solve the MCLP using Benders Decomposition
-- `PREBD/bin/PSCLPBD`    to solve the PSCLP using Benders Decomposition
+- `PRECPX/bin/MCLPCPX`   to solve the MCLP using CPX
+- `PRECPX/bin/PSCLPCPX`  to solve the PSCLP using CPX
+- `PREBD/bin/MCLPBD`     to solve the MCLP using BD
+- `PREBD/bin/PSCLPBD`    to solve the PSCLP using BD
 
-As for whether to use presolving methods, see the parameters of executable files in "How to run the solver".
+See the parameters of executable files in "How to run the solver" to get information of implementing presolving.
 
 ## Data sets
 In directory `TESTDATA/`, we provide some facility information.
-Directory `f_data_100/` contains coordinates of 100 facilities and directory `f_data_2500/` contains coordinates of 2500 facilities.
+Directory `f_data_100/` contains coordinates of 100 facilities and directory `f_data_2500/` contains coordinates of 2500 facilities, which are all randomly generated.
 
 In each file, 
 
-- column 1 "F" means facility; 
+- column 1 "F" means "facility"; 
 
-- column 2 is the index of facility; 
+- column 2 gives the index of facility; 
 
-- columns 3 and 4 is the coordinates (x,y);
+- columns 3 and 4 give coordinates (x,y) of facility;
 
-- column 5 is the demand if this facility is regarded as a customer
+- column 5 gives the demand of customer when considering test set T2 where the coordinates of facilities and customers are chosen to be identical
 
    (the costs of all facilities are 1 in the paper).
 
 ## How to run the solver
-For a given executable file [EXE], the solver can be run in the main directory as
+For a given executable file [EXE] (`MCLPCPX`, `PSCLPCPX`, `MCLPBD`or `PSCLPBD`), the solver can be run in the corresponding main directory as
 
   ```
   ./bin/[EXE] [PS] [FF] [FC] [NF] [NC] [TL] [R] [P] ([RS])
   ```
 
-where `[EXE]` is executable file (`MCLPCPX`, `PSCLPCPX`, `MCLPBD`or `PSCLPBD`) and the arguments are: 
-`[PS]` for `MCLPCPX` or `PSCLPCPX` 
+where the arguments are listed in the following:
 
+`[PS]` presolving settings for `MCLPCPX` or `PSCLPCPX`; 
 - 0: `CPX`; 
 - 1: `PRE+CPX`;
 - 2: `No SIN_AGG`;
@@ -74,16 +73,16 @@ where `[EXE]` is executable file (`MCLPCPX`, `PSCLPCPX`, `MCLPBD`or `PSCLPBD`) a
 - 1: `PRE+BD`;
 
 `[FF]` facilities file; 
-`[FC]` customers file (can be NULL and then generate customers randomly when running the code);
+`[FC]` customers file (as the numbers of customers are extremely large in some testsets in the paper, the parameter can be NULL and then generated randomly when running the code);
 `[NF]` number of facilities;
-`[NC]` number of customers
+`[NC]` number of customers;
 `[TL]` time limitation in seconds;
 `[R]`  covering radius;
-`[P] ` budget in the MCLP or covering demand in the PSCLP,
-     <= 1 means percentage;
+`[P] ` budget parameter for the MCLP or covering demand parameter in the PSCLP
+     (a value less than 1 means a percentage);
 `[RS]` `CPXPARAM_RandomSeed` for `CPX` (optional).
 
-one can execute scripts e.g. `./Subs-MCLP-T1.sh` to see the command in the paper.
+one can execute scripts e.g. `./Subs-MCLP-T1.sh` to see all the command in the paper.
 
 ### Example
 
