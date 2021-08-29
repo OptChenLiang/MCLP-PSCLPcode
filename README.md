@@ -84,6 +84,7 @@ where the arguments are listed in the following:
 
 one can execute scripts e.g. `./Subs-MCLP-T1.sh` to see all the command in the paper.
 
+
 ### Example
 
 1. For instance in testset T1, consider the MCLP with 100 facilities and 100000 customers. The dataset is given by `../TESTDATA/f_data_100/n100_f10_100_s2.dat` with covering radius 5.75 and budget 10. For using CPLEX with our presolving methods within 10000 seconds, one can run 
@@ -93,6 +94,8 @@ one can execute scripts e.g. `./Subs-MCLP-T1.sh` to see all the command in the p
  ```
 
 2. For instance in testset T2, consider the MCLP with 1700 facilities and 1700 customers (same coordinates). The dataset is given by `../TESTDATA/f_data_2500/n2500s2.dat` with covering radius 4 and budget 20. For using CPLEX with our presolving methods except the domination within 10000 seconds, one can run 
+
+#SC@LC: why the name of dateset is n2500s2.dat in this example?
 
  ```
 ./bin/MCLPCPX 5 ../TESTDATA/f_data_2500/n2500s2.dat ../TESTDATA/f_data_2500/n2500s2.dat 1700 1700 10000 4 20
