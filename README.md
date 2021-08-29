@@ -86,19 +86,19 @@ one can execute scripts e.g. `./Subs-MCLP-T1.sh` to see all the command in the p
 
 ### Example
 
-1. For instance in testset T1, considering the MCLP with 100 facilities and 100000 customers for the facility dataset `../TESTDATA/f_data_100/n100_f10_100_s2.dat` with covering radius 5.75 and budget 10, if one test it by using CPLEX with our presolving methods within 10000 seconds, one can run 
+1. For instance in testset T1, consider the MCLP with 100 facilities and 100000 customers. The dataset is given by `../TESTDATA/f_data_100/n100_f10_100_s2.dat` with covering radius 5.75 and budget 10. For using CPLEX with our presolving methods within 10000 seconds, one can run 
 
  ```
  ./bin/MCLPCPX 1 ../TESTDATA/f_data_100/n100_f10_100_s2.dat NULL 100 100000 10000 5.75 0.1
  ```
 
-2. For instance in testset T2, considering the MCLP with 1700 facilities and 1700 customers (same coordinates) for the facility and customer dataset `../TESTDATA/f_data_2500/n2500s2.dat` with covering radius 4and budget 20, if one test it by using CPLEX with our presolving methods except the domination within 10000 seconds, one can run 
+2. For instance in testset T2, consider the MCLP with 1700 facilities and 1700 customers (same coordinates). The dataset is given by `../TESTDATA/f_data_2500/n2500s2.dat` with covering radius 4 and budget 20. For using CPLEX with our presolving methods except the domination within 10000 seconds, one can run 
 
  ```
 ./bin/MCLPCPX 5 ../TESTDATA/f_data_2500/n2500s2.dat ../TESTDATA/f_data_2500/n2500s2.dat 1700 1700 10000 4 20
  ```
 
-3. For instance in testset T3, considering the PSCLP with 1500 facilities and 10000000 customers for the facility dataset `../TESTDATA/n2500s5.dat` with covering radius 1.0328 and covering demand 70% of total demand, if one test it by using Benders Decomposition with our presolving methods within 10000 seconds, one can run 
+3. For instance in testset T3, consider the PSCLP with 1500 facilities and 10000000 customers. The dataset is given by `../TESTDATA/n2500s5.dat` with covering radius 1.0328 and covering demand 70% of total demand. For using Benders Decomposition with our presolving methods within 10000 seconds, one can run 
 
   ```
   ./bin/BD 1 ../TESTDATA/f_data_2500/n2500s5.dat NULL 1500 10000000 10000 1.0328 0.7
