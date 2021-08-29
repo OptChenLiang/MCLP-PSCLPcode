@@ -73,10 +73,10 @@ int main(int argc, char** argv) {
       case 1: //ALL
          break;
       case 2: //NO_SIN_AGG
-         inst.isIA = false;
+         inst.isSA = false;
          break;
       case 3: //NO_ISO_AGG
-         inst.isSA = false;
+         inst.isIA = false;
          break;
       case 4: //NO_NON_CAN
          inst.isNC = false;
