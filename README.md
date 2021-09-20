@@ -1,7 +1,7 @@
 ## Introduction
 The README contains code and complementary material to the paper
 
-L. Chen, S.-J. Chen, W.-K. Chen, Y.-H. Dai, and J. Juan, (2021). 
+L. Chen, S.-J. Chen, W.-K. Chen, Y.-H. Dai, J. Juan, and T. Quan (2021). 
 Efficient presolving methods for solving maximal covering and partial set covering location problems
 
 To solve the maximal covering location problem (MCLP) and partial set covering location problem (PSCLP), the branch-and-cut 
