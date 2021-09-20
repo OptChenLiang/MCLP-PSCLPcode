@@ -52,7 +52,7 @@ In each file,
    (the costs of all facilities are 1 in the paper).
 
 ## How to run the solver
-For a given executable file [EXE] (`MCLPCPX`, `PSCLPCPX`, `MCLPBD`or `PSCLPBD`), the solver can be run in the corresponding main directory as
+For a given executable file [EXE] (`MCLPCPX`, `PSCLPCPX`, `MCLPBD`, or `PSCLPBD`), the solver can be run in the corresponding main directory as
 
   ```
   ./bin/[EXE] [PS] [FF] [FC] [NF] [NC] [TL] [R] [P] ([RS])
