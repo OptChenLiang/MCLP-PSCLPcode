@@ -15,7 +15,7 @@ algorithm is used in the paper combined with five proposed presolving methods, i
 
 
 The directory `PRECPX/` includes all source files and header files for solving the MCLP and PSCLP using CPLEX (`CPX`);
-the directory `PREBD` includes all source files and header files for solving the MCLP and PSCLP using the Benders decomposition (`BD`);
+the directory `PREBD/` includes all source files and header files for solving the MCLP and PSCLP using the Benders decomposition (`BD`);
 the directory `TESTDATA/` contains the related data sets in the paper; . 
 Note that, to compile and run the code, the CPLEX libraries and header files are required, which given in directories  `lib/` and `include/`.
 
