@@ -11,7 +11,7 @@ COPT  = -m64 -fPIC -fno-strict-aliasing -std=c++11
 # Link options and libraries
 # ---------------------------------------------------------------------
 
-CPLEXLIBDIR   = lib/
+CPLEXLIBDIR   = ../lib/
 
 CCLNDIRS  = -L$(CPLEXLIBDIR) -L$(CONCERTLIBDIR)
 CLNDIRS   = -L$(CPLEXLIBDIR)
@@ -21,10 +21,10 @@ CLNFLAGS  = -lcplex -lm -lpthread -ldl
 all:
 	make all_c
 
-CONCERTINCDIR = include
-CPLEXINCDIR   = include
+CONCERTINCDIR = ../include
+CPLEXINCDIR   = ../include
 
-EXINC         = include
+EXINC         = ../include
 EXSRCC        = ./
 
 CFLAGS  = $(COPT) -I$(CPLEXINCDIR) -O2
