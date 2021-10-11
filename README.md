@@ -1,7 +1,7 @@
 ## Introduction
 The README contains code and complementary material to the paper
 
-L. Chen, S.-J. Chen, W.-K. Chen, Y.-H. Dai, and J. Juan, (2021). 
+L. Chen, S.-J. Chen, W.-K. Chen, Y.-H. Dai, J. Juan, and T. Quan (2021). 
 Efficient presolving methods for solving maximal covering and partial set covering location problems
 
 To solve the maximal covering location problem (MCLP) and partial set covering location problem (PSCLP), the branch-and-cut 
@@ -15,7 +15,7 @@ algorithm is used in the paper combined with five proposed presolving methods, i
 
 
 The directory `PRECPX/` includes all source files and header files for solving the MCLP and PSCLP using CPLEX (`CPX`);
-the directory `PREBD` includes all source files and header files for solving the MCLP and PSCLP using the Benders decomposition (`BD`);
+the directory `PREBD/` includes all source files and header files for solving the MCLP and PSCLP using the Benders decomposition (`BD`);
 the directory `TESTDATA/` contains the related data sets in the paper; . 
 Note that, to compile and run the code, the CPLEX libraries and header files are required, which given in directories  `lib/` and `include/`.
 
@@ -52,7 +52,7 @@ In each file,
    (the costs of all facilities are 1 in the paper).
 
 ## How to run the solver
-For a given executable file [EXE] (`MCLPCPX`, `PSCLPCPX`, `MCLPBD`or `PSCLPBD`), the solver can be run in the corresponding main directory as
+For a given executable file [EXE] (`MCLPCPX`, `PSCLPCPX`, `MCLPBD`, or `PSCLPBD`), the solver can be run in the corresponding main directory as
 
   ```
   ./bin/[EXE] [PS] [FF] [FC] [NF] [NC] [TL] [R] [P] ([RS])
