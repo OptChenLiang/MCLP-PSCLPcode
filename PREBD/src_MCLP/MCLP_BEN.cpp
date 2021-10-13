@@ -771,7 +771,7 @@ void solve_model_DFL_BEN_2(instance *inst, mystr* inst1)
 		printf("error in CPXgetmipobjval\n");
 	}
 
-	printf("\n\nMIP solution value ->\t\%f",inst->objval);
+	printf("MIP solution value: %f\n",inst->objval);
 
 
 	int open_facilities=-1;
@@ -815,7 +815,7 @@ void solve_model_DFL_BEN_2(instance *inst, mystr* inst1)
 	inst->lpstat=CPXgetstat(inst->env_DFL_BEN_2,inst->lp_DFL_BEN_2);
 	inst->nodecount = CPXgetnodecnt(inst->env_DFL_BEN_2, inst->lp_DFL_BEN_2);
 
-	cout << "\n\nlpstat\t" << inst->lpstat << endl;
+	//cout << "Lpstat\t" << inst->lpstat << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////////////
 	bool *reached_clients=new bool[inst->n_clients];
@@ -851,13 +851,18 @@ void solve_model_DFL_BEN_2(instance *inst, mystr* inst1)
 //	}
 //	delete[] reached_clients;
 //	///////////////////////////////////////////////////////////////////////////////////////////
+	cout << "Objval: " << inst->objval << endl;
+   cout << "Bestobjval: " << inst->bestobjval << endl;
+   cout << "Lpstat: " << inst->lpstat << endl; 
+   cout << "Nodecount: " << inst->nodecount << endl;
+   cout << "Solve_time: " << solution_time << endl;
 
-	cout << "\n***open_facilities\t" << open_facilities << endl;
-	cout << "***satisfied_clients\t" << satisfied_clients << endl;
+	//cout << "\n***open_facilities\t" << open_facilities << endl;
+	//cout << "***satisfied_clients\t" << satisfied_clients << endl;
 
 
 //cout << "\n\nSTAT:\tobjval\t" << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients << "\ttime\t"<< solution_time<< endl << endl;
-	cout << "\n\nSTAT:\tobjval\t" << setw(16) << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients <<"\tnodecount\t"<<inst->nodecount<<"\tpresolve_time\t"<<inst1->presolve_IA_time <<"\tsolve_time\t"<< solution_time<<"\ttotal_time\t"<<inst1->presolve_IA_time+solution_time<<"\ttotal_time_minus_presolve_time\t "<<solution_time<< endl << endl;
+	//cout << "\n\nSTAT:\tobjval\t" << setw(16) << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients <<"\tnodecount\t"<<inst->nodecount<<"\tpresolve_time\t"<<inst1->presolve_IA_time <<"\tsolve_time\t"<< solution_time<<"\ttotal_time\t"<<inst1->presolve_IA_time+solution_time<<"\ttotal_time_minus_presolve_time\t "<<solution_time<< endl << endl;
 
 
 

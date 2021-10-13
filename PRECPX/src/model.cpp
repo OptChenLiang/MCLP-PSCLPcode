@@ -200,7 +200,7 @@ void build_model(instance *inst)
       free(inst->sense);
       nrows++;
    }
-   printf("Numer of customers: %d\n", nrows);
+   printf("Number of customers: %d\n", nrows);
    /////////////////////////////////////////////////////////////////////////////////////////////////////////
    if(inst->isPSCLP)
    {

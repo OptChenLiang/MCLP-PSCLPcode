@@ -283,8 +283,8 @@ void IA2(mystr* inst)
 
 void IA(mystr *inst)
 {
-   if(inst->coordinates_loaded == false)
-      cout<< "Randomly generate!"<<endl;
+   //if(inst->coordinates_loaded == false)
+   //   cout<< "Randomly generate!"<<endl;
    unordered_map<MyArray, MyPair*, MyArray_hasher, MyArray_equal> mymap;
    unordered_map<MyArray, MyPair*, MyArray_hasher, MyArray_equal>::iterator it;
    clock_t time_presolvestart;
@@ -422,7 +422,7 @@ void IA(mystr *inst)
          n_data++;
       }
    }
-   cout<< inst->presolve_IA_time <<endl;
+   //cout<< inst->presolve_IA_time <<endl;
    for(int i = 0; i<n_data; i++)
    {
       delete[] totalarray[i];

@@ -5,8 +5,8 @@
 //Read facility and client files if files exist and implement presolving methods
 void read_file(mystr *inst)
 {
-   cout << "INSTANCE_f " << inst->input_file_f << endl;
-   cout << "INSTANCE_c " << inst->input_file_c << endl;
+   cout << "Facility file: " << inst->input_file_f << endl; /* Facility file */
+   cout << "Customer file: " << inst->input_file_c << endl; /* Client file */
 
    ifstream in_f(inst->input_file_f);
    ifstream in_c(inst->input_file_c);
@@ -37,8 +37,9 @@ void read_file(mystr *inst)
          inst->n_clients = (int)floor(a+1e-8);
    }
 
-   cout << "***LOCATIONS\t" << inst->n_locations << endl;
-   cout << "***CLIENTS\t" << inst->n_clients << endl;
+   cout << "Original model: "<< endl;
+   cout << "Number of facilities: " << inst->n_locations << endl;
+   cout << "Numer of customers: " << inst->n_clients << endl;
 
    inst->fixed_cost = (double *) calloc(inst->n_locations, sizeof(double));
    inst->x_location= (double *) calloc(inst->n_locations, sizeof(double));
@@ -99,7 +100,7 @@ void read_file(mystr *inst)
       }
    }
 
-   cout<<"RADIUS: "<<inst->RADIUS<<endl;
+   //cout<<"RADIUS: "<<inst->RADIUS<<endl;
 	//////////////////////////
    //Initialize statistics
    inst->nfix = 0;
@@ -124,7 +125,7 @@ void read_file(mystr *inst)
                ratio = ratio + inst->data[i]->demand;
          }
          inst->COVERING_DEMAND = (int)ceil(inst->COVERING_DEMAND * ratio);
-         cout<<"BUDGET: "<<inst->COVERING_DEMAND<<endl;
+         //cout<<"BUDGET: "<<inst->COVERING_DEMAND<<endl;
       }
 
    }
@@ -137,7 +138,7 @@ void read_file(mystr *inst)
          for(int i = 0; i<inst->n_locations; i++)
             ratio += inst->covers[i]->demand;
          inst->BUDGET = (int)floor(inst->BUDGET * ratio);
-         cout<<"BUDGET: "<<inst->BUDGET<<endl;
+         //cout<<"BUDGET: "<<inst->BUDGET<<endl;
       }
    }
    
@@ -147,8 +148,8 @@ void read_file(mystr *inst)
    inst->n_location = (int*) calloc(inst->data.size() + inst->covers.size(), sizeof(int));
    
    int size1 = inst->n_data;
-   cout<<"Row1: "<<inst->n_data<<endl;
-   cout<<"presolve_IA1: "<<inst->presolve_IA_time<<endl;
+   //cout<<"Row1: "<<inst->n_data<<endl;
+   //cout<<"presolve_IA1: "<<inst->presolve_IA_time<<endl;
    // Calculate J(i), i in I
    CalculateCovers(inst->covers, inst->data);
 
@@ -173,7 +174,7 @@ void read_file(mystr *inst)
             j++;
          }
       }
-      cout<<"n_deleted_columns: "<<n_deleted<<endl;
+      //cout<<"n_deleted_columns: "<<n_deleted<<endl;
       int lsize = 0, ncounter = 0;
       for(int i = 0; i<inst->n_data; i++)
       {
@@ -203,7 +204,7 @@ void read_file(mystr *inst)
          //Reimplement isomorphic aggregation if domination presolving succeeds
          IA2(inst);
       
-      cout<<"n_deleted_rows: "<<size1 - inst->n_data<<endl;
+      //cout<<"n_deleted_rows: "<<size1 - inst->n_data<<endl;
       inst->validlocations = inst->covers.size() - n_deleted;
    }
    if(inst->isSA)
@@ -213,26 +214,19 @@ void read_file(mystr *inst)
    }
    //////////////////////////////////
    int nnz = 0;
-   double mindemand = 1e+20;
-   double maxdemand = 0;
-   double meandemand = 0;
    for(int i = 0; i<inst->n_data; i++)
    {
       if(inst->data[i]->isdeleted == false)
       {
          nnz = nnz + inst->data[i]->locations.size();
-         if( inst->data[i]->demand > maxdemand )
-            maxdemand = inst->data[i]->demand;
-         if( inst->data[i]->demand < mindemand )
-            mindemand = inst->data[i]->demand;
-         meandemand += inst->data[i]->demand/inst->data.size();
       }
    }
    //Statistics after presolving
-   cout<<"mindemand: "<< mindemand<<" maxdemand: "<<maxdemand<<" meandemand: "<<meandemand<<endl;
-   nnz += inst->validlocations;
-   cout<<"DPANNZ= "<<nnz<<endl;
-   cout<<"Row2: "<<inst->n_data<<endl;
+   if(inst->isPSCLP)
+      nnz += inst->validlocations;
+   else
+      nnz += inst->n_data;
+   cout<<"NNZ before nonzero cancellation: "<<nnz<<endl; /* Number of nonzeros in model after presolving */
 }
 //Free intermediate variables
 /*****************************************************************/

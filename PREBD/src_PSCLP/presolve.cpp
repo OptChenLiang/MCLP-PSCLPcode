@@ -445,7 +445,7 @@ void IA(mystr *inst)
    }
    time_presolveend=clock();
    inst->presolve_IA_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
-   cout<< inst->presolve_IA_time <<endl;
+   //cout<< inst->presolve_IA_time <<endl;
    for(int i = 0; i<n_data; i++)
    {
       delete[] totalarray[i];
