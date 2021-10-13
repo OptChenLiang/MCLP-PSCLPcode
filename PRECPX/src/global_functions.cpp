@@ -4,8 +4,8 @@
 //Read facility and client files if files exist.
 void read_file(instance *inst)
 {
-   cout << "INSTANCE_f " << inst->input_file_f << endl; /* Facility file */
-   cout << "INSTANCE_c " << inst->input_file_c << endl; /* Client file */
+   cout << "Facility file: " << inst->input_file_f << endl; /* Facility file */
+   cout << "Customer file: " << inst->input_file_c << endl; /* Client file */
 
    ifstream in_f(inst->input_file_f);
    ifstream in_c(inst->input_file_c);
@@ -19,7 +19,7 @@ void read_file(instance *inst)
    {
       
       inst->coordinates_loaded = false;
-      cout << "Client file could not be opened. " << endl;
+      cout << "Customer file could not be opened. " << endl;
    }
    else
       inst->coordinates_loaded = true;
@@ -35,9 +35,9 @@ void read_file(instance *inst)
       if(inst->n_clients > a)
          inst->n_clients = (int)floor(a+1e-8);
    }
-
-   cout << "***LOCATIONS\t" << inst->n_locations << endl;
-   cout << "***CLIENTS\t" << inst->n_clients << endl;
+   cout << "Original model: "<< endl;
+   cout << "Number of facilities: " << inst->n_locations << endl;
+   cout << "Numer of customers: " << inst->n_clients << endl;
 
    inst->fixed_cost = (double *) calloc(inst->n_locations, sizeof(double));
    inst->x_location= (double *) calloc(inst->n_locations, sizeof(double));
@@ -99,7 +99,7 @@ void read_file(instance *inst)
       }
    }
 
-   cout<<"RADIUS: "<<inst->RADIUS<<endl; /* Coverage radius */
+   //cout<<"Radius: "<<inst->RADIUS<<endl; /* Coverage radius */
 	//////////////////////////
    //Initialize statistics
    inst->nfix = 0;
@@ -123,7 +123,7 @@ void read_file(instance *inst)
                TotalDemand += inst->data[i]->demand;
          }
          inst->COVERING_DEMAND = ceil(inst->COVERING_DEMAND * TotalDemand);
-         cout<<"BUDGET: "<<inst->COVERING_DEMAND<<endl; /* The required coverage demand */
+         //cout<<"Demand: "<<inst->COVERING_DEMAND<<endl; /* The required coverage demand */
       }
 
    }
@@ -137,7 +137,7 @@ void read_file(instance *inst)
          for(int i = 0; i<inst->n_locations; i++)
             TotalCost += inst->covers[i]->demand;
          inst->BUDGET = floor(inst->BUDGET * TotalCost);
-         cout<<"BUDGET: "<<inst->BUDGET<<endl; /* The required coverage budget */
+         //cout<<"Budget: "<<inst->BUDGET<<endl; /* The required coverage budget */
       }
    }
    
@@ -147,8 +147,8 @@ void read_file(instance *inst)
    inst->n_location = (int*) calloc(inst->data.size() + inst->covers.size(), sizeof(int));
    
    int size1 = inst->n_data;
-   cout<<"Row1: "<<inst->n_data<<endl; 
-   cout<<"presolve_IA1: "<<inst->presolve_IA_time<<endl;
+   //cout<<"Row1: "<<inst->n_data<<endl; 
+   //cout<<"presolve_ISO_AGG: "<<inst->presolve_IA_time<<endl;
    // Calculate J(i), i in I
    CalculateCovers(inst->covers, inst->data);
 
@@ -165,13 +165,13 @@ void read_file(instance *inst)
          if(inst->covers[i]->isdeleted)
             n_deleted++;
       }
-      cout<<"n_deleted_columns: "<<n_deleted<<endl;
+      //cout<<"Number of deleted columns: "<<n_deleted<<endl;
       
       if(inst->isfind)
          //Reimplement isomorphic aggregation if domination presolving succeeds
          IA2(inst);
       
-      cout<<"n_deleted_rows: "<<size1 - inst->n_data<<endl;
+      //cout<<"n_deleted_rows: "<<size1 - inst->n_data<<endl;
       inst->validlocations = inst->covers.size() - n_deleted;
    }
    if(inst->isSA)
@@ -182,26 +182,19 @@ void read_file(instance *inst)
    //////////////////////////////////
    //Calculate statistics after presolving
    int nnz = 0;
-   double mindemand = 1e+20;
-   double maxdemand = 0;
-   double meandemand = 0;
    for(int i = 0; i<inst->n_data; i++)
    {
       if(inst->data[i]->isdeleted == false)
       {
          nnz = nnz + inst->data[i]->locations.size();
-         if( inst->data[i]->demand > maxdemand )
-            maxdemand = inst->data[i]->demand;
-         if( inst->data[i]->demand < mindemand )
-            mindemand = inst->data[i]->demand;
-         meandemand += inst->data[i]->demand/inst->data.size();
       }
    }
    
-   cout<<"mindemand: "<< mindemand<<" maxdemand: "<<maxdemand<<" meandemand: "<<meandemand<<endl; /* Minimal/maximal/average client demand*/
-   nnz += inst->validlocations;
-   cout<<"DPANNZ= "<<nnz<<endl; /* Number of nonzeros in model after presolving */
-   cout<<"Row2: "<<inst->n_data<<endl; /* Number of clients after presolving */
+   if(inst->isPSCLP)
+      nnz += inst->validlocations;
+   else
+      nnz += inst->n_data;
+   cout<<"NNZ before nonzero cancellation: "<<nnz<<endl; /* Number of nonzeros in model after presolving */
 }
 
 //Free intermediate variables

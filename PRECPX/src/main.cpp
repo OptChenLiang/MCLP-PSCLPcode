@@ -25,16 +25,22 @@ int main(int argc, char** argv) {
       inst.n_clients=atoll(argv[5]);
       inst.timelimit=atof(argv[6]);
       inst.RADIUS=atof(argv[7]);
-      cout << "***RADIUS " << inst.RADIUS << endl;
+      cout << "Radius: " << inst.RADIUS << endl;
       if(inst.isPSCLP)
       {
          inst.COVERING_DEMAND=atof(argv[8]);
-         cout << "***BUDGET " << inst.COVERING_DEMAND << endl;
+         if(inst.COVERING_DEMAND < 1)
+            cout << "Demand(%): " << inst.COVERING_DEMAND << endl;
+         else
+            cout << "Demand: " << inst.COVERING_DEMAND << endl;
       }
       else
       {
          inst.BUDGET=atof(argv[8]);
-         cout << "***BUDGET " << inst.BUDGET << endl;
+         if(inst.BUDGET < 1)
+            cout << "Budget(%): " << inst.BUDGET << endl;
+         else
+            cout << "Budget: " << inst.BUDGET << endl;
       }
       inst.seed = -1;
       if (argc >= 10)
@@ -52,7 +58,7 @@ int main(int argc, char** argv) {
 		cout << "Param6:\t time limitation in seconds\n";
 		cout << "Param7:\t covering radius\n";
 		cout << "Param8:\t budget in the MCLP or covering demand in the PSCLP, <= 1 means percentage\n";
-		cout << "Param9:\t  CPXPARAM_RandomSeed for CPLEX\n";
+		cout << "Param9:\t CPXPARAM_RandomSeed for CPLEX\n";
 		exit(-1);
 	}
    inst.isBranch = true;
@@ -94,10 +100,10 @@ int main(int argc, char** argv) {
 	read_file(&inst);
 	clock_t time_end=clock();
 	double inst_generation_time=(double)(time_end-time_start)/(double)CLOCKS_PER_SEC;
-	cout << "READING TIME: " << inst_generation_time << endl;
+	cout << "Reading time: " << inst_generation_time << endl;
 
 	inst.number_of_CPU=1;
-	cout << "***NUMBER OF CPUs " << inst.number_of_CPU << endl;
+	cout << "Number of CPUs: " << inst.number_of_CPU << endl;
 	
    inst.coordinates_loaded = false;
    //Build MIP model
@@ -117,6 +123,5 @@ int main(int argc, char** argv) {
 
    return 1;
 }
-
 
 

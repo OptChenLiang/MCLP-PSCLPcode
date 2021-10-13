@@ -76,7 +76,7 @@ void build_model(instance *inst)
 
 	}
    inst->validlocations = counter;
-	cout << "\n*** CONTINUOUS Z VARIABLES\n";
+	//cout << "\n*** CONTINUOUS Z VARIABLES\n";
    //Create the client variables 
    int size = inst->n_data;
    for ( int i = 0; i < size; i++ )
@@ -92,7 +92,8 @@ void build_model(instance *inst)
 	}
 	//Add variables into CPLEX
 	inst->status=CPXnewcols(inst->env,inst->lp,counter,inst->obj,inst->lb,inst->ub,inst->c_type,inst->colname);
-   printf("locations:%d cols: %d\n", inst->validlocations, counter);
+   cout << "Presolved model: "<< endl;
+   printf("Number of facilities: %d\n", inst->validlocations);
 	if(inst->status!=0)
 	{
 		printf("error in CPXnewcols\n");
@@ -199,7 +200,7 @@ void build_model(instance *inst)
       free(inst->sense);
       nrows++;
    }
-   printf("rows: %d\n", nrows+1);
+   printf("Numer of customers: %d\n", nrows);
    /////////////////////////////////////////////////////////////////////////////////////////////////////////
    if(inst->isPSCLP)
    {
@@ -285,11 +286,11 @@ void build_model(instance *inst)
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 #endif
    //Statistics
-   cout<<"DNCNNZ= " << CPXgetnumnz( inst->env, inst->lp ) <<endl;;
+   cout<<"NNZ after presolving: " << CPXgetnumnz( inst->env, inst->lp ) <<endl;;
 
-   cout<<"presolve_IA: "<<inst->presolve_IA_time<<endl;
-   cout<<"presolve_NC: "<<inst->presolve_NC_time<<endl;
-   cout<<"presolve_D: "<<inst->presolve_D_time<<endl;
+   //cout<<"presolve_ISO_AGG: "<<inst->presolve_IA_time<<endl;
+   //cout<<"presolve_NON_CAN: "<<inst->presolve_NC_time<<endl;
+   //cout<<"presolve_DOM: "<<inst->presolve_D_time<<endl;
    inst->presolve_time = inst->presolve_IA_time
       + inst->presolve_NC_time
       + inst->presolve_D_time;
@@ -463,7 +464,7 @@ void solve_model(instance *inst)
 		printf("error in CPXgetmipobjval\n");
 	}
 
-	printf("\n\nMIP solution value ->\t\%f",inst->objval);
+	printf("MIP solution value: %f\n",inst->objval);
 
 	int open_facilities=-1;
 	int satisfied_clients=-1;
@@ -512,26 +513,19 @@ void solve_model(instance *inst)
 	inst->nodecount = CPXgetnodecnt(inst->env, inst->lp);
    int itcnt = CPXgetmipitcnt( inst->env, inst->lp );
 
-   cout<<"\nitcnt: "<<itcnt<<endl;
-
+   cout << "Itcnt: " << itcnt <<endl;
    inst->status = CPXgetintparam( inst->env, CPX_PARAM_RANDOMSEED, &inst->seed);
-   cout<<"\nseed: "<< inst->seed<<endl;
-
-	cout << "\n\nlpstat\t" << inst->lpstat << endl;
-
-
-   if(inst->isPSCLP)
-      cout << "\n***open_facilities\t" << open_facilities << " " << inst->COVERING_DEMAND<<endl;
-   else
-      cout << "\n***open_facilities\t" << open_facilities << " " << inst->BUDGET<<endl;
-	cout << "***satisfied_clients\t" << satisfied_clients << endl;
-
+   cout << "Random seed: "<< inst->seed<<endl;
    //Statistics output
-	cout << "\n\nSTAT:\tobjval\t" << setw(16) << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients <<"\tnodecount\t"<<inst->nodecount<<"\tpresolve_time\t"<<inst->presolve_IA_time <<"\tsolve_time\t"<< solution_time<<"\ttotal_time\t"<<inst->presolve_time+solution_time<<"\ttotal_time_minus_presolve_time\t "<<inst->presolve_time+solution_time<< endl << endl;
-
-   cout<<"presolve_node_time "<<inst->presolve_node_time<<endl;
-   
-   cout<<"nfix "<<inst->nfix<<endl;
+	cout << "Objval: " << inst->objval << endl;
+   cout << "Bestobjval: " << inst->bestobjval << endl;
+   cout << "Lpstat: " << inst->lpstat << endl; 
+   cout << "Nodecount: " << inst->nodecount << endl;
+   cout << "Nfix: " << inst->nfix <<endl;
+   cout << "Presolve_time: " << inst->presolve_time << endl;
+   cout << "Presolve_node_time: " << inst->presolve_node_time <<endl;
+   cout << "Solve_time: " << solution_time << endl;
+   cout << "Total_time: "<< inst->presolve_time + solution_time << endl;
 
 	free(inst->x);
 	free(inst->lb);
