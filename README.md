@@ -5,33 +5,33 @@ L. Chen, S.-J. Chen, W.-K. Chen, Y.-H. Dai, J. Juan, and T. Quan (2021).
 Efficient presolving methods for solving maximal covering and partial set covering location problems
 
 To solve the maximal covering location problem (MCLP) and partial set covering location problem (PSCLP), the branch-and-cut 
-algorithm is used in the paper combined with five proposed presolving methods, i.e., 
+algorithm is used in the paper combined with five proposed presolving methods: 
 
 1. singleton aggregation (`SIN_AGG`), 
 2. isomorphic aggregation (`ISO_AGG`),
-3. nonzero cancellation (`NON_CAN`),
+3. nonzero cancellation (`NNZ_CAN`),
 4. domination (`DOM`), and
-5. nonoverlap fixing (`NON_FIX`), 
+5. nonoverlap fixing (`NON_FIX`).
 
 
-The directory `PRECPX/` includes all source files and header files for solving the MCLP and PSCLP using CPLEX (`CPX`);
-the directory `PREBD/` includes all source files and header files for solving the MCLP and PSCLP using the Benders decomposition (`BD`);
-the directory `TESTDATA/` contains the related data sets in the paper; . 
+Directory `PRECPX/` includes all source files and header files for solving the MCLP and PSCLP using CPLEX (`CPX`);
+Directory `PREBD/` includes all source files and header files for solving the MCLP and PSCLP using the Benders decomposition (`BD`);
+Directory `TESTDATA/` contains the related data sets in the paper.
 Note that, to compile and run the code, the CPLEX libraries and header files are required and given in directories  `lib/` and `include/`.
 
 ## Executable files
-We have written the `Makefile` in the main directory, and one just needs to run 
+We have written the `Makefile` in the main directory. To compile the code, one can just run 
 
 ```
 make
 ```
 
- in directory `PRECPX/` or `PREBD/` to compile and generate the executable files in a new created directory `bin/` in the corresponding directory. 
+in directory `PRECPX/` or `PREBD/`. Then the following executable files will be generated.
 
-- `PRECPX/bin/MCLPCPX`   to solve the MCLP using CPX
-- `PRECPX/bin/PSCLPCPX`  to solve the PSCLP using CPX
-- `PREBD/bin/MCLPBD`     to solve the MCLP using BD
-- `PREBD/bin/PSCLPBD`    to solve the PSCLP using BD
+- `PRECPX/bin/MCLPCPX`   (solve the MCLP using CPX)
+- `PRECPX/bin/PSCLPCPX`  (solve the PSCLP using CPX)
+- `PREBD/bin/MCLPBD`     (solve the MCLP using BD)
+- `PREBD/bin/PSCLPBD`    (solve the PSCLP using BD)
 
 See the parameters of executable files in "How to run the solver" to get information of implementing presolving.
 
