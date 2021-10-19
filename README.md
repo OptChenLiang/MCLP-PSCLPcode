@@ -13,13 +13,37 @@ algorithm is used in the paper combined with five proposed presolving methods:
 4. domination (`DOM`), and
 5. nonoverlap fixing (`NON_FIX`).
 
-
 Directory `PRECPX/` includes all source files and header files for solving the MCLP and PSCLP using CPLEX (`CPX`);
-Directory `PREBD/` includes all source files and header files for solving the MCLP and PSCLP using the Benders decomposition (`BD`);
+Directory `PREBD/` includes patch files for the Benders decomposition (`BD` [Cordeau et. al.，2019]);
 Directory `TESTDATA/` contains the related data sets in the paper.
 Note that, to compile and run the code, the CPLEX libraries and header files are required and given in directories  `lib/` and `include/`.
 
-## Executable files
+## Executable files PREBD
+We have written the patch files (combining with singleton and isomorphic aggregations and domination) for the code in Cordeau et. al.，2019. Please run 
+
+```
+cd PREBD
+git clone https://github.com/fabiofurini/LocationCovering
+./patch.sh
+```
+
+Then the source files in `LocationCovering/src_MCLP` and  `LocationCovering/src_PSCLP` will be updated. 
+
+Please run 
+
+```
+make
+```
+
+the following executable files will be generated.
+
+- `bin/MCLPBD`     (solve the MCLP using BD)
+- `bin/PSCLPBD`    (solve the PSCLP using BD)
+
+See the parameters of executable files in "How to run the solver" to get information of implementing presolving.
+
+## Executable files PRECPX
+
 We have written the `Makefile` in the main directory. To compile the code, one can just run 
 
 ```
@@ -28,10 +52,8 @@ make
 
 in directory `PRECPX/` or `PREBD/`. Then the following executable files will be generated.
 
-- `PRECPX/bin/MCLPCPX`   (solve the MCLP using CPX)
-- `PRECPX/bin/PSCLPCPX`  (solve the PSCLP using CPX)
-- `PREBD/bin/MCLPBD`     (solve the MCLP using BD)
-- `PREBD/bin/PSCLPBD`    (solve the PSCLP using BD)
+- `bin/MCLPCPX`   (solve the MCLP using CPX)
+- `bin/PSCLPCPX`  (solve the PSCLP using CPX)
 
 See the parameters of executable files in "How to run the solver" to get information of implementing presolving.
 
@@ -105,6 +127,5 @@ one can execute scripts e.g. `./Subs-MCLP-T1.sh` to see all the command in the p
 3. For instance in testset T3, consider the PSCLP with 1500 facilities and 10000000 customers. The dataset is given by `../TESTDATA/n2500s5.dat` with covering radius 1.0328 and covering demand 70% of total demand. For using Benders Decomposition with our presolving methods within 10000 seconds, one can run 
 
   ```
-  ./bin/BD 1 ../TESTDATA/f_data_2500/n2500s5.dat NULL 1500 10000000 10000 1.0328 0.7
+  ./bin/BD 1 ../TESTDATA/f_data_2500/n2500s5.dat NULL 1500 10000000 10000 1.0328 0.7  
   ```
-
