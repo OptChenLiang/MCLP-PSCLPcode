@@ -1,0 +1,16 @@
+6a7
+> #include "struct.h"
+19c20
+< /*****************************************************************/
+---
+> //Build Benders master problem
+23,24c24,25
+< /*****************************************************************/
+< void solve_model_CFL_BEN_2(instance *inst);
+---
+> //Solve PSCLP using Benders decomposition
+> void solve_model_CFL_BEN_2(instance *inst, mystr* inst1);
+27c28
+< /*****************************************************************/
+---
+> //Close CPLEX environment

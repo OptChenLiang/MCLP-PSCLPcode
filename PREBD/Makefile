@@ -34,6 +34,8 @@ CFLAGS  = $(COPT) -I$(CPLEXINCDIR) -O2
 #  make all      : to compile the examples. 
 #  make execute  : to compile and execute the examples.
 #------------------------------------------------------------
+dirMCLP=LocationCovering/src_MCLP
+dirPSCLP=LocationCovering/src_PSCLP
 
 C_EX = MCLPBD PSCLPBD 
 
@@ -44,17 +46,17 @@ execute_c: $(C_EX)
 # ------------------------------------------------------------
 
 clean :
-	/bin/rm -rf src_PSCLP/*.o src_MCLP/*.o *.o *~ *.class
+	/bin/rm -rf $(dirPSCLP)/*.o $(dirMCLP)/*.o *.o *~ *.class
 	/bin/rm -rf bin/*
 	/bin/rm -rf *.mps *.ord *.sos *.lp *.SAv *.net *.msg *.log *.clp
 
 # ------------------------------------------------------------
 #
-MCLPBD: src_MCLP/Main.cpp src_MCLP/global_functions.o src_MCLP/MCLP_BEN.o src_MCLP/presolve.o src_MCLP/read.o src_MCLP/MCLP.o
+MCLPBD: $(dirMCLP)/Main.cpp $(dirMCLP)/global_functions.o $(dirMCLP)/MCLP_BEN.o $(dirMCLP)/presolve.o $(dirMCLP)/read.o $(dirMCLP)/MCLP.o
 	mkdir -p bin
 	$(CCC) $(CFLAGS) $(CLNDIRS) -o bin/$@ $^ $(CLNFLAGS)
 
-PSCLPBD: src_PSCLP/Main.cpp src_PSCLP/global_functions.o src_PSCLP/PSCLP_BEN.o src_PSCLP/presolve.o src_PSCLP/read.o src_PSCLP/PSCLP.o
+PSCLPBD: $(dirPSCLP)/Main.cpp $(dirPSCLP)/global_functions.o $(dirPSCLP)/PSCLP_BEN.o $(dirPSCLP)/presolve.o $(dirPSCLP)/read.o $(dirPSCLP)/PSCLP.o
 	mkdir -p bin
 	$(CCC) $(CFLAGS) $(CLNDIRS) -o bin/$@ $^ $(CLNFLAGS)
 

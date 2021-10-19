@@ -1,0 +1,76 @@
+2c2
+< 
+---
+> #include <iomanip>
+58c58
+< /*****************************************************************/
+---
+> //Benders callback for integer solution 
+156c156,157
+< 		_cut_CFL_BEN_2_rmatval[i]=0.0;
+---
+> 		//_cut_CFL_BEN_2_rmatval[i]=0.0;
+> 		_cut_CFL_BEN_2_rmatval[i]=inst->singleton[i];
+160,162c161,170
+< 
+< 
+< 			_cut_CFL_BEN_2_rmatval[i]=_cut_CFL_BEN_2_rmatval[i] + AUX_SOL_2[inst->AFS[k]];
+---
+>          /*
+>          if(inst->NBS[inst->AFS[k]+1] - inst->NBS[inst->AFS[k]] == 1)
+>          {
+> 		      _cut_CFL_BEN_2_rmatval[i]+=inst->demand[inst->AFS[k]];
+>             if(i==0)
+>                cout<<inst->demand[inst->AFS[k]]<<" "<<_cut_CFL_BEN_2_rmatval[i]<<endl;
+>          }
+>          else
+>          */
+>             _cut_CFL_BEN_2_rmatval[i]=_cut_CFL_BEN_2_rmatval[i] + AUX_SOL_2[inst->AFS[k]];
+278c286
+< /*****************************************************************/
+---
+> //Benders callback for fractional solution 
+376c384,385
+< 		_cut_CFL_BEN_2_rmatval[i]=0.0;
+---
+> 		//_cut_CFL_BEN_2_rmatval[i]=0.0;
+> 		_cut_CFL_BEN_2_rmatval[i]=inst->singleton[i];
+501c510
+< /*****************************************************************/
+---
+> //Build Benders master problem
+634,635c643,644
+< /*****************************************************************/
+< void solve_model_CFL_BEN_2(instance *inst)
+---
+> //Solve PSCLP using Benders decomposition
+> void solve_model_CFL_BEN_2(instance *inst, mystr* inst1)
+748c757
+< 	printf("\n\nMIP solution value ->\t\%f",inst->objval);
+---
+> 	printf("MIP solution value: %f\n",inst->objval);
+792c801
+< 	cout << "\n\nlpstat\t" << inst->lpstat << endl;
+---
+> 	//cout << "\n\nlpstat\t" << inst->lpstat << endl;
+802,803c811,812
+< 	cout << "\n***open_facilities\t" << open_facilities << endl;
+< 	cout << "***satisfied_clients\t" << satisfied_clients << endl;
+---
+> 	//cout << "\n***open_facilities\t" << open_facilities << endl;
+> 	//cout << "***satisfied_clients\t" << satisfied_clients << endl;
+806a816,820
+> 	cout << "Objval: " << inst->objval << endl;
+>    cout << "Bestobjval: " << inst->bestobjval << endl;
+>    cout << "Lpstat: " << inst->lpstat << endl; 
+>    cout << "Nodecount: " << inst->nodecount << endl;
+>    cout << "Solve_time: " << solution_time << endl;
+808c822,823
+< 	cout << "\n\nSTAT:\tobjval\t" << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients << "\ttime\t"<< solution_time<< endl << endl;
+---
+>    //cout << "\n\nSTAT:\tobjval\t" << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients << "\ttime\t"<< solution_time<< endl << endl;
+> 	//cout << "\n\nSTAT:\tobjval\t" << setw(16) << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients <<"\tnodecount\t"<<inst->nodecount<<"\tpresolve_time\t"<<inst1->presolve_IA_time <<"\tsolve_time\t"<< solution_time<<"\ttotal_time\t"<<inst1->presolve_IA_time+solution_time<<"\ttotal_time_minus_presolve_time\t "<<solution_time<< endl << endl;
+866c881
+< /*****************************************************************/
+---
+> //Close CPLEX environment

@@ -1,0 +1,108 @@
+11a12,13
+> #include "struct.h"
+> #include "read.h"
+15d16
+< 
+19,20c20,27
+< 
+< 	inst.input_file = (char *) calloc(1000, sizeof(char));
+---
+> 	mystr inst1;
+> //Presolving settings
+>    inst1.isPSCLP = true;
+> 	inst.algorithm = 2;
+>    
+>    //Input facilities file and clients file
+>    inst1.input_file_f = (char *) calloc(1000, sizeof(char)); 
+>    inst1.input_file_c = (char *) calloc(1000, sizeof(char)); 
+23c30,31
+< 	if (argc == 6)
+---
+>    int exec = 0;
+> 	if (argc >= 9)
+25,29c33,53
+< 		/*Param1*/strcpy(inst.input_file, argv[1]);
+< 		/*Param2*/inst.algorithm=atoi(argv[2]);
+< 		/*Param3*/inst.timelimit=atof(argv[3]);
+< 		/*Param4*/inst.RADIUS=atof(argv[4]);
+< 		/*Param5*/inst.COVERING_DEMAND=atof(argv[5]);
+---
+>       /*Param1*/exec = atoi(argv[1]);
+> 		/*Param2*/strcpy(inst1.input_file_f, argv[2]);
+> 		/*Param3*/strcpy(inst1.input_file_c, argv[3]);
+>       /*Param4*/inst1.n_locations=atoi(argv[4]);             
+>       /*Param5*/inst1.n_clients=atoll(argv[5]);
+> 		/*Param6*/inst.timelimit=atof(argv[6]);
+> 		/*Param7*/inst1.RADIUS=atof(argv[7]);
+>       cout << "***RADIUS " << inst1.RADIUS << endl;
+>       if( inst1.isPSCLP )
+>       {
+>          inst1.COVERING_DEMAND=atof(argv[8]);
+>          cout << "***BUDGET " << inst1.COVERING_DEMAND << endl;
+>       }
+>       else
+>       {
+>          inst1.BUDGET=atof(argv[8]);
+>          cout << "***BUDGET " << inst1.BUDGET << endl;
+>       }
+>       inst1.seed = -1;
+>       if (argc >= 10)
+>          inst1.seed=atof(argv[9]);
+33a58
+> 		//Error input
+42a68,84
+>    
+>    inst1.isIA = true;
+>    inst1.isSA = true;
+>    inst1.isD = true;
+>    switch (exec)
+>    {
+>       case 0: //NO_PRE
+>          inst1.isIA = false;
+>          inst1.isSA = false;
+>          inst1.isD = false;
+>          break;
+>       case 1: //ALL
+>          inst1.isIA = true;
+>          inst1.isSA = true;
+>          inst1.isD = true;
+>          break;
+>    }
+45a88
+>    inst1.coordinates_loaded = false;
+48,49c91,92
+< 	cout << "***RADIUS\t" << inst.RADIUS << endl;
+< 	cout << "***BUDGET\t" << inst.COVERING_DEMAND << endl;
+---
+> 	cout << "***RADIUS\t" << inst1.RADIUS << endl;
+> 	cout << "***BUDGET\t" << inst1.COVERING_DEMAND << endl;
+54,55c97,106
+< 
+< 	READ_NEW_FILE(&inst);
+---
+> 	//Read facility and client files if files exist and implement presolving methods
+> 	read_file(&inst1);
+> 	//Build data structures based on read data
+> 	READ_NEW_FILE1(&inst, &inst1);
+> 	//Presolving time statistics
+>    cout<<"presolve_IA: "<<inst1.presolve_IA_time<<endl;
+>    cout<<"presolve_D: "<<inst1.presolve_D_time<<endl;
+>    inst1.presolve_time = inst1.presolve_IA_time
+>       + inst1.presolve_D_time;
+>    cout<<"Presolve Time: "<<inst1.presolve_time<<endl;
+90c141
+< 		solve_model_CFL_BEN_2(&inst);
+---
+> 		solve_model_CFL_BEN_2(&inst, &inst1);
+96,97c147,150
+< 
+< 	free(inst.input_file);
+---
+> 	//Free memory
+> 	free(inst1.input_file_f);
+> 	free(inst1.input_file_c);
+>    free_data(&inst1);
+101c154
+< 	printf("\nDONE!");
+---
+> 	printf("\nDONE!\n");

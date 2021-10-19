@@ -1,0 +1,81 @@
+2c2
+< 
+---
+> #include <iomanip>
+56c56
+< /*****************************************************************/
+---
+> //Benders callback for integer solution 
+249c249
+< /*****************************************************************/
+---
+> //Benders callback for fractional solution 
+462c462
+< /*****************************************************************/
+---
+> //Build Benders master problem
+502c502
+< 		inst->obj[counter]=0.0;
+---
+> 		inst->obj[counter]=inst->singleton[j];
+521a522
+> 
+659,660c660,661
+< /*****************************************************************/
+< void solve_model_DFL_BEN_2(instance *inst)
+---
+> //Solve MCLP using Benders decomposition
+> void solve_model_DFL_BEN_2(instance *inst, mystr* inst1)
+670,674c671,675
+< 	//	inst->status = CPXsetdblparam (inst->env_DFL_BEN_2, CPX_PARAM_EPAGAP, 0.0);
+< 	//	if (inst->status)
+< 	//	{
+< 	//		printf ("error for CPX_PARAM_EPAGAP\n");
+< 	//	}
+---
+> 		inst->status = CPXsetdblparam (inst->env_DFL_BEN_2, CPX_PARAM_EPAGAP, 0.0);
+> 		if (inst->status)
+> 		{
+> 			printf ("error for CPX_PARAM_EPAGAP\n");
+> 		}
+677,681c678,682
+< 	//	inst->status = CPXsetdblparam (inst->env_DFL_BEN_2, CPX_PARAM_EPGAP, 0.0);
+< 	//	if (inst->status)
+< 	//	{
+< 	//		printf ("error for CPX_PARAM_EPGAP\n");
+< 	//	}
+---
+> 		inst->status = CPXsetdblparam (inst->env_DFL_BEN_2, CPX_PARAM_EPGAP, 0.0);
+> 		if (inst->status)
+> 		{
+> 			printf ("error for CPX_PARAM_EPGAP\n");
+> 		}
+773c774
+< 	printf("\n\nMIP solution value ->\t\%f",inst->objval);
+---
+> 	printf("MIP solution value: %f\n",inst->objval);
+817c818
+< 	cout << "\n\nlpstat\t" << inst->lpstat << endl;
+---
+> 	//cout << "Lpstat\t" << inst->lpstat << endl;
+852a854,858
+> 	cout << "Objval: " << inst->objval << endl;
+>    cout << "Bestobjval: " << inst->bestobjval << endl;
+>    cout << "Lpstat: " << inst->lpstat << endl; 
+>    cout << "Nodecount: " << inst->nodecount << endl;
+>    cout << "Solve_time: " << solution_time << endl;
+854,855c860,861
+< 	cout << "\n***open_facilities\t" << open_facilities << endl;
+< 	cout << "***satisfied_clients\t" << satisfied_clients << endl;
+---
+> 	//cout << "\n***open_facilities\t" << open_facilities << endl;
+> 	//cout << "***satisfied_clients\t" << satisfied_clients << endl;
+858c864,865
+< 	cout << "\n\nSTAT:\tobjval\t" << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients << "\ttime\t"<< solution_time<< endl << endl;
+---
+> //cout << "\n\nSTAT:\tobjval\t" << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients << "\ttime\t"<< solution_time<< endl << endl;
+> 	//cout << "\n\nSTAT:\tobjval\t" << setw(16) << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients <<"\tnodecount\t"<<inst->nodecount<<"\tpresolve_time\t"<<inst1->presolve_IA_time <<"\tsolve_time\t"<< solution_time<<"\ttotal_time\t"<<inst1->presolve_IA_time+solution_time<<"\ttotal_time_minus_presolve_time\t "<<solution_time<< endl << endl;
+911c918
+< /*****************************************************************/
+---
+> //Close CPLEX environment

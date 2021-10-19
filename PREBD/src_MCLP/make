@@ -1,2 +1,0 @@
-g++ -o MCLPBEN --std=c++11 -w -I./include/cplex/ -I./include/concert/ilconcert/ src_MCLP/*.cpp  -L./lib/cplex -L./lib/concert -lconcert -lilocplex -lcplex -lm -lpthread -g -O2
-g++ -o PSCLPBEN --std=c++11 -w -I./include/cplex/ -I./include/concert/ilconcert/ src_PSCLP/*.cpp  -L./lib/cplex -L./lib/concert -lconcert -lilocplex -lcplex -lm -lpthread -g -O2
