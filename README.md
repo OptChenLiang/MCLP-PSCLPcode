@@ -4,8 +4,8 @@ The README contains code and complementary material to the paper
 L. Chen, S.-J. Chen, W.-K. Chen, Y.-H. Dai, J. Juan, and T. Quan (2021). 
 Efficient presolving methods for solving maximal covering and partial set covering location problems
 
-To solve the maximal covering location problem (MCLP) and partial set covering location problem (PSCLP), the branch-and-cut 
-algorithm is used in the paper combined with five proposed presolving methods: 
+To enhance of capability of solving the maximal covering location problem (MCLP) and 
+partial set covering location problem (PSCLP), the paper proposes five presolving methods including
 
 1. singleton aggregation (`SIN_AGG`), 
 2. isomorphic aggregation (`ISO_AGG`),
@@ -13,12 +13,15 @@ algorithm is used in the paper combined with five proposed presolving methods:
 4. domination (`DOM`), and
 5. nonoverlap fixing (`NON_FIX`).
 
-Directory `PRECPX/` includes all source files and header files for solving the MCLP and PSCLP using CPLEX (`CPX`);
+Directory `PRECPX/` includes all source files and header files for solving the MCLP and PSCLP
+using CPLEX with the proposed presolving methods;
+
 Directory `PREBD/` includes patch files for the Benders decomposition (`BD` [Cordeau et. al.，2019]);
+
 Directory `TESTDATA/` contains the related data sets in the paper.
 Note that, to compile and run the code, the CPLEX libraries and header files are required and given in directories  `lib/` and `include/`.
 
-## Executable files PREBD
+## How to complile PREBD
 We have written the patch files (combining with singleton and isomorphic aggregations and domination) for the code in Cordeau et. al.，2019. Please run 
 
 ```
@@ -42,7 +45,7 @@ the following executable files will be generated.
 
 See the parameters of executable files in "How to run the solver" to get information of implementing presolving.
 
-## Executable files PRECPX
+## How to complile PREBD
 
 We have written the `Makefile` in the main directory. To compile the code, one can just run 
 
@@ -57,7 +60,7 @@ in directory `PRECPX/` or `PREBD/`. Then the following executable files will be 
 
 See the parameters of executable files in "How to run the solver" to get information of implementing presolving.
 
-## Data sets
+## Information for the data sets
 In directory `TESTDATA/`, we provide some facility information.
 Directory `f_data_100/` contains coordinates of 100 facilities and directory `f_data_2500/` contains coordinates of 2500 facilities, which are all randomly generated.
 
