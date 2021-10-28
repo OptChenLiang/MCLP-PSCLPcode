@@ -16,9 +16,11 @@ partial set covering location problem (PSCLP), the paper proposes five presolvin
 Directory `PRECPX/` includes all source files and header files for solving the MCLP and PSCLP
 using CPLEX with the proposed presolving methods;
 
-Directory `PREBD/` includes patch files for the Benders decomposition (`BD` [Cordeau et. al.，2019]);
+Directory `PREBD/` includes patch files for the Benders decomposition [Cordeau et. al.，2019];
 
 Directory `TESTDATA/` contains the related data sets in the paper.
+
+
 Note that, to compile and run the code, the CPLEX libraries and header files are required and given in directories  `lib/` and `include/`.
 
 ## How to complile PREBD
