@@ -71,12 +71,12 @@ do
                DD=${D[j]};
                RR=$(awk -v r=${R[j]} -v n=${N[i]} 'BEGIN{print r*(100/n)^(0.5)}');
 
-               f_name=../TESTDATA/n2500s$l.dat
+               f_name=../TESTDATA/n${N[i]}s$l.dat
 
                workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
          
                #bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./PSCLP ${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
-               echo "./bin/PSCLPBD ${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               echo "./bin/PSCLPBD ${exec[p]} ${f_name} ${M[k]} $timlim ${RR} 1 ${DD}"
 
             done
          done

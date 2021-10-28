@@ -1,0 +1,3583 @@
+diff -uprN LocationCovering/src_MCLP/MCLP_BEN.cpp LocationCovering1/src_MCLP/MCLP_BEN.cpp
+--- LocationCovering/src_MCLP/MCLP_BEN.cpp	2021-10-28 22:15:32.557501600 +0800
++++ LocationCovering1/src_MCLP/MCLP_BEN.cpp	2021-10-28 22:24:02.016968000 +0800
+@@ -1,5 +1,5 @@
+ 
+-
++#include <iomanip>
+ #include "MCLP_BEN.h"
+ 
+ //#define USE_CUT_LOOP
+@@ -53,7 +53,7 @@ double _cut_DFL_BEN_2_local_rho[MAX_SIZE
+ double _cut_DFL_BEN_2_super_rho[MAX_SIZE];
+ double _cut_DFL_BEN_2_single_rho[MAX_SIZE];
+ 
+-/*****************************************************************/
++//Benders callback for integer solution 
+ int CPXPUBLIC mycutcallback_DFL_BEN_2(CPXCENVptr env,void *cbdata,int wherefrom,void *cbhandle,int *useraction_p)
+ /*****************************************************************/
+ {
+@@ -246,7 +246,7 @@ int CPXPUBLIC mycutcallback_DFL_BEN_2(CP
+ 
+ 
+ 
+-/*****************************************************************/
++//Benders callback for fractional solution 
+ int CPXPUBLIC myusercutcallback_DFL_BEN_2(CPXCENVptr env,void *cbdata,int wherefrom,void *cbhandle,int *useraction_p)
+ /*****************************************************************/
+ {
+@@ -459,7 +459,7 @@ int CPXPUBLIC myusercutcallback_DFL_BEN_
+ 
+ 
+ 
+-/*****************************************************************/
++//Build Benders master problem
+ void build_model_DFL_BEN_2(instance *inst)
+ /*****************************************************************/
+ {
+@@ -499,7 +499,7 @@ void build_model_DFL_BEN_2(instance *ins
+ 	int counter=0;
+ 	for ( int j = 0; j < inst->n_locations; j++){
+ 
+-		inst->obj[counter]=0.0;
++		inst->obj[counter]=inst->singleton[j];
+ 		inst->lb[counter]=0.0;
+ 		inst->ub[counter]=1.0;
+ 		inst->c_type[counter]='B';
+@@ -519,6 +519,7 @@ void build_model_DFL_BEN_2(instance *ins
+ 		total_demand+=inst->demand[i];
+ 	}
+ 
++
+ 	inst->ub[counter]=total_demand;
+ 	//inst->ub[counter]=CPX_INFBOUND;
+ 
+@@ -656,8 +657,8 @@ void build_model_DFL_BEN_2(instance *ins
+ 
+ 
+ 
+-/*****************************************************************/
+-void solve_model_DFL_BEN_2(instance *inst)
++//Solve MCLP using Benders decomposition
++void solve_model_DFL_BEN_2(instance *inst, mystr* inst1)
+ /*****************************************************************/
+ {
+ 
+@@ -667,18 +668,18 @@ void solve_model_DFL_BEN_2(instance *ins
+ 
+ 
+ 	//	// * Set relative tolerance *
+-	//	inst->status = CPXsetdblparam (inst->env_DFL_BEN_2, CPX_PARAM_EPAGAP, 0.0);
+-	//	if (inst->status)
+-	//	{
+-	//		printf ("error for CPX_PARAM_EPAGAP\n");
+-	//	}
++		inst->status = CPXsetdblparam (inst->env_DFL_BEN_2, CPX_PARAM_EPAGAP, 0.0);
++		if (inst->status)
++		{
++			printf ("error for CPX_PARAM_EPAGAP\n");
++		}
+ 	//
+ 	//	// * Set a tolerance *
+-	//	inst->status = CPXsetdblparam (inst->env_DFL_BEN_2, CPX_PARAM_EPGAP, 0.0);
+-	//	if (inst->status)
+-	//	{
+-	//		printf ("error for CPX_PARAM_EPGAP\n");
+-	//	}
++		inst->status = CPXsetdblparam (inst->env_DFL_BEN_2, CPX_PARAM_EPGAP, 0.0);
++		if (inst->status)
++		{
++			printf ("error for CPX_PARAM_EPGAP\n");
++		}
+ 	//
+ 	//	// * Set mip tolerances integrality *
+ 	//	inst->status = CPXsetdblparam (inst->env_DFL_BEN_2, CPX_PARAM_EPINT, 0.0);
+@@ -770,7 +771,7 @@ void solve_model_DFL_BEN_2(instance *ins
+ 		printf("error in CPXgetmipobjval\n");
+ 	}
+ 
+-	printf("\n\nMIP solution value ->\t\%f",inst->objval);
++	printf("MIP solution value: %f\n",inst->objval);
+ 
+ 
+ 	int open_facilities=-1;
+@@ -814,7 +815,7 @@ void solve_model_DFL_BEN_2(instance *ins
+ 	inst->lpstat=CPXgetstat(inst->env_DFL_BEN_2,inst->lp_DFL_BEN_2);
+ 	inst->nodecount = CPXgetnodecnt(inst->env_DFL_BEN_2, inst->lp_DFL_BEN_2);
+ 
+-	cout << "\n\nlpstat\t" << inst->lpstat << endl;
++	//cout << "Lpstat\t" << inst->lpstat << endl;
+ 
+ 	///////////////////////////////////////////////////////////////////////////////////////////
+ 	bool *reached_clients=new bool[inst->n_clients];
+@@ -850,12 +851,18 @@ void solve_model_DFL_BEN_2(instance *ins
+ //	}
+ //	delete[] reached_clients;
+ //	///////////////////////////////////////////////////////////////////////////////////////////
++	cout << "Objval: " << inst->objval << endl;
++   cout << "Bestobjval: " << inst->bestobjval << endl;
++   cout << "Lpstat: " << inst->lpstat << endl; 
++   cout << "Nodecount: " << inst->nodecount << endl;
++   cout << "Solve_time: " << solution_time << endl;
+ 
+-	cout << "\n***open_facilities\t" << open_facilities << endl;
+-	cout << "***satisfied_clients\t" << satisfied_clients << endl;
++	//cout << "\n***open_facilities\t" << open_facilities << endl;
++	//cout << "***satisfied_clients\t" << satisfied_clients << endl;
+ 
+ 
+-	cout << "\n\nSTAT:\tobjval\t" << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients << "\ttime\t"<< solution_time<< endl << endl;
++//cout << "\n\nSTAT:\tobjval\t" << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients << "\ttime\t"<< solution_time<< endl << endl;
++	//cout << "\n\nSTAT:\tobjval\t" << setw(16) << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients <<"\tnodecount\t"<<inst->nodecount<<"\tpresolve_time\t"<<inst1->presolve_IA_time <<"\tsolve_time\t"<< solution_time<<"\ttotal_time\t"<<inst1->presolve_IA_time+solution_time<<"\ttotal_time_minus_presolve_time\t "<<solution_time<< endl << endl;
+ 
+ 
+ 
+@@ -908,7 +915,7 @@ void solve_model_DFL_BEN_2(instance *ins
+ }
+ 
+ 
+-/*****************************************************************/
++//Close CPLEX environment
+ void clean_model_DFL_BEN_2(instance *inst)
+ /*****************************************************************/
+ {
+diff -uprN LocationCovering/src_MCLP/MCLP_BEN.h LocationCovering1/src_MCLP/MCLP_BEN.h
+--- LocationCovering/src_MCLP/MCLP_BEN.h	2021-10-28 22:15:32.559688500 +0800
++++ LocationCovering1/src_MCLP/MCLP_BEN.h	2021-10-28 22:24:02.017965300 +0800
+@@ -4,19 +4,20 @@
+ 
+ #include "global_variables.h"
+ #include "global_functions.h"
++#include "struct.h"
+ 
+ using namespace std;
+ 
+ 
+-/*****************************************************************/
++//Build Benders master problem
+ void build_model_DFL_BEN_2(instance *inst);
+ /*****************************************************************/
+ 
+-/*****************************************************************/
+-void solve_model_DFL_BEN_2(instance *inst);
++//Solve MCLP using Benders decomposition
++void solve_model_DFL_BEN_2(instance *inst, mystr* inst1);
+ /*****************************************************************/
+ 
+-/*****************************************************************/
++//Close CPLEX environment
+ void clean_model_DFL_BEN_2(instance *inst);
+ /*****************************************************************/
+ 
+Binary files LocationCovering/src_MCLP/MCLP_BEN.o and LocationCovering1/src_MCLP/MCLP_BEN.o differ
+diff -uprN LocationCovering/src_MCLP/Main.cpp LocationCovering1/src_MCLP/Main.cpp
+--- LocationCovering/src_MCLP/Main.cpp	2021-10-28 22:15:32.559688500 +0800
++++ LocationCovering1/src_MCLP/Main.cpp	2021-10-28 22:24:02.020957200 +0800
+@@ -9,50 +9,105 @@
+ 
+ #include "global_functions.h"
+ #include "global_variables.h"
++#include "struct.h"
++#include "read.h"
+ #include "MCLP.h"
+ #include "MCLP_BEN.h"
+ 
+-
+ int main(int argc, char** argv) {
+ 
+ 	instance inst;
+-
+-	inst.input_file = (char *) calloc(1000, sizeof(char));
++	mystr inst1;
++//Presolving settings
++   inst1.isPSCLP = false;
++	inst.algorithm = 2;
++   //Input facilities file and clients file
++   inst1.input_file_f = (char *) calloc(1000, sizeof(char)); 
++   inst1.input_file_c = (char *) calloc(1000, sizeof(char)); 
+ 
+ 	////////////////////////////////////////////////////////////////////////////////////////
+-	if (argc == 6)
++   int exec = 0;
++	if (argc >= 8)
+ 	{
+-		/*Param1*/strcpy(inst.input_file, argv[1]);
+-		/*Param2*/inst.algorithm=atoi(argv[2]);
+-		/*Param3*/inst.timelimit=atof(argv[3]);
+-		/*Param4*/inst.RADIUS=atof(argv[4]);
+-		/*Param5*/inst.BUDGET=atof(argv[5]);
++      exec = atoi(argv[1]);
++		strcpy(inst1.input_file_f, argv[2]);
++		strcpy(inst1.input_file_c, argv[3]);
++      inst.timelimit=atof(argv[4]);
++      inst1.RADIUS=atof(argv[5]);
++      inst1.is_percentage=atoi(argv[6]);
++      cout << "Radius: " << inst1.RADIUS << endl;
++      if( inst1.isPSCLP )
++      {
++         inst1.COVERING_DEMAND=atof(argv[7]);
++         if(inst1.is_percentage == 1)
++            printf("Demand(percentage): %f\n", inst.COVERING_DEMAND);
++         else
++            printf("Demand: %f\n", inst.COVERING_DEMAND);
++      }
++      else
++      {
++         inst1.BUDGET=atof(argv[7]);
++         printf("%f\n", inst1.BUDGET);
++         if(inst1.is_percentage == 1)
++            printf( "Budget(percentage): %f\n", inst.BUDGET );
++         else
++            printf( "Budget: %f\n", inst.BUDGET);
++      }
++      inst1.seed = -1;
++      if (argc >= 9)
++         inst1.seed=atof(argv[8]);
+ 
+ 	}
+ 	else
+ 	{
++		//Error input
+ 		cout << "ERROR NUMBER STANDARD PARAMETERS" << endl;
+-		cout << "Param1:\t instance name\n";
+-		cout << "Param2:\t algorithm\n";
+-		cout << "Param3:\t time limit\n";
+-		cout << "Param4:\t RADIUS\n";
+-		cout << "Param5:\t BUDGET\n";
+-
++      cout << "Param1:\t settings\n";
++		cout << "Param2:\t file of facilities\n";
++      cout << "Param3:\t customers file (can be a number and then generate customers randomly when running the code)\n";
++		cout << "Param4:\t time limitation in seconds\n";
++		cout << "Param5:\t covering radius\n";
++		cout << "Param6:\t is percentage of Param7 (total budget for the MCLP or total covering demand for the PSCLP)?\n";
++		cout << "Param7:\t budget for the MCLP or covering demand for the PSCLP\n";
++		cout << "Param8:\t CPXPARAM_RandomSeed for CPLEX\n";
+ 		exit(-1);
+ 	}
++   
++   inst1.isIA = true;
++   inst1.isSA = true;
++   inst1.isD = true;
++   switch (exec)
++   {
++      case 0: //NO_PRE
++         inst1.isIA = false;
++         inst1.isSA = false;
++         inst1.isD = false;
++         break;
++      case 1: //ALL
++         inst1.isIA = true;
++         inst1.isSA = true;
++         inst1.isD = true;
++         break;
++   }
+ 	////////////////////////////////////////////////////////////////////////////////////////
+ 
+ 
++   inst1.coordinates_loaded = false;
+ 	inst.cohordinates_loaded=false;
+ 
+-	cout << "***RADIUS\t" << inst.RADIUS << endl;
+-	cout << "***BUDGET\t" << inst.BUDGET << endl;
+-
+ 
+ 	/////////////////////////////////////////////////////////////////////////////////////////
+ 	clock_t time_start=clock();
+-
+-	READ_NEW_FILE(&inst);
++	//Read facility and client files if files exist and implement presolving methods
++	read_file(&inst1);
++	//Build data structures based on read data
++	READ_NEW_FILE1(&inst, &inst1);
++   //Presolving time statistics
++   cout<<"presolve_IA: "<<inst1.presolve_IA_time<<endl;
++   cout<<"presolve_D: "<<inst1.presolve_D_time<<endl;
++   inst1.presolve_time = inst1.presolve_IA_time
++      + inst1.presolve_D_time;
++   cout<<"Presolve Time: "<<inst1.presolve_time<<endl;
+ 
+ 	clock_t time_end=clock();
+ 	double inst_generation_time=(double)(time_end-time_start)/(double)CLOCKS_PER_SEC;
+@@ -87,18 +142,20 @@ int main(int argc, char** argv) {
+ 
+ 		///////////////////////////
+ 		build_model_DFL_BEN_2(&inst);
+-		solve_model_DFL_BEN_2(&inst);
++		solve_model_DFL_BEN_2(&inst, &inst1);
+ 		clean_model_DFL_BEN_2(&inst);
+ 		///////////////////////////
+ 
+ 	}
+ 
+-
+-	free(inst.input_file);
++	//Free memory
++	free(inst1.input_file_f);
++	free(inst1.input_file_c);
++   free_data(&inst1);
+ 
+ 	free_data(&inst);
+ 
+-	printf("\nDONE!");
++	printf("\nDONE!\n");
+ 
+ 	return 1;
+ }
+diff -uprN LocationCovering/src_MCLP/global_functions.cpp LocationCovering1/src_MCLP/global_functions.cpp
+--- LocationCovering/src_MCLP/global_functions.cpp	2021-10-28 22:15:32.556505300 +0800
++++ LocationCovering1/src_MCLP/global_functions.cpp	2021-10-28 22:24:02.014973300 +0800
+@@ -318,8 +318,8 @@ double distance(double x1,double y1,doub
+ {
+ 
+ 
+-	int distancex = (x2 - x1)*(x2 - x1);
+-	int distancey = (y2 - y1)*(y2 - y1);
++	double distancex = (x2 - x1)*(x2 - x1);
++	double distancey = (y2 - y1)*(y2 - y1);
+ 
+ 	return   sqrt(distancex + distancey);
+ }
+@@ -351,127 +351,7 @@ double distance_manatthan(double x1,doub
+ 
+ 
+ 
+-/*****************************************************************/
+-void READ_NEW_FILE(instance *inst)
+-/*****************************************************************/
+-{
+-
+-	cout << "INSTANCE\t" << inst->input_file << endl;
+-
+-
+-	ifstream in(inst->input_file);
+-	if(!in)
+-	{
+-		ofstream err("Error.log",ios::app);
+-		cout << "File could not be opened. " << endl;
+-		exit(1);
+-	}
+-
+-	in >> inst->n_locations;
+-	in >> inst->n_clients;
+-
+-	cout << "\n\n***LOCATIONS\t" << inst->n_locations << endl;
+-	cout << "***CLIENTS\t" << inst->n_clients << endl;
+-
+-	inst->fixed_cost = (int *) calloc(inst->n_locations, sizeof(int));
+-	inst->demand = (int *) calloc(inst->n_clients, sizeof(int));
+-
+-	inst->x_location= (double *) calloc(inst->n_locations, sizeof(double));
+-	inst->y_location= (double *) calloc(inst->n_locations, sizeof(double));
+-
+-	inst->x_client= (double *) calloc(inst->n_clients, sizeof(double));
+-	inst->y_client= (double *) calloc(inst->n_clients, sizeof(double));
+-
+-	inst->cohordinates_loaded=true;
+-
+-
+-	for ( int j = 0; j < inst->n_locations; j++ )
+-	{
+-		char dummy_char;
+-		int dummy_int;
+-
+-		in >>dummy_char;
+-		in >>dummy_int;
+-
+-//		cout << dummy_char << "\t" <<dummy_int << endl;
+-//		cin.get();
+-
+-		in >> inst->x_location[j];
+-		in >> inst->y_location[j];
+-		in >> inst->fixed_cost[j];
+-	}
+-
+-	for ( int i = 0; i < inst->n_clients; i++ )
+-	{
+-
+-		char dummy_char;
+-		int dummy_int;
+-
+-		in >>dummy_char;
+-		in >>dummy_int;
+-
+-//		cout << dummy_char << "\t" <<dummy_int << endl;
+-//		cin.get();
+ 
+-		in >> inst->x_client[i];
+-		in >> inst->y_client[i];
+-		in >> inst->demand[i];
+-	}
+-
+-
+-#ifdef	print_point
+-	for ( int j = 0; j < inst->n_locations; j++ )
+-	{
+-		cout << "Location\t" <<  j << "\t(x,y)\t" << inst->x_location[j] << "\t" << inst->y_location[j] << endl;
+-	}
+-
+-	for ( int i = 0; i < inst->n_clients; i++ )
+-	{
+-
+-		cout << "Client\t" << i << "\t(x,y)\t" << inst->x_client[i]  << "\t" << inst->y_client[i] << endl;
+-	}
+-#endif
+-
+-
+-
+-#ifdef	print_distances
+-	cout << "DISTANCES\n";
+-	for ( int j = 0; j < inst->n_locations; j++ )
+-	{
+-		cout << "location\t" << j << endl;
+-		for ( int i = 0; i < inst->n_clients; i++ )
+-		{
+-			cout << "distance to client\t" << i << "\t" << distance_manatthan(inst->x_location[j],inst->y_location[j],inst->x_client[i],inst->y_client[i]) << "\t" << distance(inst->x_location[j],inst->y_location[j],inst->x_client[i],inst->y_client[i])<< endl;
+-
+-		}
+-	}
+-	cin.get();
+-#endif
+-
+-
+-
+-	cout << "\n\nBUILDING neighbourhoods\n";
+-	vector < vector < int > > dummy;
+-	for ( int i = 0; i < inst->n_clients; i++ ){
+-
+-		vector < int > local_dummy;
+-
+-		for ( int j = 0; j < inst->n_locations; j++)
+-		{
+-
+-			if(distance(inst->x_client[i],inst->y_client[i],inst->x_location[j],inst->y_location[j]) < inst->RADIUS)
+-			{
+-				local_dummy.push_back(j);
+-			}
+-		}
+-		dummy.push_back(local_dummy);
+-	}
+-
+-	///////////////////////////////////
+-	build_data_structure(inst,dummy);
+-	///////////////////////////////////
+-
+-}
+ 
+ 
+ 
+@@ -482,6 +362,7 @@ void free_data(instance *inst)
+ {
+ 
+ 	free(inst->fixed_cost);
++	free(inst->singleton);
+ 	free(inst->demand);
+ 
+ 
+@@ -495,10 +376,10 @@ void free_data(instance *inst)
+ 
+ 
+ 	if(inst->cohordinates_loaded==true){
+-		free(inst->x_location);
+-		free(inst->y_location);
+-		free(inst->x_client);
+-		free(inst->y_client);
++		//free(inst->x_location);
++		//free(inst->y_location);
++		//free(inst->x_client);
++		//free(inst->y_client);
+ 	}
+ 
+ 	delete[]inst->cliets_OK;
+diff -uprN LocationCovering/src_MCLP/global_functions.h LocationCovering1/src_MCLP/global_functions.h
+--- LocationCovering/src_MCLP/global_functions.h	2021-10-28 22:15:32.560685600 +0800
++++ LocationCovering1/src_MCLP/global_functions.h	2021-10-28 22:24:02.020957200 +0800
+@@ -33,10 +33,6 @@ double distance_manatthan(double x1,doub
+ /*****************************************************************/
+ 
+ /*****************************************************************/
+-void READ_NEW_FILE(instance *inst);
+-/*****************************************************************/
+-
+-/*****************************************************************/
+ void free_data(instance *inst);
+ /*****************************************************************/
+ 
+Binary files LocationCovering/src_MCLP/global_functions.o and LocationCovering1/src_MCLP/global_functions.o differ
+diff -uprN LocationCovering/src_MCLP/global_variables.h LocationCovering1/src_MCLP/global_variables.h
+--- LocationCovering/src_MCLP/global_variables.h	2021-10-28 22:15:32.561682900 +0800
++++ LocationCovering1/src_MCLP/global_variables.h	2021-10-28 22:24:02.022951900 +0800
+@@ -16,7 +16,7 @@
+ #include <algorithm>
+ 
+ //#include </home/fabio/ILOG/CPLEX_Studio_AcademicResearch127/cplex/include/ilcplex/cplex.h>
+-#include <cplex.h>
++#include "../../../include/cplex.h"
+ 
+ using namespace std;
+ 
+@@ -29,23 +29,26 @@ using namespace std;
+ 
+ typedef struct {
+ 
+-	int algorithm;
+-	char *input_file;
+-	int n_locations;
+-	int n_clients;
++	int algorithm; /* Solving settings */
++	char *input_file; 
++	int n_locations; /* Number of facilities */
++	int n_clients; /* Number of clients */
+ 
+-	int *demand;
+-	int *fixed_cost;
+ 
+-	double RADIUS;
+-	double COVERING_DEMAND;
+-	double BUDGET;
++	int *demand; /*Demand vector of clients */
++	int *fixed_cost; /* Cost vector of facilities */
++	double *singleton; /* Singleton nodes */
++ 
++	double RADIUS; /* Coverage radius */
++	double COVERING_DEMAND; /* The required coverage demand */
++	double BUDGET; /* The required coverage budget */
+ 
+-	double timelimit;
+ 
+-	int seed;
++	double timelimit; /* Time limitation */
+ 
+-	int number_of_CPU;
++	int seed; /* Random seed */
++
++	int number_of_CPU; /* Number of CPUs */
+ 
+ 
+ 	///////////////////////////////////////////////////////////////////////////////
+@@ -59,15 +62,18 @@ typedef struct {
+ 	///////////////////////////////////////////////////////////////////////////////
+ 
+ 	bool cohordinates_loaded;
+-	double *x_location;
+-	double *y_location;
+ 
+-	double *x_client;
+-	double *y_client;
+ 
++
++	double *x_location; /*X coordinates of facilities */
++   	double *y_location; /*Y coordinates of facilities */
++
++   	double *x_client; /*X coordinates of clients */
++   	double *y_client; /*Y coordinates of clients */
++	
+ 	bool *cliets_OK;
+ 
+-	/////////////////////////////////////CPLEX/////////////////////////////////////
++	//CPLEX related variables and environments
+ 	CPXENVptr env_CFL,env_CFL_BEN,env_CFL_BEN_FACETS,env_CFL_BEN_2,env_DFL_BEN_2,env_CFL_BEN_AUX,env_CFL_BEN_FACETS_AUX,env_CFL_MOD,env_CFL_penalty,env_DFL,env_DFL_penalty,env_DFL_MOD,env_CFL2,env_CFL_CVAR,env_DFL_CVAR,env_CFL_CONS,env_DFL_CONS,env_CFL_GAMMA,env_DFL_GAMMA,env_CFL_EXP;
+ 	CPXLPptr  lp_CFL,lp_CFL_BEN,lp_CFL_BEN_FACETS,lp_CFL_BEN_2,lp_DFL_BEN_2,lp_CFL_BEN_AUX,lp_CFL_BEN_FACETS_AUX,lp_CFL_MOD,lp_CFL_penalty,lp_DFL,lp_DFL_penalty,lp_DFL_MOD,lp_CFL2,lp_CFL_CVAR,lp_DFL_CVAR,lp_CFL_CONS,lp_DFL_CONS,lp_CFL_GAMMA,lp_DFL_GAMMA,lp_CFL_EXP;
+ 	int status,ccnt,rcnt,nzcnt;
+diff -uprN LocationCovering/src_MCLP/presolve.cpp LocationCovering1/src_MCLP/presolve.cpp
+--- LocationCovering/src_MCLP/presolve.cpp	1970-01-01 08:00:00.000000000 +0800
++++ LocationCovering1/src_MCLP/presolve.cpp	2021-10-28 22:24:02.022951900 +0800
+@@ -0,0 +1,490 @@
++#include "presolve.h"
++#include <cstdlib>
++#define MAXFACILITY 2500
++#define MAXCLIENT (MAXFACILITY*MAXFACILITY) 
++/*
++double distance(double x1,double y1,double x2, double y2)
++{
++	double distancex = (x2 - x1)*(x2 - x1);
++	double distancey = (y2 - y1)*(y2 - y1);
++	return  distancex + distancey;
++}*/
++
++bool CompforDNC(MyPair* a, MyPair *b)
++{
++   int size1 = a->locations.size();
++   int size2 = b->locations.size();
++   if(size1 > size2)
++      return true;
++   else if (size1 < size2)
++      return false;
++   for( int i = 0; i < size1 && i< size2; i++)
++   {
++      if( a->locations[i] < b->locations[i] )
++         return true;
++      else if( a->locations[i] > b->locations[i] )
++         return false;
++   }
++   return false;
++}
++
++bool CompforIndex(MyPair* a, MyPair *b)
++{
++   return a->index < b->index;
++}
++
++bool CompEQ(MyPair* a, MyPair *b)
++{
++   int size1 = a->locations.size();
++   int size2 = b->locations.size();
++   if(size1 != size2)
++      return false;
++   for( int i = 0; i < size1 && i< size2; i++)
++   {
++      if( a->locations[i] < b->locations[i] )
++         return false;
++      else if( a->locations[i] > b->locations[i] )
++         return false;
++   }
++   return true;
++}
++
++//Set bound in node presolving
++bool setbound(mystr* inst, int pos, char sign)
++{
++   assert(pos >= 0 && pos <= inst->validlocations + inst->data.size());
++   if(sign == 'L')
++   {
++      if( inst->ub[pos] > 1e-6)
++      {
++         inst->ub[pos] = 0;
++         inst->chgind[inst->numchg] = pos;
++         inst->sign[inst->numchg] = 'L';
++         inst->numchg++;
++         inst->nfix++;
++      }
++      else
++         return false;
++   }
++   else if(sign == 'G')
++   {
++      if( inst->lb[pos] <= 1-1e-8 )
++      {
++         inst->lb[pos] = 1;
++         inst->chgind[inst->numchg] = pos;
++         inst->sign[inst->numchg] = 'G';
++         inst->numchg++;
++         inst->nfix++;
++      }
++      else 
++         return false;
++   }
++   else
++      assert(0);
++   return true;
++}
++
++//Calculate J(i) based on I(j)
++bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
++{
++   int size = a.size();
++   int bsize = b.size();
++   for(int i = 0; i<size; i++)
++   {
++      a[i]->locations.clear();
++      a[i]->sign = 0;
++   }
++   for(int i = 0; i<bsize; i++)
++   {      
++      //inst->data[i]->Print();
++      size = b[i]->locations.size();
++      for(int k = 0; k<size; k++)
++      {
++         a[b[i]->locations[k]]->sign |= (1 << (i%32));
++         a[b[i]->locations[k]]->locations.push_back(i);
++      }
++   }
++   return true;
++}
++
++//Determine inclusive relations of  support signature in 32-bit
++bool IsSubSet32(vector<MyPair*> &a, int i, int j)
++{
++   if( ( a[i]->sign | a[j]->sign) == a[i]->sign )
++      return true;
++   return false;
++}
++
++bool IsSubSet(vector<int> &a, vector<int> &b)
++{
++   int size1 = a.size();
++   int size2 = b.size();
++   if(size1 < size2)
++      return false;
++   int i = 0, j = 0; 
++   bool isSubset = true;
++   while(i < size1 && j< size2)
++   {
++      if( a[i] == b[j] )
++      {
++         i++;
++         j++;
++      }
++      else if( a[i] < b[j] )
++      {
++         i++;
++      }
++      else if( a[i] > b[j] )
++      {
++         isSubset = false;
++         break;
++      }
++   }
++   if(isSubset == false || j < size2)
++   {
++      return false;
++   }
++   return true;
++}
++
++bool RemoveSubSet(vector<int> &a, vector<int> &b)
++{
++   int size1 = a.size();
++   int size2 = b.size();
++   if(size1 < size2)
++      return false;
++   int i = 0, j = 0; 
++   int n_locations = 0;
++   while(i < size1 && j< size2)
++   {
++      if( a[i] == b[j] )
++      {
++         i++;
++         j++;
++      }
++      else if( a[i] < b[j] )
++      {
++         a[n_locations] = a[i]; 
++         n_locations++;
++         i++;
++      }
++      else if( a[i] > b[j] )
++      {
++         assert(0);
++      }
++   }
++   for(; i<size1; i++)
++   {
++      a[n_locations] = a[i]; 
++      n_locations++;
++   }
++   a.erase(a.begin() + n_locations, a.end());
++   return true;
++}
++
++void Domination(mystr* inst)
++{
++   clock_t time_presolvestart=clock();
++   int asize = inst->covers.size();
++   sort(inst->covers.begin(), inst->covers.end(), CompforDNC);
++   
++   for(int i = 0; i<asize; i++)
++   {
++      if(inst->covers[i]->isdeleted == true)
++         continue;
++      for(int j = i+1; j<asize; j++)
++      {
++         if(inst->covers[j]->isdeleted == true)
++            continue;
++         if( inst->covers[j]->locations.size() > 0)
++         {
++            if( IsSubSet32(inst->covers, i, j))
++            {
++               if(IsSubSet(inst->covers[i]->locations, inst->covers[j]->locations))
++               {
++                  inst->covers[j]->isdeleted = true;
++               }
++            }
++         }
++         else
++         {
++            if(IsSubSet(inst->covers[i]->locations, inst->covers[j]->locations))
++            {
++               inst->covers[j]->isdeleted = true;
++            }
++         }
++      }
++   }
++   sort(inst->covers.begin(), inst->covers.end(), CompforIndex);
++   //Remove the deleted facilities from the set I(j).
++   int lsize = 0, ncounter = 0;
++   for(int i = 0; i<inst->n_data; i++)
++   {
++      lsize = inst->data[i]->locations.size();
++      ncounter = 0;
++      inst->data[i]->sign = 0;
++      for(int j = 0; j<lsize; j++)
++      {
++         if(inst->covers[inst->data[i]->locations[j]]->isdeleted == false)
++         {
++            inst->data[i]->sign &= 1 << ((inst->data[i]->locations[j])%32);
++            inst->data[i]->locations[ncounter] = inst->data[i]->locations[j]; 
++            ncounter++;
++         }
++      }
++      inst->data[i]->locations.erase(inst->data[i]->locations.begin()+ncounter, inst->data[i]->locations.end());
++   }
++   clock_t time_presolveend=clock();
++   inst->presolve_D_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
++}
++
++void IA2(mystr* inst)
++{
++   inst->isfind = false;
++   clock_t time_presolvestart;
++   clock_t time_presolveend;
++   time_presolvestart=clock();
++   unordered_map<vector<int>, MyPair*, MyVector_hasher, MyVector_equal> mymap;
++   unordered_map<vector<int>, MyPair*, MyVector_hasher, MyVector_equal>::iterator it;
++	for ( int i = 0; i < inst->n_data; i++ )
++   {
++      it = mymap.find(inst->data[i]->locations);
++      if(it == mymap.end())
++      {
++         mymap.insert({ inst->data[i]->locations, inst->data[i]});
++      }
++      else
++      {
++         (*it).second->cost += inst->data[i]->cost;
++         (*it).second->demand += inst->data[i]->demand;
++         for(int j = 0; j<inst->data[i]->clients.size(); j++)
++            (*it).second->clients.push_back(inst->data[i]->clients[j]);
++         delete inst->data[i];
++         inst->data[i] = NULL;
++         inst->isfind = true;
++      }
++   }
++   time_presolveend = clock();
++   inst->presolve_IA_time += (double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
++   int ncounter = 0;
++   for(int i = 0; i<inst->n_data; i++)
++   {
++      if(inst->data[i] != NULL)
++      {
++         inst->data[ncounter] = inst->data[i];
++         ncounter++;
++      }
++   }
++   inst->data.erase(inst->data.begin()+ncounter, inst->data.end());
++   inst->n_data = inst->data.size();
++   CalculateCovers(inst->covers, inst->data);
++   return;
++}
++
++void IA(mystr *inst)
++{
++   //if(inst->coordinates_loaded == false)
++   //   cout<< "Randomly generate!"<<endl;
++   unordered_map<MyArray, MyPair*, MyArray_hasher, MyArray_equal> mymap;
++   unordered_map<MyArray, MyPair*, MyArray_hasher, MyArray_equal>::iterator it;
++   clock_t time_presolvestart;
++   clock_t time_presolveend;
++   MyPair* pair;
++   int local_dummy_a[MAXFACILITY];
++   int **totalarray;
++   if(inst->isIA)
++      totalarray = new int*[inst->n_locations*inst->n_locations];
++   else
++      totalarray = new int*[inst->n_clients];
++   int n_data = 0;
++   double Distance = 0.0;
++   double x,y;
++   int len = 0;
++   double rand_max = 1.0*RAND_MAX;
++   MyArray local_dummy;
++   local_dummy.a = local_dummy_a;
++   local_dummy.len = len;
++   double rsquare = inst->RADIUS;
++	for ( long long i = 0; i < inst->n_clients; i++ ){
++      len = 0;
++      if(inst->coordinates_loaded == false)
++      {
++         //Random generate points of clients
++         x = rand()/rand_max*30;
++         y = rand()/rand_max*30;
++         for ( int j = 0; j < inst->n_locations; j++)
++         {
++            Distance = distance(x,y,inst->x_location[j],inst->y_location[j]);
++            if(Distance < rsquare)
++               local_dummy_a[len++] = j;
++         }
++      }
++      else
++      {
++         for ( int j = 0; j < inst->n_locations; j++)
++         {
++            Distance = distance(inst->x_client[i],inst->y_client[i],inst->x_location[j],inst->y_location[j]);
++            if( strcmp(inst->input_file_f, inst->input_file_c) == 0 && i == j)
++               Distance = 0;
++            if(Distance < rsquare)
++            {
++               local_dummy_a[len++] = j;
++            }
++         }
++      }
++      if(inst->isIA)
++      {
++   time_presolvestart=clock();
++         local_dummy.a = local_dummy_a;
++         local_dummy.len = len;
++         it = mymap.find(local_dummy);
++         if(it == mymap.end())
++         {
++            pair = new MyPair(n_data);
++            totalarray[n_data] = new int[local_dummy.len];
++            for(int ll = 0; ll<local_dummy.len; ll++)
++            {
++               pair->locations.push_back(local_dummy.a[ll]);
++               totalarray[n_data][ll] = local_dummy.a[ll];
++            }
++            local_dummy.a = totalarray[n_data];
++            if(inst->isPSCLP)
++            {
++               pair->cost = 0;
++               if(inst->coordinates_loaded==true)
++                  pair->demand = inst->demand[i];
++               else
++                  pair->demand = (rand() % 100)+ 1;
++            }
++            else
++            {
++               pair->demand = 0;
++               if(inst->coordinates_loaded == true)
++                  pair->cost = inst->demand[i];
++               else
++                  pair->cost = (rand() % 100)+ 1;
++            }
++            inst->data.push_back(pair);
++            mymap.insert({ local_dummy, pair});
++            n_data++;
++         }
++         else
++         {
++            if(inst->isPSCLP)
++            {
++               it->second->cost = 0;
++               if(inst->coordinates_loaded==true)
++                  it->second->demand = inst->demand[i];
++               else
++                  it->second->demand += (rand() % 100)+ 1;
++            }
++            else
++            {
++               it->second->demand = 0;
++               if(inst->coordinates_loaded == true)
++                  it->second->cost += inst->demand[i];
++               else
++                  it->second->cost += (rand() % 100)+ 1;
++            }
++         }
++   time_presolveend=clock();
++   inst->presolve_IA_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
++      }
++      else
++      {
++         local_dummy.a = local_dummy_a;
++         local_dummy.len = len;
++         pair = new MyPair(n_data);
++         totalarray[n_data] = new int[local_dummy.len];
++         for(int ll = 0; ll<local_dummy.len; ll++)
++         {
++            pair->locations.push_back(local_dummy.a[ll]);
++            totalarray[n_data][ll] = local_dummy.a[ll];
++         }
++         local_dummy.a = totalarray[n_data];
++         if(inst->isPSCLP)
++         {
++            pair->cost = 0;
++            if(inst->coordinates_loaded==true)
++               pair->demand = inst->demand[i];
++            else
++               pair->demand = (rand() % 100)+ 1;
++         }
++         else
++         {
++            pair->demand = 0;
++            if(inst->coordinates_loaded==true)
++               pair->cost = inst->demand[i];
++            else
++               pair->cost = (rand() % 100)+ 1;
++         }
++         inst->data.push_back(pair);
++         n_data++;
++      }
++   }
++   //cout<< inst->presolve_IA_time <<endl;
++   for(int i = 0; i<n_data; i++)
++   {
++      delete[] totalarray[i];
++   }
++   delete[] totalarray;
++   inst->n_data = inst->data.size();
++}
++
++void SA(mystr* inst)
++{
++   int csize = inst->data.size();
++   inst->n_data = 0;
++   for(int i = 0; i<csize; i++)
++   {
++      if(inst->data[i]->locations.size() == 0)
++      {
++         delete inst->data[i];
++      }
++      else if(inst->data[i]->locations.size() == 1)
++      {
++         inst->covers[inst->data[i]->locations[0]]->cost += inst->data[i]->cost;
++         inst->covers[inst->data[i]->locations[0]]->demand += inst->data[i]->demand;
++         inst->singlecover.push_back(inst->data[i]->locations[0]);
++         delete inst->data[i];
++      }
++      else
++      {
++         inst->data[inst->n_data] = inst->data[i];
++         inst->n_data++;
++      }
++   }
++   inst->data.erase(inst->data.begin()+inst->n_data, inst->data.end()); 
++}
++
++void NodePresolveInit(mystr* inst)
++{
++   int i = 0, j = 0;
++   int posi = 0;
++   int posj = 0;
++   int lsize = 0;
++   int datasize = inst->data.size();
++   for(i = 0; i<datasize; i++)
++   {
++      posi = inst->data[i]->pos;
++      assert(posi >= 0);
++      if(inst->ub[posi] <= 1e-6)
++      {
++         inst->data[i]->isdeleted = true;
++         lsize = inst->data[i]->locations.size();
++         for(j = 0; j<lsize; j++)
++         {
++            posj = inst->covers[inst->data[i]->locations[j]]->pos;
++            assert(posj >= 0);
++            setbound(inst, posj, 'L');
++         }
++      }
++      else 
++         inst->data[i]->isdeleted = false;
++   }
++}
++
++void NodePresolve(mystr* inst, double bestobj)
++{
++   NodePresolveInit(inst);
++}
+diff -uprN LocationCovering/src_MCLP/presolve.h LocationCovering1/src_MCLP/presolve.h
+--- LocationCovering/src_MCLP/presolve.h	1970-01-01 08:00:00.000000000 +0800
++++ LocationCovering1/src_MCLP/presolve.h	2021-10-28 22:24:02.021954600 +0800
+@@ -0,0 +1,36 @@
++#ifndef PRESOLVE__H
++#define PRESOLVE__H
++#include "struct.h"
++
++//Calculate the distance between (x1,y1) and (x2,y2)
++double distance(double x1,double y1,double x2, double y2);
++
++bool Comp(MyPair* a, MyPair *b);
++bool CompforDNC(MyPair* a, MyPair *b);
++bool CompforIndex(MyPair* a, MyPair *b);
++bool CompEQ(MyPair* a, MyPair *b);
++
++//Set a contains Set b ?
++bool IsSubSet(vector<int> &a, vector<int> &b);
++
++//Remove the elements of Set a in Set b?
++bool RemoveSubSet(vector<int> &a, vector<int> &b);
++
++//Calculate J(i) based on I(j)
++bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b);
++
++//Isomorphic aggregation (and generate random data)
++void IA(mystr *inst);
++
++//Reimplement isomorphic aggregation when domination presolving succeeds
++void IA2(mystr* inst);
++
++//Domination presolving
++void Domination(mystr* inst);
++
++//Singleton aggregation
++void SA(mystr* inst);
++
++//Node presolving
++void NodePresolve(mystr* inst, double bestobj);
++#endif
+diff -uprN LocationCovering/src_MCLP/read.cpp LocationCovering1/src_MCLP/read.cpp
+--- LocationCovering/src_MCLP/read.cpp	1970-01-01 08:00:00.000000000 +0800
++++ LocationCovering1/src_MCLP/read.cpp	2021-10-28 22:24:02.015970800 +0800
+@@ -0,0 +1,384 @@
++#include "global_functions.h"
++#include "presolve.h"
++#include "read.h"
++
++//Read facility and client files if files exist and implement presolving methods
++void read_file(mystr *inst)
++{
++   cout << "Facility information: " << inst->input_file_f << endl; /* Facility file */
++   cout << "Customer information: " << inst->input_file_c << endl; /* Client file */
++
++   ifstream in_f(inst->input_file_f);
++   if(!in_f)
++   {
++      ofstream err("Error.log",ios::app);
++      cout << "Faclity file could not be opened. " << endl;
++      exit(1);
++   }
++   ifstream in_c(inst->input_file_c);
++   if(atoi(inst->input_file_c) > 0)
++   {
++      inst->n_clients = atoi(inst->input_file_c); 
++      inst->coordinates_loaded = false;
++      cout << "Customer file could not be opened. " << endl;
++   }
++   else
++      inst->coordinates_loaded = true;
++
++   //The number of facilities/clients does not exceed the number of rows in files.
++   in_f >> inst->n_locations;
++   if( inst->coordinates_loaded == true)
++   {
++      in_c >> inst->n_clients;
++   }
++   cout << "Original model: "<< endl;
++   cout << "Number of facilities: " << inst->n_locations << endl;
++   cout << "Number of customers: " << inst->n_clients << endl;
++
++   inst->fixed_cost = (double *) calloc(inst->n_locations, sizeof(double));
++   inst->x_location= (double *) calloc(inst->n_locations, sizeof(double));
++   inst->y_location= (double *) calloc(inst->n_locations, sizeof(double));
++
++   //If customer file exists,  
++   if( inst->coordinates_loaded == true)
++   {
++      inst->demand = (double *) calloc(inst->n_clients, sizeof(double));
++      inst->x_client= (double *) calloc(inst->n_clients, sizeof(double));
++      inst->y_client= (double *) calloc(inst->n_clients, sizeof(double));
++   }
++
++   MyPair* mypair;
++   vector<int> vec;
++   char dummy_char;
++   int dummy_int;
++	for ( int j = 0; j < inst->n_locations; j++ )
++	{
++      in_f >> dummy_char;
++		in_f >> dummy_int;
++		in_f >> inst->x_location[j];
++		in_f >> inst->y_location[j];
++		in_f >> inst->fixed_cost[j];
++      inst->fixed_cost[j] = 1;
++      mypair = new MyPair(j);
++      if(inst->isPSCLP)
++      {
++         mypair->demand = 0;
++         mypair->cost = inst->fixed_cost[j];
++      }
++      else
++      {
++         mypair->demand = inst->fixed_cost[j];
++         mypair->cost = 0;
++      }
++      mypair->index = j;
++      inst->covers.push_back(mypair);
++	}
++   if( inst->coordinates_loaded == true)
++   {
++      for ( int i = 0; i < inst->n_clients; i++ )
++      {
++
++         char dummy_char;
++         int dummy_int;
++
++         in_c >>dummy_char;
++         in_c >>dummy_int;
++         in_c >> inst->x_client[i];
++         in_c >> inst->y_client[i];
++         if( strcmp(inst->input_file_f, inst->input_file_c) == 0)
++         {
++            inst->x_client[i] = inst->x_location[i];
++            inst->y_client[i] = inst->y_location[i];
++         }
++         in_c >> inst->demand[i];
++      }
++   }
++
++   //cout<<"RADIUS: "<<inst->RADIUS<<endl;
++	//////////////////////////
++   //Initialize statistics
++   inst->nfix = 0;
++   inst->presolve_time = 0.0;
++   inst->presolve_IA_time = 0.0;
++   inst->presolve_D_time = 0.0;
++   inst->presolve_node_time = 0.0;
++ 
++   //Implement isomorphic aggregations
++   IA(inst);
++   if(inst->isPSCLP)
++   {
++      if(inst->COVERING_DEMAND <= 1+1e-8)
++      {
++         //Calculate total valid demand of customers (covered by at least one potential facilities).
++         double ratio = 0;
++         for(int i = 0; i<inst->data.size(); i++)
++         {
++            if(inst->data[i]->locations.size() > 0)
++               ratio = ratio + inst->data[i]->demand;
++         }
++         inst->COVERING_DEMAND = (int)ceil(inst->COVERING_DEMAND * ratio);
++         //cout<<"BUDGET: "<<inst->COVERING_DEMAND<<endl;
++      }
++
++   }
++   else
++   {
++      if(inst->is_percentage == 1)
++      {
++         //Calculate total valid cost of facilities.
++         double ratio = 0;
++         for(int i = 0; i<inst->n_locations; i++)
++            ratio += inst->covers[i]->demand;
++         inst->BUDGET = (int)floor(inst->BUDGET * ratio);
++         //cout<<"BUDGET: "<<inst->BUDGET<<endl;
++      }
++   }
++   
++   inst->numchg = 0;
++   inst->chgind = (int*) calloc(inst->data.size() + inst->covers.size(), sizeof(int));
++   inst->sign = (char*) calloc(inst->data.size() + inst->covers.size(), sizeof(char));
++   inst->n_location = (int*) calloc(inst->data.size() + inst->covers.size(), sizeof(int));
++   
++   int size1 = inst->n_data;
++   //cout<<"Row1: "<<inst->n_data<<endl;
++   //cout<<"presolve_IA1: "<<inst->presolve_IA_time<<endl;
++   // Calculate J(i), i in I
++   CalculateCovers(inst->covers, inst->data);
++
++   inst->isfind = true;
++   inst->validlocations = inst->n_locations;
++   //Domination presolving
++   if(inst->isD)
++   {
++      inst->isfind = false;
++      Domination(inst);
++      int n_deleted = 0;
++      int j = 0;
++      for ( int i = 0; i < inst->n_locations; i++ )
++      {
++         if(inst->covers[i]->isdeleted)
++         {
++            n_deleted++;
++         }
++         else
++         {
++            inst->covers[i]->pos = j;
++            j++;
++         }
++      }
++      //cout<<"n_deleted_columns: "<<n_deleted<<endl;
++      int lsize = 0, ncounter = 0;
++      for(int i = 0; i<inst->n_data; i++)
++      {
++         lsize = inst->data[i]->locations.size();
++         for(int j = 0; j<lsize; j++)
++         {
++            inst->data[i]->locations[j] = inst->covers[ inst->data[i]->locations[j] ]->pos; 
++         }
++      }
++      j = 0;
++      for ( int i = 0; i < inst->n_locations; i++ )
++      {
++         if(inst->covers[i]->isdeleted)
++         {
++            delete inst->covers[i];
++         }
++         else
++         {
++            inst->covers[j] = inst->covers[i];
++            j++;
++         }
++      }
++      inst->covers.erase(inst->covers.begin()+j, inst->covers.end());
++      inst->n_locations = inst->covers.size();
++      
++      if(inst->isfind)
++         //Reimplement isomorphic aggregation if domination presolving succeeds
++         IA2(inst);
++      
++      //cout<<"n_deleted_rows: "<<size1 - inst->n_data<<endl;
++      inst->validlocations = inst->covers.size() - n_deleted;
++   }
++   if(inst->isSA)
++   {
++      //Reimplement singleton aggregations after domination presolving succeeds
++      SA(inst);
++   }
++   //////////////////////////////////
++   int nnz = 0;
++   for(int i = 0; i<inst->n_data; i++)
++   {
++      if(inst->data[i]->isdeleted == false)
++      {
++         nnz = nnz + inst->data[i]->locations.size();
++      }
++   }
++   //Statistics after presolving
++   if(inst->isPSCLP)
++      nnz += inst->validlocations;
++   else
++      nnz += inst->n_data;
++   cout<<"NNZ before nonzero cancellation: "<<nnz<<endl; /* Number of nonzeros in model after presolving */
++}
++//Free intermediate variables
++/*****************************************************************/
++void free_data(mystr *inst)
++   /*****************************************************************/
++{
++   int size = inst->data.size();
++   for(int i = 0; i<size; i++)
++   {
++      delete inst->data[i];
++   }
++   for(int i = 0; i<inst->n_locations; i++)
++   {
++      delete inst->covers[i];
++   }
++
++   free(inst->fixed_cost);
++   free(inst->chgind);
++   free(inst->sign);
++   free(inst->n_location);
++
++   free(inst->x_location);
++   free(inst->y_location);
++   if(inst->coordinates_loaded==true){
++      free(inst->demand);
++      free(inst->x_client);
++      free(inst->y_client);
++   }
++
++}
++
++//Build data structures based on read data
++void READ_NEW_FILE1(instance *inst, mystr* inst1)
++/*****************************************************************/
++{
++
++	//cout << "INSTANCE\t" << inst->input_file << endl;
++
++
++	//ifstream in(inst->input_file);
++	inst->n_locations = inst1->covers.size();
++	inst->n_clients = inst1->data.size();
++
++	//cout << "\n\n***LOCATIONS\t" << inst->n_locations << endl;
++	//cout << "***CLIENTS\t" << inst->n_clients << endl;
++
++	inst->fixed_cost = (int *) calloc(inst->n_locations, sizeof(int));
++	inst->singleton = (double *) calloc(inst->n_locations, sizeof(double));
++	inst->demand = (int *) calloc(inst->n_clients, sizeof(int));
++
++	//inst->x_location= (double *) calloc(inst->n_locations, sizeof(double));
++	//inst->y_location= (double *) calloc(inst->n_locations, sizeof(double));
++
++	//inst->x_client= (double *) calloc(inst->n_clients, sizeof(double));
++	//inst->y_client= (double *) calloc(inst->n_clients, sizeof(double));
++
++	inst->cohordinates_loaded=true;
++
++
++   double sumcost = 0;
++	for ( int j = 0; j < inst->n_locations; j++ )
++	{
++		//char dummy_char;
++		//int dummy_int;
++
++		//in >>dummy_char;
++		//in >>dummy_int;
++
++//		cout << dummy_char << "\t" <<dummy_int << endl;
++//		cin.get();
++
++//		in >> inst->x_location[j];
++//		in >> inst->y_location[j];
++		inst->singleton[j] = inst1->covers[j]->cost;
++		inst->fixed_cost[j] = 1;
++      sumcost += inst->fixed_cost[j];
++	}
++   inst->BUDGET = inst1->BUDGET;
++      
++
++	for ( int i = 0; i < inst->n_clients; i++ )
++	{
++
++		//char dummy_char;
++		//int dummy_int;
++
++		//in >>dummy_char;
++		//in >>dummy_int;
++
++//		cout << dummy_char << "\t" <<dummy_int << endl;
++//		cin.get();
++
++//		in >> inst->x_client[i];
++//		in >> inst->y_client[i];
++//		in >> inst->demand[i];
++		inst->demand[i] = inst1->data[i]->cost;
++	}
++
++
++#ifdef	print_point
++	for ( int j = 0; j < inst->n_locations; j++ )
++	{
++		cout << "Location\t" <<  j << "\t(x,y)\t" << inst->x_location[j] << "\t" << inst->y_location[j] << endl;
++	}
++
++	for ( int i = 0; i < inst->n_clients; i++ )
++	{
++
++		cout << "Client\t" << i << "\t(x,y)\t" << inst->x_client[i]  << "\t" << inst->y_client[i] << endl;
++	}
++#endif
++
++
++
++#ifdef	print_distances
++	cout << "DISTANCES\n";
++	for ( int j = 0; j < inst->n_locations; j++ )
++	{
++		cout << "location\t" << j << endl;
++		for ( int i = 0; i < inst->n_clients; i++ )
++		{
++			cout << "distance to client\t" << i << "\t" << distance_manatthan(inst->x_location[j],inst->y_location[j],inst->x_client[i],inst->y_client[i]) << "\t" << distance(inst->x_location[j],inst->y_location[j],inst->x_client[i],inst->y_client[i])<< endl;
++
++		}
++	}
++	cin.get();
++#endif
++
++
++
++	cout << "\n\nBUILDING neighbourhoods\n";
++	vector < vector < int > > dummy;
++#if 1
++	for ( int i = 0; i < inst1->n_data; i++ ){
++
++		vector < int > local_dummy;
++
++      local_dummy = inst1->data[i]->locations;
++
++		dummy.push_back(local_dummy);
++	}
++#else
++	for ( int i = 0; i < inst->n_clients; i++ ){
++
++		vector < int > local_dummy;
++
++		for ( int j = 0; j < inst->n_locations; j++)
++		{
++
++			if(distance(inst->x_client[i],inst->y_client[i],inst->x_location[j],inst->y_location[j]) < inst->RADIUS)
++			{
++				local_dummy.push_back(j);
++			}
++		}
++		dummy.push_back(local_dummy);
++	}
++#endif
++	///////////////////////////////////
++	build_data_structure(inst,dummy);
++	///////////////////////////////////
++
++}
++
+diff -uprN LocationCovering/src_MCLP/read.h LocationCovering1/src_MCLP/read.h
+--- LocationCovering/src_MCLP/read.h	1970-01-01 08:00:00.000000000 +0800
++++ LocationCovering1/src_MCLP/read.h	2021-10-28 22:24:02.019959900 +0800
+@@ -0,0 +1,17 @@
++#ifndef FUNCTIONS_HEADER
++#define FUNCTIONS_HEADER
++
++#include "struct.h"
++
++//Read facility and client files if files exist and implement presolving methods
++void read_file(mystr *inst);
++/*****************************************************************/
++
++//Free intermediate variables
++void free_data(mystr *inst);
++/*****************************************************************/
++
++//Build data structures based on read data
++void READ_NEW_FILE1(instance *inst, mystr* inst1);
++/*****************************************************************/
++#endif
+diff -uprN LocationCovering/src_MCLP/struct.h LocationCovering1/src_MCLP/struct.h
+--- LocationCovering/src_MCLP/struct.h	1970-01-01 08:00:00.000000000 +0800
++++ LocationCovering1/src_MCLP/struct.h	2021-10-28 22:24:02.018962700 +0800
+@@ -0,0 +1,234 @@
++#ifndef VARIABLE_HEADER
++#define VARIABLE_HEADER
++
++
++#include <stdlib.h>
++#include <stdio.h>
++#include <assert.h>
++#include <time.h>
++#include <iostream>
++#include <fstream>
++#include <math.h>
++#include <string.h>
++#include <errno.h>
++#include <sstream>
++#include <vector>
++#include <queue>
++#include <algorithm>
++#include <unordered_map>
++#include <cstddef>
++#include <functional>
++#include "../../../include/cplex.h"
++
++using namespace std;
++//Covering relationship and aggregation information
++class MyPair
++{
++public:
++   vector<int> locations; 
++   vector<long long> clients;
++   unsigned int sign;
++   double demand;
++   double cost;
++   int index;
++   vector<int> fronts;
++   vector<int> same;
++   vector<int> nexts;
++   bool isdeleted;
++   int pos;
++   MyPair(int ind)
++   {
++      demand = 0; 
++      index = ind; 
++      isdeleted = false; 
++   }
++   ~MyPair(){};
++   //Output callback
++   void Print()
++   {
++      int size = locations.size(); 
++      cout<<"index: "<<index<<" ";
++      cout<<"deleted: "<<isdeleted<<" ";
++      cout<<"locations: ";
++      for(int j = 0; j<size; j++)
++      {
++         cout<<locations[j]<<" ";
++      }
++      size = clients.size(); 
++      if(size > 0)
++         cout<<"\t clients: ";
++      for(int j = 0; j<size; j++)
++      {
++         cout<<clients[j]<<" ";
++      }
++      size = fronts.size(); 
++      if(size > 0)
++         cout<<"\t fronts: ";
++      for(int j = 0; j<size; j++)
++      {
++         cout<<fronts[j]<<" ";
++      }
++      size = nexts.size(); 
++      if(size > 0)
++         cout<<"\t nexts: ";
++      for(int j = 0; j<size; j++)
++      {
++         cout<<nexts[j]<<" ";
++      }
++      cout<<endl;
++   }
++};
++//Hash key storing coverage facilities of a client in isomorphic aggregation
++struct MyArray
++{ 
++   int* a;
++   int len;
++};
++//Hash function
++struct MyArray_hasher
++{ 
++   size_t operator ()(MyArray const& r) const
++   {
++      int size = r.len;
++      size_t t = 0;
++      for(int i = 0; i<size; i++)
++         t = t + hash<int>()(r.a[i]);
++      return t;
++   }
++};
++//Decide identify whether two clients have isomorphic coverage relations
++struct MyArray_equal
++{
++   bool operator()(MyArray const& lhs, MyArray const& rhs) const
++   {
++      int size1 = lhs.len;
++      int size2 = rhs.len;
++      if(size1 != size2)
++         return false;
++      for(int i = 0; i<size1; i++)
++      {
++         if(lhs.a[i] != rhs.a[i])
++            return false;
++      }
++      return true;
++   }
++};
++//Hash function when reimplementing isomorphic aggregation if domination presolving succeeds
++struct MyVector_hasher
++{ 
++   size_t operator ()(vector<int> const& r) const
++   {
++      int size = r.size();
++      size_t t = 0;
++      for(int i = 0; i<size; i++)
++         t = t + hash<int>()(r[i]);
++      return t;
++   }
++};
++//Decide identify whether two clients have isomorphic coverage relations when reimplementing isomorphic aggregation if domination presolving succeeds
++struct MyVector_equal
++{
++   bool operator()(vector<int> const& lhs, vector<int> const& rhs) const
++   {
++      int size1 = lhs.size();
++      int size2 = rhs.size();
++      if(size1 != size2)
++         return false;
++      for(int i = 0; i<size1; i++)
++      {
++         if(lhs[i] != rhs[i])
++            return false;
++      }
++      return true;
++   }
++};
++//MCLP instance
++typedef struct {
++////////////////////
++   vector<MyPair*> data;  //Rows(Clients) information
++   vector<MyPair*> covers;  //Columns(Facilities) informaion
++   vector<int> singlecover;  
++
++   int n_data; /* Number of clients after presolving */
++
++	
++   int algorithm; /* Solving settings */
++   char *input_file_f; /* Facility file */
++   char *input_file_c; /* Client file */
++   int n_locations; /* Number of facilities */
++   long long n_clients; /* Number of clients */
++   bool is_percentage; /* Is percentage */
++
++   double *demand; /*Demand vector of clients */
++   double *fixed_cost; /* Cost vector of facilities */
++	
++	
++
++   bool findsolution;
++	double RADIUS; /* Coverage radius */
++   double sumvalid;
++	double COVERING_DEMAND; /* The required coverage demand */
++	double BUDGET; /* The required coverage budget */
++   
++   bool isfind; /* Does domination presolving succeed */
++   int validlocations; /* Number of facilities after domination presolving */
++
++	double timelimit;   /* Time limitation */
++
++	int seed;  /* Random seed */
++
++	int number_of_CPU; /* Number of CPUs */
++   
++   int* n_location; /*Vector of numbers of coverage facilities */
++
++   int numchg;
++   int* chgind;
++   char* sign;
++
++   long nodeindex;
++
++	bool coordinates_loaded;
++
++	
++   double *x_location; /*X coordinates of facilities */
++   double *y_location; /*Y coordinates of facilities */
++
++   double *x_client; /*X coordinates of clients */
++   double *y_client; /*Y coordinates of clients */
++
++   //CPLEX related variables and environments
++   CPXENVptr env;
++   CPXLPptr lp;
++   int status,ccnt,rcnt,nzcnt;
++   int* rmatbeg, *rmatind,*cmatbeg, *cmatind;
++   double* rmatval,*cmatval,*x,*pi,*obj, *lb, *ub,*rhs;
++   char *c_type,* sense;
++   char **colname;
++   double objval,bestobjval;
++   int lpstat,nodecount;
++   ///////////////////////////////////////////////////////////////////////////////
++
++   int counter_c;
++   int counter_l;
++
++
++
++   double presolve_time; /* Total presolving time */
++   double presolve_IA_time; /* Presolving time of isomorphic aggregation */
++   double presolve_D_time; /* Presolving time of domination presolving */
++   double presolve_node_time; /* Prsolving time of nonoverlap fixing presolving */
++
++   long nfix;
++
++   bool isBranch;
++   bool isCut;
++   bool isBin; /*Set client variables binary or not */
++   bool isIA; /* Do isomorphic aggregation or not */
++   bool isSA; /* Do singleton aggregation or not */
++   bool isD; /* Do domination presolving or not */
++   bool isPSCLP; /* Is solving model a PSCLP (or a MCLP) */
++	
++} mystr;
++
++
++#endif
+diff -uprN LocationCovering/src_PSCLP/Main.cpp LocationCovering1/src_PSCLP/Main.cpp
+--- LocationCovering/src_PSCLP/Main.cpp	2021-10-28 22:15:32.554509500 +0800
++++ LocationCovering1/src_PSCLP/Main.cpp	2021-10-28 22:24:02.009986400 +0800
+@@ -9,50 +9,106 @@
+ 
+ #include "global_functions.h"
+ #include "global_variables.h"
++#include "struct.h"
++#include "read.h"
+ #include "PSCLP.h"
+ #include "PSCLP_BEN.h"
+ 
+-
+ int main(int argc, char** argv) {
+ 
+ 	instance inst;
+-
+-	inst.input_file = (char *) calloc(1000, sizeof(char));
++	mystr inst1;
++//Presolving settings
++   inst1.isPSCLP = true;
++	inst.algorithm = 2;
++   
++   //Input facilities file and clients file
++   inst1.input_file_f = (char *) calloc(1000, sizeof(char)); 
++   inst1.input_file_c = (char *) calloc(1000, sizeof(char)); 
+ 
+ 	////////////////////////////////////////////////////////////////////////////////////////
+-	if (argc == 6)
++   int exec = 0;
++	if (argc >= 8)
+ 	{
+-		/*Param1*/strcpy(inst.input_file, argv[1]);
+-		/*Param2*/inst.algorithm=atoi(argv[2]);
+-		/*Param3*/inst.timelimit=atof(argv[3]);
+-		/*Param4*/inst.RADIUS=atof(argv[4]);
+-		/*Param5*/inst.COVERING_DEMAND=atof(argv[5]);
++      exec = atoi(argv[1]);
++		strcpy(inst1.input_file_f, argv[2]);
++		strcpy(inst1.input_file_c, argv[3]);
++      inst.timelimit=atof(argv[4]);
++      inst1.RADIUS=atof(argv[5]);
++      inst1.is_percentage=atoi(argv[6]);
++      cout << "Radius: " << inst1.RADIUS << endl;
++      if( inst1.isPSCLP )
++      {
++         inst1.COVERING_DEMAND=atof(argv[7]);
++         if(inst1.is_percentage == 1)
++            printf("Demand(percentage): %f\n", inst.COVERING_DEMAND);
++         else
++            printf("Demand: %f\n", inst.COVERING_DEMAND);
++      }
++      else
++      {
++         inst1.BUDGET=atof(argv[7]);
++         printf("%f\n", inst1.BUDGET);
++         if(inst1.is_percentage == 1)
++            printf( "Budget(percentage): %f\n", inst.BUDGET );
++         else
++            printf( "Budget: %f\n", inst.BUDGET);
++      }
++      inst1.seed = -1;
++      if (argc >= 9)
++         inst1.seed=atof(argv[8]);
+ 
+ 	}
+ 	else
+ 	{
++		//Error input
+ 		cout << "ERROR NUMBER STANDARD PARAMETERS" << endl;
+-		cout << "Param1:\t instance name\n";
+-		cout << "Param2:\t algorithm\n";
+-		cout << "Param3:\t time limit\n";
+-		cout << "Param4:\t RADIUS\n";
+-		cout << "Param5:\t BUDGET\n";
+-
++      cout << "Param1:\t settings\n";
++		cout << "Param2:\t file of facilities\n";
++      cout << "Param3:\t customers file (can be a number and then generate customers randomly when running the code)\n";
++		cout << "Param4:\t time limitation in seconds\n";
++		cout << "Param5:\t covering radius\n";
++		cout << "Param6:\t is percentage of Param7 (total budget for the MCLP or total covering demand for the PSCLP)?\n";
++		cout << "Param7:\t budget for the MCLP or covering demand for the PSCLP\n";
++		cout << "Param8:\t CPXPARAM_RandomSeed for CPLEX\n";
+ 		exit(-1);
+ 	}
++   
++   inst1.isIA = true;
++   inst1.isSA = true;
++   inst1.isD = true;
++   switch (exec)
++   {
++      case 0: //NO_PRE
++         inst1.isIA = false;
++         inst1.isSA = false;
++         inst1.isD = false;
++         break;
++      case 1: //ALL
++         inst1.isIA = true;
++         inst1.isSA = true;
++         inst1.isD = true;
++         break;
++   }
+ 	////////////////////////////////////////////////////////////////////////////////////////
+ 
+ 
++   inst1.coordinates_loaded = false;
+ 	inst.cohordinates_loaded=false;
+ 
+-	cout << "***RADIUS\t" << inst.RADIUS << endl;
+-	cout << "***BUDGET\t" << inst.COVERING_DEMAND << endl;
+-
+ 
+ 	/////////////////////////////////////////////////////////////////////////////////////////
+ 	clock_t time_start=clock();
+-
+-	READ_NEW_FILE(&inst);
++	//Read facility and client files if files exist and implement presolving methods
++	read_file(&inst1);
++	//Build data structures based on read data
++	READ_NEW_FILE1(&inst, &inst1);
++	//Presolving time statistics
++   cout<<"presolve_IA: "<<inst1.presolve_IA_time<<endl;
++   cout<<"presolve_D: "<<inst1.presolve_D_time<<endl;
++   inst1.presolve_time = inst1.presolve_IA_time
++      + inst1.presolve_D_time;
++   cout<<"Presolve Time: "<<inst1.presolve_time<<endl;
+ 
+ 	clock_t time_end=clock();
+ 	double inst_generation_time=(double)(time_end-time_start)/(double)CLOCKS_PER_SEC;
+@@ -87,18 +143,20 @@ int main(int argc, char** argv) {
+ 
+ 		///////////////////////////
+ 		build_model_CFL_BEN_2(&inst);
+-		solve_model_CFL_BEN_2(&inst);
++		solve_model_CFL_BEN_2(&inst, &inst1);
+ 		clean_model_CFL_BEN_2(&inst);
+ 		///////////////////////////
+ 
+ 	}
+ 
+-
+-	free(inst.input_file);
++	//Free memory
++	free(inst1.input_file_f);
++	free(inst1.input_file_c);
++   free_data(&inst1);
+ 
+ 	free_data(&inst);
+ 
+-	printf("\nDONE!");
++	printf("\nDONE!\n");
+ 
+ 	return 1;
+ }
+diff -uprN LocationCovering/src_PSCLP/PSCLP.cpp LocationCovering1/src_PSCLP/PSCLP.cpp
+--- LocationCovering/src_PSCLP/PSCLP.cpp	2021-10-28 22:15:32.553512100 +0800
++++ LocationCovering1/src_PSCLP/PSCLP.cpp	2021-10-28 22:24:02.008989200 +0800
+@@ -428,10 +428,10 @@ void solve_model_CFL(instance *inst)
+ 	inst->lpstat=CPXgetstat(inst->env_CFL,inst->lp_CFL);
+ 	inst->nodecount = CPXgetnodecnt(inst->env_CFL, inst->lp_CFL);
+ 
+-	cout << "\n\nlpstat\t" << inst->lpstat << endl;
++	//cout << "\n\nlpstat\t" << inst->lpstat << endl;
+ 
+-	cout << "\n***open_facilities\t" << open_facilities << endl;
+-	cout << "***satisfied_clients\t" << satisfied_clients << endl;
++	//cout << "\n***open_facilities\t" << open_facilities << endl;
++	//cout << "***satisfied_clients\t" << satisfied_clients << endl;
+ 
+ 
+ 	///////////////////////////////////////////////////////////////////////////////////
+@@ -449,7 +449,12 @@ void solve_model_CFL(instance *inst)
+ 	int cur_numcols=CPXgetnumcols(inst->env_CFL,inst->lp_CFL);
+ 	int cur_numrows=CPXgetnumrows(inst->env_CFL,inst->lp_CFL);
+ 
+-	cout << "\n\nSTAT:\tobjval\t" << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients << "\ttime\t"<< solution_time<< endl << endl;
++	cout << "Objval: " << inst->objval << endl;
++   cout << "Bestobjval: " << inst->bestobjval << endl;
++   cout << "Lpstat: " << inst->lpstat << endl; 
++   cout << "Nodecount: " << inst->nodecount << endl;
++   cout << "Solve_time: " << solution_time << endl;
++	//cout << "\n\nSTAT:\tobjval\t" << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients << "\ttime\t"<< solution_time<< endl << endl;
+ 
+ 
+ 	//	printf("\nnumcols\t%d\n",cur_numcols);
+diff -uprN LocationCovering/src_PSCLP/PSCLP_BEN.cpp LocationCovering1/src_PSCLP/PSCLP_BEN.cpp
+--- LocationCovering/src_PSCLP/PSCLP_BEN.cpp	2021-10-28 22:15:32.552513100 +0800
++++ LocationCovering1/src_PSCLP/PSCLP_BEN.cpp	2021-10-28 22:24:02.006994500 +0800
+@@ -1,5 +1,5 @@
+ 
+-
++#include <iomanip>
+ #include "PSCLP_BEN.h"
+ 
+ 
+@@ -55,7 +55,7 @@ int n_cuts_BEN_FRAC_CFL_2=0;
+ 
+ //#define LIFTING
+ 
+-/*****************************************************************/
++//Benders callback for integer solution 
+ int CPXPUBLIC mycutcallback_CFL_BEN_2(CPXCENVptr env,void *cbdata,int wherefrom,void *cbhandle,int *useraction_p)
+ /*****************************************************************/
+ {
+@@ -153,13 +153,21 @@ int CPXPUBLIC mycutcallback_CFL_BEN_2(CP
+ 	for (int i = 0; i <inst->n_locations; i++)
+ 	{
+ 
+-		_cut_CFL_BEN_2_rmatval[i]=0.0;
++		//_cut_CFL_BEN_2_rmatval[i]=0.0;
++		_cut_CFL_BEN_2_rmatval[i]=inst->singleton[i];
+ 
+ 		for (int  k = inst->NFS[i]; k < inst->NFS[i+1]; k++ )
+ 		{
+-
+-
+-			_cut_CFL_BEN_2_rmatval[i]=_cut_CFL_BEN_2_rmatval[i] + AUX_SOL_2[inst->AFS[k]];
++         /*
++         if(inst->NBS[inst->AFS[k]+1] - inst->NBS[inst->AFS[k]] == 1)
++         {
++		      _cut_CFL_BEN_2_rmatval[i]+=inst->demand[inst->AFS[k]];
++            if(i==0)
++               cout<<inst->demand[inst->AFS[k]]<<" "<<_cut_CFL_BEN_2_rmatval[i]<<endl;
++         }
++         else
++         */
++            _cut_CFL_BEN_2_rmatval[i]=_cut_CFL_BEN_2_rmatval[i] + AUX_SOL_2[inst->AFS[k]];
+ 
+ 		}
+ 
+@@ -275,7 +283,7 @@ int CPXPUBLIC mycutcallback_CFL_BEN_2(CP
+ 
+ 
+ 
+-/*****************************************************************/
++//Benders callback for fractional solution 
+ int CPXPUBLIC myusercutcallback_CFL_BEN_2(CPXCENVptr env,void *cbdata,int wherefrom,void *cbhandle,int *useraction_p)
+ /*****************************************************************/
+ {
+@@ -373,7 +381,8 @@ int CPXPUBLIC myusercutcallback_CFL_BEN_
+ 	for (int i = 0; i <inst->n_locations; i++)
+ 	{
+ 
+-		_cut_CFL_BEN_2_rmatval[i]=0.0;
++		//_cut_CFL_BEN_2_rmatval[i]=0.0;
++		_cut_CFL_BEN_2_rmatval[i]=inst->singleton[i];
+ 
+ 		for (int  k = inst->NFS[i]; k < inst->NFS[i+1]; k++ )
+ 		{
+@@ -498,7 +507,7 @@ int CPXPUBLIC myusercutcallback_CFL_BEN_
+ 
+ 
+ 
+-/*****************************************************************/
++//Build Benders master problem
+ void build_model_CFL_BEN_2(instance *inst)
+ /*****************************************************************/
+ {
+@@ -631,8 +640,8 @@ void build_model_CFL_BEN_2(instance *ins
+ }
+ 
+ 
+-/*****************************************************************/
+-void solve_model_CFL_BEN_2(instance *inst)
++//Solve PSCLP using Benders decomposition
++void solve_model_CFL_BEN_2(instance *inst, mystr* inst1)
+ /*****************************************************************/
+ {
+ 
+@@ -745,7 +754,7 @@ void solve_model_CFL_BEN_2(instance *ins
+ 		printf("error in CPXgetmipobjval\n");
+ 	}
+ 
+-	printf("\n\nMIP solution value ->\t\%f",inst->objval);
++	printf("MIP solution value: %f\n",inst->objval);
+ 
+ 
+ 	int open_facilities=-1;
+@@ -789,7 +798,7 @@ void solve_model_CFL_BEN_2(instance *ins
+ 	inst->lpstat=CPXgetstat(inst->env_CFL_BEN_2,inst->lp_CFL_BEN_2);
+ 	inst->nodecount = CPXgetnodecnt(inst->env_CFL_BEN_2, inst->lp_CFL_BEN_2);
+ 
+-	cout << "\n\nlpstat\t" << inst->lpstat << endl;
++	//cout << "\n\nlpstat\t" << inst->lpstat << endl;
+ 
+ 
+ 	///////////////////////////////////////////////////////////////////////////////////////////
+@@ -799,13 +808,19 @@ void solve_model_CFL_BEN_2(instance *ins
+ 	///////////////////////////////////////////////////////////////////////////////////////////
+ 
+ 
+-	cout << "\n***open_facilities\t" << open_facilities << endl;
+-	cout << "***satisfied_clients\t" << satisfied_clients << endl;
++	//cout << "\n***open_facilities\t" << open_facilities << endl;
++	//cout << "***satisfied_clients\t" << satisfied_clients << endl;
+ 
+ 	//cout << "***lost_time\t" << lost_time << endl;
+ 
++	cout << "Objval: " << inst->objval << endl;
++   cout << "Bestobjval: " << inst->bestobjval << endl;
++   cout << "Lpstat: " << inst->lpstat << endl; 
++   cout << "Nodecount: " << inst->nodecount << endl;
++   cout << "Solve_time: " << solution_time << endl;
+ 
+-	cout << "\n\nSTAT:\tobjval\t" << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients << "\ttime\t"<< solution_time<< endl << endl;
++   //cout << "\n\nSTAT:\tobjval\t" << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients << "\ttime\t"<< solution_time<< endl << endl;
++	//cout << "\n\nSTAT:\tobjval\t" << setw(16) << inst->objval << "\tbestobjval\t" << inst->bestobjval << "\tlpstat\t" << inst->lpstat << "\topen_facilities\t" << open_facilities << "\tsatisfied_clients\t" << satisfied_clients <<"\tnodecount\t"<<inst->nodecount<<"\tpresolve_time\t"<<inst1->presolve_IA_time <<"\tsolve_time\t"<< solution_time<<"\ttotal_time\t"<<inst1->presolve_IA_time+solution_time<<"\ttotal_time_minus_presolve_time\t "<<solution_time<< endl << endl;
+ 
+ 
+ 
+@@ -863,7 +878,7 @@ void solve_model_CFL_BEN_2(instance *ins
+ }
+ 
+ 
+-/*****************************************************************/
++//Close CPLEX environment
+ void clean_model_CFL_BEN_2(instance *inst)
+ /*****************************************************************/
+ {
+diff -uprN LocationCovering/src_PSCLP/PSCLP_BEN.h LocationCovering1/src_PSCLP/PSCLP_BEN.h
+--- LocationCovering/src_PSCLP/PSCLP_BEN.h	2021-10-28 22:15:32.552513100 +0800
++++ LocationCovering1/src_PSCLP/PSCLP_BEN.h	2021-10-28 22:24:02.007991800 +0800
+@@ -4,6 +4,7 @@
+ 
+ #include "global_variables.h"
+ #include "global_functions.h"
++#include "struct.h"
+ 
+ using namespace std;
+ 
+@@ -16,15 +17,15 @@ void comb_solve_model_CFL_BEN_2_AUX(inst
+ void load_N_value_2(instance *inst,bool rounding);
+ /*****************************************************************/
+ 
+-/*****************************************************************/
++//Build Benders master problem
+ void build_model_CFL_BEN_2(instance *inst);
+ /*****************************************************************/
+ 
+-/*****************************************************************/
+-void solve_model_CFL_BEN_2(instance *inst);
++//Solve PSCLP using Benders decomposition
++void solve_model_CFL_BEN_2(instance *inst, mystr* inst1);
+ /*****************************************************************/
+ 
+-/*****************************************************************/
++//Close CPLEX environment
+ void clean_model_CFL_BEN_2(instance *inst);
+ /*****************************************************************/
+ 
+diff -uprN LocationCovering/src_PSCLP/global_functions.cpp LocationCovering1/src_PSCLP/global_functions.cpp
+--- LocationCovering/src_PSCLP/global_functions.cpp	2021-10-28 22:15:32.551345800 +0800
++++ LocationCovering1/src_PSCLP/global_functions.cpp	2021-10-28 22:24:02.005995500 +0800
+@@ -318,10 +318,10 @@ double distance(double x1,double y1,doub
+ {
+ 
+ 
+-	int distancex = (x2 - x1)*(x2 - x1);
+-	int distancey = (y2 - y1)*(y2 - y1);
++	double distancex = (x2 - x1)*(x2 - x1);
++	double distancey = (y2 - y1)*(y2 - y1);
+ 
+-	return   sqrt(distancex + distancey);
++	return sqrt(distancex + distancey);
+ }
+ 
+ /*****************************************************************/
+@@ -351,128 +351,6 @@ double distance_manatthan(double x1,doub
+ 
+ 
+ 
+-/*****************************************************************/
+-void READ_NEW_FILE(instance *inst)
+-/*****************************************************************/
+-{
+-
+-	cout << "INSTANCE\t" << inst->input_file << endl;
+-
+-
+-	ifstream in(inst->input_file);
+-	if(!in)
+-	{
+-		ofstream err("Error.log",ios::app);
+-		cout << "File could not be opened. " << endl;
+-		exit(1);
+-	}
+-
+-	in >> inst->n_locations;
+-	in >> inst->n_clients;
+-
+-	cout << "\n\n***LOCATIONS\t" << inst->n_locations << endl;
+-	cout << "***CLIENTS\t" << inst->n_clients << endl;
+-
+-	inst->fixed_cost = (int *) calloc(inst->n_locations, sizeof(int));
+-	inst->demand = (int *) calloc(inst->n_clients, sizeof(int));
+-
+-	inst->x_location= (double *) calloc(inst->n_locations, sizeof(double));
+-	inst->y_location= (double *) calloc(inst->n_locations, sizeof(double));
+-
+-	inst->x_client= (double *) calloc(inst->n_clients, sizeof(double));
+-	inst->y_client= (double *) calloc(inst->n_clients, sizeof(double));
+-
+-	inst->cohordinates_loaded=true;
+-
+-
+-	for ( int j = 0; j < inst->n_locations; j++ )
+-	{
+-		char dummy_char;
+-		int dummy_int;
+-
+-		in >>dummy_char;
+-		in >>dummy_int;
+-
+-//		cout << dummy_char << "\t" <<dummy_int << endl;
+-//		cin.get();
+-
+-		in >> inst->x_location[j];
+-		in >> inst->y_location[j];
+-		in >> inst->fixed_cost[j];
+-	}
+-
+-	for ( int i = 0; i < inst->n_clients; i++ )
+-	{
+-
+-		char dummy_char;
+-		int dummy_int;
+-
+-		in >>dummy_char;
+-		in >>dummy_int;
+-
+-//		cout << dummy_char << "\t" <<dummy_int << endl;
+-//		cin.get();
+-
+-		in >> inst->x_client[i];
+-		in >> inst->y_client[i];
+-		in >> inst->demand[i];
+-	}
+-
+-
+-#ifdef	print_point
+-	for ( int j = 0; j < inst->n_locations; j++ )
+-	{
+-		cout << "Location\t" <<  j << "\t(x,y)\t" << inst->x_location[j] << "\t" << inst->y_location[j] << endl;
+-	}
+-
+-	for ( int i = 0; i < inst->n_clients; i++ )
+-	{
+-
+-		cout << "Client\t" << i << "\t(x,y)\t" << inst->x_client[i]  << "\t" << inst->y_client[i] << endl;
+-	}
+-#endif
+-
+-
+-
+-#ifdef	print_distances
+-	cout << "DISTANCES\n";
+-	for ( int j = 0; j < inst->n_locations; j++ )
+-	{
+-		cout << "location\t" << j << endl;
+-		for ( int i = 0; i < inst->n_clients; i++ )
+-		{
+-			cout << "distance to client\t" << i << "\t" << distance_manatthan(inst->x_location[j],inst->y_location[j],inst->x_client[i],inst->y_client[i]) << "\t" << distance(inst->x_location[j],inst->y_location[j],inst->x_client[i],inst->y_client[i])<< endl;
+-
+-		}
+-	}
+-	cin.get();
+-#endif
+-
+-
+-
+-	cout << "\n\nBUILDING neighbourhoods\n";
+-	vector < vector < int > > dummy;
+-	for ( int i = 0; i < inst->n_clients; i++ ){
+-
+-		vector < int > local_dummy;
+-
+-		for ( int j = 0; j < inst->n_locations; j++)
+-		{
+-
+-			if(distance(inst->x_client[i],inst->y_client[i],inst->x_location[j],inst->y_location[j]) < inst->RADIUS)
+-			{
+-				local_dummy.push_back(j);
+-			}
+-		}
+-		dummy.push_back(local_dummy);
+-	}
+-
+-	///////////////////////////////////
+-	build_data_structure(inst,dummy);
+-	///////////////////////////////////
+-
+-}
+-
+ 
+ 
+ 
+@@ -482,6 +360,7 @@ void free_data(instance *inst)
+ {
+ 
+ 	free(inst->fixed_cost);
++	free(inst->singleton);
+ 	free(inst->demand);
+ 
+ 
+@@ -495,10 +374,10 @@ void free_data(instance *inst)
+ 
+ 
+ 	if(inst->cohordinates_loaded==true){
+-		free(inst->x_location);
+-		free(inst->y_location);
+-		free(inst->x_client);
+-		free(inst->y_client);
++		//free(inst->x_location);
++		//free(inst->y_location);
++		//free(inst->x_client);
++		//free(inst->y_client);
+ 	}
+ 
+ 	delete[]inst->cliets_OK;
+@@ -652,8 +531,8 @@ void load_I_TILDE_CFL(instance *inst, bo
+ 
+ 
+ 	for ( int j = 0; j < inst->n_clients; j++){
+-
+-		I_TILDE_CFL[j]=0.0;
++		
++      I_TILDE_CFL[j]=0.0;
+ 
+ 		for (int  k = inst->NBS[j]; k < inst->NBS[j+1]; k++ )
+ 		{
+@@ -743,7 +622,6 @@ void comb_solve_model_CFL_BEN_2_AUX_2(in
+ 	for ( int i = 0; i < inst->n_clients; i++ )
+ 	{
+ 
+-
+ 		if(I_TILDE[i] <= 1 + 0.0001)
+ 		{
+ 			//pi
+diff -uprN LocationCovering/src_PSCLP/global_functions.h LocationCovering1/src_PSCLP/global_functions.h
+--- LocationCovering/src_PSCLP/global_functions.h	2021-10-28 22:15:32.555506800 +0800
++++ LocationCovering1/src_PSCLP/global_functions.h	2021-10-28 22:24:02.010983800 +0800
+@@ -33,10 +33,6 @@ double distance_manatthan(double x1,doub
+ /*****************************************************************/
+ 
+ /*****************************************************************/
+-void READ_NEW_FILE(instance *inst);
+-/*****************************************************************/
+-
+-/*****************************************************************/
+ void free_data(instance *inst);
+ /*****************************************************************/
+ 
+diff -uprN LocationCovering/src_PSCLP/global_variables.h LocationCovering1/src_PSCLP/global_variables.h
+--- LocationCovering/src_PSCLP/global_variables.h	2021-10-28 22:15:32.553512100 +0800
++++ LocationCovering1/src_PSCLP/global_variables.h	2021-10-28 22:24:02.008989200 +0800
+@@ -16,7 +16,7 @@
+ #include <algorithm>
+ 
+ //#include </home/fabio/ILOG/CPLEX_Studio_AcademicResearch127/cplex/include/ilcplex/cplex.h>
+-#include <cplex.h>
++#include "../../../include/cplex.h"
+ 
+ using namespace std;
+ 
+@@ -29,23 +29,25 @@ using namespace std;
+ 
+ typedef struct {
+ 
+-	int algorithm;
++	int algorithm; /* Solving settings */
+ 	char *input_file;
+-	int n_locations;
+-	int n_clients;
++	int n_locations; /* Number of facilities */
++	int n_clients; /* Number of clients */
+ 
+-	int *demand;
+-	int *fixed_cost;
+ 
+-	double RADIUS;
+-	double COVERING_DEMAND;
+-	double BUDGET;
++	int *demand; /*Demand vector of clients */
++	int *fixed_cost; /* Cost vector of facilities */
++	double *singleton; /* Singleton nodes */
+ 
+-	double timelimit;
++	double RADIUS; /* Coverage radius */
++	double COVERING_DEMAND; /* The required coverage demand */
++	double BUDGET; /* The required coverage budget */
+ 
+-	int seed;
++	double timelimit; /* Time limitation */
+ 
+-	int number_of_CPU;
++	int seed; /* Random seed */
++
++	int number_of_CPU; /* Number of CPUs */
+ 
+ 
+ 	///////////////////////////////////////////////////////////////////////////////
+@@ -59,15 +61,15 @@ typedef struct {
+ 	///////////////////////////////////////////////////////////////////////////////
+ 
+ 	bool cohordinates_loaded;
+-	double *x_location;
+-	double *y_location;
++	double *x_location; /*X coordinates of facilities */
++   	double *y_location; /*Y coordinates of facilities */
+ 
+-	double *x_client;
+-	double *y_client;
++   	double *x_client; /*X coordinates of clients */
++   	double *y_client; /*Y coordinates of clients */
+ 
+ 	bool *cliets_OK;
+ 
+-	/////////////////////////////////////CPLEX/////////////////////////////////////
++	//CPLEX related variables and environments
+ 	CPXENVptr env_CFL,env_CFL_BEN,env_CFL_BEN_FACETS,env_CFL_BEN_2,env_DFL_BEN_2,env_CFL_BEN_AUX,env_CFL_BEN_FACETS_AUX,env_CFL_MOD,env_CFL_penalty,env_DFL,env_DFL_penalty,env_DFL_MOD,env_CFL2,env_CFL_CVAR,env_DFL_CVAR,env_CFL_CONS,env_DFL_CONS,env_CFL_GAMMA,env_DFL_GAMMA,env_CFL_EXP;
+ 	CPXLPptr  lp_CFL,lp_CFL_BEN,lp_CFL_BEN_FACETS,lp_CFL_BEN_2,lp_DFL_BEN_2,lp_CFL_BEN_AUX,lp_CFL_BEN_FACETS_AUX,lp_CFL_MOD,lp_CFL_penalty,lp_DFL,lp_DFL_penalty,lp_DFL_MOD,lp_CFL2,lp_CFL_CVAR,lp_DFL_CVAR,lp_CFL_CONS,lp_DFL_CONS,lp_CFL_GAMMA,lp_DFL_GAMMA,lp_CFL_EXP;
+ 	int status,ccnt,rcnt,nzcnt;
+diff -uprN LocationCovering/src_PSCLP/presolve.cpp LocationCovering1/src_PSCLP/presolve.cpp
+--- LocationCovering/src_PSCLP/presolve.cpp	1970-01-01 08:00:00.000000000 +0800
++++ LocationCovering1/src_PSCLP/presolve.cpp	2021-10-28 22:24:02.003883300 +0800
+@@ -0,0 +1,514 @@
++#include "presolve.h"
++#include <cstdlib>
++#define MAXFACILITY 2500
++#define MAXCLIENT (MAXFACILITY*MAXFACILITY) 
++/*
++double distance(double x1,double y1,double x2, double y2)
++{
++	double distancex = (x2 - x1)*(x2 - x1);
++	double distancey = (y2 - y1)*(y2 - y1);
++	return  distancex + distancey;
++}*/
++
++bool Comp(MyPair* a, MyPair *b)
++{
++   int size1 = a->locations.size();
++   int size2 = b->locations.size();
++   for( int i = 0; i < size1 && i< size2; i++)
++   {
++      if( a->locations[i] < b->locations[i] )
++         return true;
++      else if( a->locations[i] > b->locations[i] )
++         return false;
++   }
++   if(size1 < size2 )
++      return true;
++   else 
++      return false;
++   return false;
++}
++
++bool CompforDNC(MyPair* a, MyPair *b)
++{
++   int size1 = a->locations.size();
++   int size2 = b->locations.size();
++   if(size1 > size2)
++      return true;
++   else if (size1 < size2)
++      return false;
++   for( int i = 0; i < size1 && i< size2; i++)
++   {
++      if( a->locations[i] < b->locations[i] )
++         return true;
++      else if( a->locations[i] > b->locations[i] )
++         return false;
++   }
++   return false;
++}
++
++bool CompforIndex(MyPair* a, MyPair *b)
++{
++   return a->index < b->index;
++}
++
++bool CompEQ(MyPair* a, MyPair *b)
++{
++   int size1 = a->locations.size();
++   int size2 = b->locations.size();
++   if(size1 != size2)
++      return false;
++   for( int i = 0; i < size1 && i< size2; i++)
++   {
++      if( a->locations[i] < b->locations[i] )
++         return false;
++      else if( a->locations[i] > b->locations[i] )
++         return false;
++   }
++   return true;
++}
++
++//Set bound in node presolving
++bool setbound(mystr* inst, int pos, char sign)
++{
++   assert(pos >= 0 && pos <= inst->validlocations + inst->data.size());
++   if(sign == 'L')
++   {
++      if( inst->ub[pos] > 1e-6)
++      {
++         inst->ub[pos] = 0;
++         inst->chgind[inst->numchg] = pos;
++         inst->sign[inst->numchg] = 'L';
++         inst->numchg++;
++         inst->nfix++;
++      }
++      else
++         return false;
++   }
++   else if(sign == 'G')
++   {
++      if( inst->lb[pos] <= 1-1e-8 )
++      {
++         inst->lb[pos] = 1;
++         inst->chgind[inst->numchg] = pos;
++         inst->sign[inst->numchg] = 'G';
++         inst->numchg++;
++         inst->nfix++;
++      }
++      else 
++         return false;
++   }
++   else
++      assert(0);
++   return true;
++}
++
++//Calculate J(i) based on I(j)
++bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b)
++{
++   int size = a.size();
++   int bsize = b.size();
++   for(int i = 0; i<size; i++)
++   {
++      a[i]->locations.clear();
++      a[i]->sign = 0;
++   }
++   for(int i = 0; i<bsize; i++)
++   {      
++      //inst->data[i]->Print();
++      size = b[i]->locations.size();
++      for(int k = 0; k<size; k++)
++      {
++         a[b[i]->locations[k]]->sign |= (1 << (i%32));
++         a[b[i]->locations[k]]->locations.push_back(i);
++      }
++   }
++   return true;
++}
++
++//Determine inclusive relations of  support signature in 32-bit
++bool IsSubSet32(vector<MyPair*> &a, int i, int j)
++{
++   if( ( a[i]->sign | a[j]->sign) == a[i]->sign )
++      return true;
++   return false;
++}
++
++//Set a contains Set b ?
++bool IsSubSet(vector<int> &a, vector<int> &b)
++{
++   int size1 = a.size();
++   int size2 = b.size();
++   if(size1 < size2)
++      return false;
++   int i = 0, j = 0; 
++   bool isSubset = true;
++   while(i < size1 && j< size2)
++   {
++      if( a[i] == b[j] )
++      {
++         i++;
++         j++;
++      }
++      else if( a[i] < b[j] )
++      {
++         i++;
++      }
++      else if( a[i] > b[j] )
++      {
++         isSubset = false;
++         break;
++      }
++   }
++   if(isSubset == false || j < size2)
++   {
++      return false;
++   }
++   return true;
++}
++
++//Remove the elements of Set a in Set b?
++bool RemoveSubSet(vector<int> &a, vector<int> &b)
++{
++   int size1 = a.size();
++   int size2 = b.size();
++   if(size1 < size2)
++      return false;
++   int i = 0, j = 0; 
++   int n_locations = 0;
++   while(i < size1 && j< size2)
++   {
++      if( a[i] == b[j] )
++      {
++         i++;
++         j++;
++      }
++      else if( a[i] < b[j] )
++      {
++         a[n_locations] = a[i]; 
++         n_locations++;
++         i++;
++      }
++      else if( a[i] > b[j] )
++      {
++         assert(0);
++      }
++   }
++   for(; i<size1; i++)
++   {
++      a[n_locations] = a[i]; 
++      n_locations++;
++   }
++   a.erase(a.begin() + n_locations, a.end());
++   return true;
++}
++
++//Domination presolving
++void Domination(mystr* inst)
++{
++   clock_t time_presolvestart=clock();
++   int asize = inst->covers.size();
++   sort(inst->covers.begin(), inst->covers.end(), CompforDNC);
++
++   for(int i = 0; i<asize; i++)
++   {
++      if(inst->covers[i]->isdeleted == true)
++         continue;
++      for(int j = i+1; j<asize; j++)
++      {
++         if(inst->covers[j]->isdeleted == true)
++            continue;
++         if( inst->covers[j]->locations.size() > 0)
++         {
++            if( IsSubSet32(inst->covers, i, j))
++            {
++               if(IsSubSet(inst->covers[i]->locations, inst->covers[j]->locations))
++               {
++                  inst->covers[j]->isdeleted = true;
++               }
++            }
++         }
++         else
++         {
++            if(IsSubSet(inst->covers[i]->locations, inst->covers[j]->locations))
++            {
++               inst->covers[j]->isdeleted = true;
++            }
++         }
++      }
++   }
++   sort(inst->covers.begin(), inst->covers.end(), CompforIndex);
++   //Remove the deleted facilities from the set I(j).
++   int lsize = 0, ncounter = 0;
++   for(int i = 0; i<inst->n_data; i++)
++   {
++      lsize = inst->data[i]->locations.size();
++      ncounter = 0;
++      inst->data[i]->sign = 0;
++      for(int j = 0; j<lsize; j++)
++      {
++         if(inst->covers[inst->data[i]->locations[j]]->isdeleted == false)
++         {
++            inst->data[i]->sign &= 1 << ((inst->data[i]->locations[j])%32);
++            inst->data[i]->locations[ncounter] = inst->data[i]->locations[j]; 
++            ncounter++;
++         }
++      }
++      inst->data[i]->locations.erase(inst->data[i]->locations.begin()+ncounter, inst->data[i]->locations.end());
++   }
++   clock_t time_presolveend=clock();
++   inst->presolve_D_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
++}
++
++//Reimplementing isomorphic aggregation when domination presolving succeeds
++void IA2(mystr* inst)
++{
++   inst->isfind = false;
++   clock_t time_presolvestart;
++   clock_t time_presolveend;
++   time_presolvestart=clock();
++   unordered_map<vector<int>, MyPair*, MyVector_hasher, MyVector_equal> mymap;
++   unordered_map<vector<int>, MyPair*, MyVector_hasher, MyVector_equal>::iterator it;
++	for ( int i = 0; i < inst->n_data; i++ )
++   {
++      it = mymap.find(inst->data[i]->locations);
++      if(it == mymap.end())
++      {
++         mymap.insert({ inst->data[i]->locations, inst->data[i]});
++      }
++      else
++      {
++         (*it).second->cost += inst->data[i]->cost;
++         (*it).second->demand += inst->data[i]->demand;
++         for(int j = 0; j<inst->data[i]->clients.size(); j++)
++            (*it).second->clients.push_back(inst->data[i]->clients[j]);
++         delete inst->data[i];
++         inst->data[i] = NULL;
++         inst->isfind = true;
++      }
++   }
++   time_presolveend = clock();
++   inst->presolve_IA_time += (double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
++   int ncounter = 0;
++   for(int i = 0; i<inst->n_data; i++)
++   {
++      if(inst->data[i] != NULL)
++      {
++         inst->data[ncounter] = inst->data[i];
++         ncounter++;
++      }
++   }
++   inst->data.erase(inst->data.begin()+ncounter, inst->data.end());
++   inst->n_data = inst->data.size();
++   CalculateCovers(inst->covers, inst->data);
++   return;
++}
++
++//Isomorphic aggregation (and generate random data)
++void IA(mystr *inst)
++{
++   if(inst->coordinates_loaded == false)
++      cout<< "Randomly generate!"<<endl;
++   unordered_map<MyArray, MyPair*, MyArray_hasher, MyArray_equal> mymap;
++   unordered_map<MyArray, MyPair*, MyArray_hasher, MyArray_equal>::iterator it;
++   clock_t time_presolvestart;
++   clock_t time_presolveend;
++   MyPair* pair;
++   int local_dummy_a[MAXFACILITY];
++   int **totalarray;
++   if(inst->isIA)
++      totalarray = new int*[inst->n_locations*inst->n_locations];
++   else
++      totalarray = new int*[inst->n_clients];
++   int n_data = 0;
++   double Distance = 0.0;
++   double x,y;
++   int len = 0;
++   double rand_max = 1.0*RAND_MAX;
++   MyArray local_dummy;
++   local_dummy.a = local_dummy_a;
++   local_dummy.len = len;
++   time_presolvestart=clock();
++   double rsquare = inst->RADIUS;
++	for ( long long i = 0; i < inst->n_clients; i++ ){
++      len = 0;
++      if(inst->coordinates_loaded == false)
++      {
++         //Random generate points of clients
++         x = rand()/rand_max*30;
++         y = rand()/rand_max*30;
++         for ( int j = 0; j < inst->n_locations; j++)
++         {
++            Distance = distance(x,y,inst->x_location[j],inst->y_location[j]);
++            if(Distance < rsquare)
++               local_dummy_a[len++] = j;
++         }
++      }
++      else
++      {
++         for ( int j = 0; j < inst->n_locations; j++)
++         {
++            Distance = distance(inst->x_client[i],inst->y_client[i],inst->x_location[j],inst->y_location[j]);
++            if( strcmp(inst->input_file_f, inst->input_file_c) == 0 && i == j)
++               Distance = 0;
++            if(Distance < rsquare)
++            {
++               local_dummy_a[len++] = j;
++            }
++         }
++      }
++      if(inst->isIA)
++      {
++         local_dummy.a = local_dummy_a;
++         local_dummy.len = len;
++         it = mymap.find(local_dummy);
++         if(it == mymap.end())
++         {
++            pair = new MyPair(n_data);
++            totalarray[n_data] = new int[local_dummy.len];
++            for(int ll = 0; ll<local_dummy.len; ll++)
++            {
++               pair->locations.push_back(local_dummy.a[ll]);
++               totalarray[n_data][ll] = local_dummy.a[ll];
++            }
++            local_dummy.a = totalarray[n_data];
++            if(inst->isPSCLP)
++            {
++               pair->cost = 0;
++               if(inst->coordinates_loaded==true)
++                  pair->demand = inst->demand[i];
++               else
++                  pair->demand = (rand() % 100)+ 1;
++            }
++            else
++            {
++               pair->demand = 0;
++               if(inst->coordinates_loaded == true)
++                  pair->cost = inst->demand[i];
++               else
++                  pair->cost += (rand() % 100)+ 1;
++            }
++            inst->data.push_back(pair);
++            mymap.insert({ local_dummy, pair});
++            n_data++;
++         }
++         else
++         {
++            if(inst->isPSCLP)
++            {
++               it->second->cost = 0;
++               if(inst->coordinates_loaded==true)
++                  it->second->demand = inst->demand[i];
++               else
++                  it->second->demand += (rand() % 100)+ 1;
++            }
++            else
++            {
++               it->second->demand = 0;
++               if(inst->coordinates_loaded == true)
++                  it->second->cost += inst->demand[i];
++               else
++                  it->second->cost += (rand() % 100)+ 1;
++            }
++         }
++      }
++      else
++      {
++         local_dummy.a = local_dummy_a;
++         local_dummy.len = len;
++         pair = new MyPair(n_data);
++         totalarray[n_data] = new int[local_dummy.len];
++         for(int ll = 0; ll<local_dummy.len; ll++)
++         {
++            pair->locations.push_back(local_dummy.a[ll]);
++            totalarray[n_data][ll] = local_dummy.a[ll];
++         }
++         local_dummy.a = totalarray[n_data];
++         if(inst->isPSCLP)
++         {
++            pair->cost = 0;
++            if(inst->coordinates_loaded==true)
++               pair->demand = inst->demand[i];
++            else
++               pair->demand = (rand() % 100)+ 1;
++         }
++         else
++         {
++            pair->demand = 0;
++            if(inst->coordinates_loaded==true)
++               pair->cost = inst->demand[i];
++            else
++               pair->cost = (rand() % 100)+ 1;
++         }
++         inst->data.push_back(pair);
++         n_data++;
++      }
++   }
++   time_presolveend=clock();
++   inst->presolve_IA_time+=(double)(time_presolveend-time_presolvestart)/(double)CLOCKS_PER_SEC;
++   //cout<< inst->presolve_IA_time <<endl;
++   for(int i = 0; i<n_data; i++)
++   {
++      delete[] totalarray[i];
++   }
++   delete[] totalarray;
++   inst->n_data = inst->data.size();
++}
++
++//Singleton aggregation
++void SA(mystr* inst)
++{
++   int csize = inst->data.size();
++   inst->n_data = 0;
++   for(int i = 0; i<csize; i++)
++   {
++      if(inst->data[i]->locations.size() == 0)
++      {
++         delete inst->data[i];
++      }
++      else if(inst->data[i]->locations.size() == 1)
++      {
++         inst->covers[inst->data[i]->locations[0]]->cost += inst->data[i]->cost;
++         inst->covers[inst->data[i]->locations[0]]->demand += inst->data[i]->demand;
++         inst->singlecover.push_back(inst->data[i]->locations[0]);
++         delete inst->data[i];
++      }
++      else
++      {
++         inst->data[inst->n_data] = inst->data[i];
++         inst->n_data++;
++      }
++   }
++   inst->data.erase(inst->data.begin()+inst->n_data, inst->data.end()); 
++}
++
++void NodePresolveInit(mystr* inst)
++{
++   int i = 0, j = 0;
++   int posi = 0;
++   int posj = 0;
++   int lsize = 0;
++   int datasize = inst->data.size();
++   for(i = 0; i<datasize; i++)
++   {
++      posi = inst->data[i]->pos;
++      assert(posi >= 0);
++      if(inst->ub[posi] <= 1e-6)
++      {
++         inst->data[i]->isdeleted = true;
++         lsize = inst->data[i]->locations.size();
++         for(j = 0; j<lsize; j++)
++         {
++            posj = inst->covers[inst->data[i]->locations[j]]->pos;
++            assert(posj >= 0);
++            setbound(inst, posj, 'L');
++         }
++      }
++      else 
++         inst->data[i]->isdeleted = false;
++   }
++}
++//Node presolving
++void NodePresolve(mystr* inst, double bestobj)
++{
++   NodePresolveInit(inst);
++}
+diff -uprN LocationCovering/src_PSCLP/presolve.h LocationCovering1/src_PSCLP/presolve.h
+--- LocationCovering/src_PSCLP/presolve.h	1970-01-01 08:00:00.000000000 +0800
++++ LocationCovering1/src_PSCLP/presolve.h	2021-10-28 22:24:02.004880600 +0800
+@@ -0,0 +1,36 @@
++#ifndef PRESOLVE__H
++#define PRESOLVE__H
++#include "struct.h"
++
++//Calculate the distance between (x1,y1) and (x2,y2)
++double distance(double x1,double y1,double x2, double y2);
++
++bool Comp(MyPair* a, MyPair *b);
++bool CompforDNC(MyPair* a, MyPair *b);
++bool CompforIndex(MyPair* a, MyPair *b);
++bool CompEQ(MyPair* a, MyPair *b);
++
++//Set a contains Set b ?
++bool IsSubSet(vector<int> &a, vector<int> &b);
++
++//Remove the elements of Set a in Set b?
++bool RemoveSubSet(vector<int> &a, vector<int> &b);
++
++//Calculate J(i) based on I(j)
++bool CalculateCovers(vector<MyPair*> &a, vector<MyPair*> &b);
++
++//Isomorphic aggregation (and generate random data)
++void IA(mystr *inst);
++
++//Reimplementing isomorphic aggregation when domination presolving succeeds
++void IA2(mystr* inst);
++
++//Domination presolving
++void Domination(mystr* inst);
++
++//Singleton aggregation
++void SA(mystr* inst);
++
++//Node presolving
++void NodePresolve(mystr* inst, double bestobj);
++#endif
+diff -uprN LocationCovering/src_PSCLP/read.cpp LocationCovering1/src_PSCLP/read.cpp
+--- LocationCovering/src_PSCLP/read.cpp	1970-01-01 08:00:00.000000000 +0800
++++ LocationCovering1/src_PSCLP/read.cpp	2021-10-28 22:24:02.004880600 +0800
+@@ -0,0 +1,383 @@
++#include "global_functions.h"
++#include "presolve.h"
++#include "read.h"
++
++//Read facility and client files if files exist and implement presolving methods
++void read_file(mystr *inst)
++{
++   cout << "Facility file: " << inst->input_file_f << endl; /* Facility file */
++   cout << "Customer file: " << inst->input_file_c << endl; /* Client file */
++
++   ifstream in_f(inst->input_file_f);
++   if(!in_f)
++   {
++      ofstream err("Error.log",ios::app);
++      cout << "Faclity file could not be opened. " << endl;
++      exit(1);
++   }
++   ifstream in_c(inst->input_file_c);
++   if(atoi(inst->input_file_c) > 0)
++   {
++      inst->n_clients = atoi(inst->input_file_c); 
++      inst->coordinates_loaded = false;
++      cout << "Customer file could not be opened. " << endl;
++   }
++   else
++      inst->coordinates_loaded = true;
++
++   //The number of facilities/clients does not exceed the number of rows in files.
++   in_f >> inst->n_locations;
++   if( inst->coordinates_loaded == true)
++   {
++      in_c >> inst->n_clients;
++   }
++   cout << "Original model: "<< endl;
++   cout << "Number of facilities: " << inst->n_locations << endl;
++   cout << "Number of customers: " << inst->n_clients << endl;
++
++   inst->fixed_cost = (double *) calloc(inst->n_locations, sizeof(double));
++   inst->x_location= (double *) calloc(inst->n_locations, sizeof(double));
++   inst->y_location= (double *) calloc(inst->n_locations, sizeof(double));
++
++   //If customer file exists,  
++   if( inst->coordinates_loaded == true)
++   {
++      inst->demand = (double *) calloc(inst->n_clients, sizeof(double));
++      inst->x_client= (double *) calloc(inst->n_clients, sizeof(double));
++      inst->y_client= (double *) calloc(inst->n_clients, sizeof(double));
++   }
++
++   MyPair* mypair;
++   vector<int> vec;
++   char dummy_char;
++   int dummy_int;
++	for ( int j = 0; j < inst->n_locations; j++ )
++	{
++      in_f >> dummy_char;
++		in_f >> dummy_int;
++		in_f >> inst->x_location[j];
++		in_f >> inst->y_location[j];
++		in_f >> inst->fixed_cost[j];
++      inst->fixed_cost[j] = 1;
++      mypair = new MyPair(j);
++      if(inst->isPSCLP)
++      {
++         mypair->demand = 0;
++         mypair->cost = inst->fixed_cost[j];
++      }
++      else
++      {
++         mypair->demand = inst->fixed_cost[j];
++         mypair->cost = 0;
++      }
++      mypair->index = j;
++      inst->covers.push_back(mypair);
++	}
++   if( inst->coordinates_loaded == true)
++   {
++      for ( int i = 0; i < inst->n_clients; i++ )
++      {
++
++         char dummy_char;
++         int dummy_int;
++
++         in_c >>dummy_char;
++         in_c >>dummy_int;
++         in_c >> inst->x_client[i];
++         in_c >> inst->y_client[i];
++         if( strcmp(inst->input_file_f, inst->input_file_c) == 0)
++         {
++            inst->x_client[i] = inst->x_location[i];
++            inst->y_client[i] = inst->y_location[i];
++         }
++         in_c >> inst->demand[i];
++      }
++   }
++
++   //cout<<"RADIUS: "<<inst->RADIUS<<endl;
++	//////////////////////////
++   //Initialize statistics
++   inst->nfix = 0;
++   inst->presolve_time = 0.0;
++   inst->presolve_IA_time = 0.0;
++   inst->presolve_D_time = 0.0;
++   inst->presolve_node_time = 0.0;
++   
++   //Implement isomorphic aggregations
++   IA(inst);
++   if(inst->isPSCLP)
++   {
++      if(inst->COVERING_DEMAND <= 1+1e-8)
++      {
++         //Calculate total valid demand of customers (covered by at least one potential facilities).
++         double ratio = 0;
++         for(int i = 0; i<inst->data.size(); i++)
++         {
++            if(inst->data[i]->locations.size() > 0)
++               ratio = ratio + inst->data[i]->demand;
++         }
++         inst->COVERING_DEMAND = ceil(inst->COVERING_DEMAND * ratio);
++         //cout<<"BUDGET: "<<inst->COVERING_DEMAND<<endl;
++      }
++
++   }
++   else
++   {
++      if(inst->is_percentage == 1)
++      {
++         //Calculate total valid cost of facilities.
++         double ratio = 0;
++         for(int i = 0; i<inst->n_locations; i++)
++            ratio += inst->covers[i]->demand;
++         inst->BUDGET = (int)floor(inst->BUDGET * ratio);
++         //cout<<"BUDGET: "<<inst->BUDGET<<endl;
++      }
++   }
++   
++   inst->numchg = 0;
++   inst->chgind = (int*) calloc(inst->data.size() + inst->covers.size(), sizeof(int));
++   inst->sign = (char*) calloc(inst->data.size() + inst->covers.size(), sizeof(char));
++   inst->n_location = (int*) calloc(inst->data.size() + inst->covers.size(), sizeof(int));
++   
++   int size1 = inst->n_data;
++   //cout<<"Row1: "<<inst->n_data<<endl;
++   //cout<<"presolve_IA1: "<<inst->presolve_IA_time<<endl;
++   // Calculate J(i), i in I
++   CalculateCovers(inst->covers, inst->data);
++
++   inst->isfind = true;
++   inst->validlocations = inst->n_locations;
++   //Domination presolving
++   if(inst->isD)
++   {
++      inst->isfind = false;
++      Domination(inst);
++      int n_deleted = 0;
++      int j = 0;
++      for ( int i = 0; i < inst->n_locations; i++ )
++      {
++         if(inst->covers[i]->isdeleted)
++         {
++            n_deleted++;
++         }
++         else
++         {
++            inst->covers[i]->pos = j;
++            j++;
++         }
++      }
++      //cout<<"n_deleted_columns: "<<n_deleted<<endl;
++      int lsize = 0, ncounter = 0;
++      for(int i = 0; i<inst->n_data; i++)
++      {
++         lsize = inst->data[i]->locations.size();
++         for(int j = 0; j<lsize; j++)
++         {
++            inst->data[i]->locations[j] = inst->covers[ inst->data[i]->locations[j] ]->pos; 
++         }
++      }
++      j = 0;
++      for ( int i = 0; i < inst->n_locations; i++ )
++      {
++         if(inst->covers[i]->isdeleted)
++         {
++            delete inst->covers[i];
++         }
++         else
++         {
++            inst->covers[j] = inst->covers[i];
++            j++;
++         }
++      }
++      inst->covers.erase(inst->covers.begin()+j, inst->covers.end());
++      inst->n_locations = inst->covers.size();
++      
++      if(inst->isfind)
++         //Reimplement isomorphic aggregation if domination presolving succeeds
++         IA2(inst);
++      
++      //cout<<"n_deleted_rows: "<<size1 - inst->n_data<<endl;
++      inst->validlocations = inst->covers.size() - n_deleted;
++   }
++   if(inst->isSA)
++   {
++      //Reimplement singleton aggregations after domination presolving succeeds
++      SA(inst);
++   }
++   //////////////////////////////////
++   int nnz = 0;
++   for(int i = 0; i<inst->n_data; i++)
++   {
++      if(inst->data[i]->isdeleted == false)
++      {
++         nnz = nnz + inst->data[i]->locations.size();
++      }
++   }
++   //Statistics after presolving
++   if(inst->isPSCLP)
++      nnz += inst->validlocations;
++   else
++      nnz += inst->n_data;
++   cout<<"NNZ before nonzero cancellation: "<<nnz<<endl; /* Number of nonzeros in model after presolving */
++}
++//Free intermediate variables
++/*****************************************************************/
++void free_data(mystr *inst)
++   /*****************************************************************/
++{
++   int size = inst->data.size();
++   for(int i = 0; i<size; i++)
++   {
++      delete inst->data[i];
++   }
++   for(int i = 0; i<inst->n_locations; i++)
++   {
++      delete inst->covers[i];
++   }
++
++   free(inst->fixed_cost);
++   free(inst->chgind);
++   free(inst->sign);
++   free(inst->n_location);
++
++   free(inst->x_location);
++   free(inst->y_location);
++   if(inst->coordinates_loaded==true){
++      free(inst->demand);
++      free(inst->x_client);
++      free(inst->y_client);
++   }
++
++}
++
++//Build data structures based on read data
++void READ_NEW_FILE1(instance *inst, mystr* inst1)
++/*****************************************************************/
++{
++
++	//cout << "INSTANCE\t" << inst->input_file << endl;
++
++
++	//ifstream in(inst->input_file);
++	inst->n_locations = inst1->covers.size();
++	inst->n_clients = inst1->data.size();
++
++	//cout << "\n\n***LOCATIONS\t" << inst->n_locations << endl;
++	//cout << "***CLIENTS\t" << inst->n_clients << endl;
++
++	inst->fixed_cost = (int *) calloc(inst->n_locations, sizeof(int));
++	inst->singleton = (double *) calloc(inst->n_locations, sizeof(double));
++	inst->demand = (int *) calloc(inst->n_clients, sizeof(int));
++
++	//inst->x_location= (double *) calloc(inst->n_locations, sizeof(double));
++	//inst->y_location= (double *) calloc(inst->n_locations, sizeof(double));
++
++	//inst->x_client= (double *) calloc(inst->n_clients, sizeof(double));
++	//inst->y_client= (double *) calloc(inst->n_clients, sizeof(double));
++
++	inst->cohordinates_loaded=true;
++
++
++   double sumdemand = 0;
++   int kkk = 0;
++	for ( int j = 0; j < inst->n_locations; j++ )
++	{
++		//char dummy_char;
++		//int dummy_int;
++
++		//in >>dummy_char;
++		//in >>dummy_int;
++
++//		cout << dummy_char << "\t" <<dummy_int << endl;
++//		cin.get();
++
++//		in >> inst->x_location[j];
++//		in >> inst->y_location[j];
++		inst->singleton[j] = inst1->covers[j]->demand;
++		inst->fixed_cost[j] = 1;
++	}
++
++	for ( int i = 0; i < inst->n_clients; i++ )
++	{
++
++		//char dummy_char;
++		//int dummy_int;
++
++		//in >>dummy_char;
++		//in >>dummy_int;
++
++//		cout << dummy_char << "\t" <<dummy_int << endl;
++//		cin.get();
++
++//		in >> inst->x_client[i];
++//		in >> inst->y_client[i];
++//		in >> inst->demand[i];
++		inst->demand[i] = inst1->data[i]->demand;
++      sumdemand += inst->demand[i];
++	}
++   inst->COVERING_DEMAND = inst1->COVERING_DEMAND;
++
++
++#ifdef	print_point
++	for ( int j = 0; j < inst->n_locations; j++ )
++	{
++		cout << "Location\t" <<  j << "\t(x,y)\t" << inst->x_location[j] << "\t" << inst->y_location[j] << endl;
++	}
++
++	for ( int i = 0; i < inst->n_clients; i++ )
++	{
++
++		cout << "Client\t" << i << "\t(x,y)\t" << inst->x_client[i]  << "\t" << inst->y_client[i] << endl;
++	}
++#endif
++
++
++
++#ifdef	print_distances
++	cout << "DISTANCES\n";
++	for ( int j = 0; j < inst->n_locations; j++ )
++	{
++		cout << "location\t" << j << endl;
++		for ( int i = 0; i < inst->n_clients; i++ )
++		{
++			cout << "distance to client\t" << i << "\t" << distance_manatthan(inst->x_location[j],inst->y_location[j],inst->x_client[i],inst->y_client[i]) << "\t" << distance(inst->x_location[j],inst->y_location[j],inst->x_client[i],inst->y_client[i])<< endl;
++
++		}
++	}
++	cin.get();
++#endif
++
++
++
++	cout << "\n\nBUILDING neighbourhoods\n";
++	vector < vector < int > > dummy;
++#if 1
++	for ( int i = 0; i < inst1->n_data; i++ ){
++
++		vector < int > local_dummy;
++
++      local_dummy = inst1->data[i]->locations;
++      dummy.push_back(local_dummy);
++	}
++#else
++	for ( int i = 0; i < inst->n_clients; i++ ){
++
++		vector < int > local_dummy;
++
++		for ( int j = 0; j < inst->n_locations; j++)
++		{
++
++			if(distance(inst->x_client[i],inst->y_client[i],inst->x_location[j],inst->y_location[j]) < inst->RADIUS)
++			{
++				local_dummy.push_back(j);
++			}
++		}
++		dummy.push_back(local_dummy);
++	}
++#endif
++	///////////////////////////////////
++	build_data_structure(inst,dummy);
++	///////////////////////////////////
++
++}
++
+diff -uprN LocationCovering/src_PSCLP/read.h LocationCovering1/src_PSCLP/read.h
+--- LocationCovering/src_PSCLP/read.h	1970-01-01 08:00:00.000000000 +0800
++++ LocationCovering1/src_PSCLP/read.h	2021-10-28 22:24:02.007991800 +0800
+@@ -0,0 +1,17 @@
++#ifndef FUNCTIONS_HEADER
++#define FUNCTIONS_HEADER
++
++#include "struct.h"
++
++//Read facility and client files if files exist and implement presolving methods
++void read_file(mystr *inst);
++/*****************************************************************/
++
++//Free intermediate variables
++void free_data(mystr *inst);
++/*****************************************************************/
++
++//Build data structures based on read data
++void READ_NEW_FILE1(instance *inst, mystr* inst1);
++/*****************************************************************/
++#endif
+diff -uprN LocationCovering/src_PSCLP/struct.h LocationCovering1/src_PSCLP/struct.h
+--- LocationCovering/src_PSCLP/struct.h	1970-01-01 08:00:00.000000000 +0800
++++ LocationCovering1/src_PSCLP/struct.h	2021-10-28 22:24:02.010983800 +0800
+@@ -0,0 +1,228 @@
++#ifndef VARIABLE_HEADER
++#define VARIABLE_HEADER
++
++
++#include <stdlib.h>
++#include <stdio.h>
++#include <assert.h>
++#include <time.h>
++#include <iostream>
++#include <fstream>
++#include <math.h>
++#include <string.h>
++#include <errno.h>
++#include <sstream>
++#include <vector>
++#include <queue>
++#include <algorithm>
++#include <unordered_map>
++#include <cstddef>
++#include <functional>
++#include "../../../include/cplex.h"
++
++using namespace std;
++//Covering relationship and aggregation information
++class MyPair
++{
++public:
++   vector<int> locations; 
++   vector<long long> clients;
++   unsigned int sign;
++   double demand;
++   double cost;
++   int index;
++   vector<int> fronts;
++   vector<int> same;
++   vector<int> nexts;
++   bool isdeleted;
++   int pos;
++   MyPair(int ind)
++   {
++      demand = 0; 
++      index = ind; 
++      isdeleted = false; 
++   }
++   ~MyPair(){};
++   //Output callback
++   void Print()
++   {
++      int size = locations.size(); 
++      cout<<"index: "<<index<<" ";
++      cout<<"deleted: "<<isdeleted<<" ";
++      cout<<"locations: ";
++      for(int j = 0; j<size; j++)
++      {
++         cout<<locations[j]<<" ";
++      }
++      size = clients.size(); 
++      if(size > 0)
++         cout<<"\t clients: ";
++      for(int j = 0; j<size; j++)
++      {
++         cout<<clients[j]<<" ";
++      }
++      size = fronts.size(); 
++      if(size > 0)
++         cout<<"\t fronts: ";
++      for(int j = 0; j<size; j++)
++      {
++         cout<<fronts[j]<<" ";
++      }
++      size = nexts.size(); 
++      if(size > 0)
++         cout<<"\t nexts: ";
++      for(int j = 0; j<size; j++)
++      {
++         cout<<nexts[j]<<" ";
++      }
++      cout<<endl;
++   }
++};
++//Hash key storing coverage facilities of a client in isomorphic aggregation
++struct MyArray
++{ 
++   int* a;
++   int len;
++};
++//Hash function
++struct MyArray_hasher
++{ 
++   size_t operator ()(MyArray const& r) const
++   {
++      int size = r.len;
++      size_t t = 0;
++      for(int i = 0; i<size; i++)
++         t = t + hash<int>()(r.a[i]);
++      return t;
++   }
++};
++//Decide identify whether two clients have isomorphic coverage relations
++struct MyArray_equal
++{
++   bool operator()(MyArray const& lhs, MyArray const& rhs) const
++   {
++      int size1 = lhs.len;
++      int size2 = rhs.len;
++      if(size1 != size2)
++         return false;
++      for(int i = 0; i<size1; i++)
++      {
++         if(lhs.a[i] != rhs.a[i])
++            return false;
++      }
++      return true;
++   }
++};
++//Hash function when reimplementing isomorphic aggregation if domination presolving succeeds
++struct MyVector_hasher
++{ 
++   size_t operator ()(vector<int> const& r) const
++   {
++      int size = r.size();
++      size_t t = 0;
++      for(int i = 0; i<size; i++)
++         t = t + hash<int>()(r[i]);
++      return t;
++   }
++};
++//Decide identify whether two clients have isomorphic coverage relations when reimplementing isomorphic aggregation if domination presolving succeeds
++struct MyVector_equal
++{
++   bool operator()(vector<int> const& lhs, vector<int> const& rhs) const
++   {
++      int size1 = lhs.size();
++      int size2 = rhs.size();
++      if(size1 != size2)
++         return false;
++      for(int i = 0; i<size1; i++)
++      {
++         if(lhs[i] != rhs[i])
++            return false;
++      }
++      return true;
++   }
++};
++//PSCLP instance
++typedef struct {
++////////////////////
++   vector<MyPair*> data;  //Rows(Clients) information
++   vector<MyPair*> covers;  //Columns(Facilities) informaion
++   vector<int> singlecover;  
++	
++   int n_data; /* Number of clients after presolving */
++
++	
++   int algorithm; /* Solving settings */
++   char *input_file_f; /* Facility file */
++   char *input_file_c; /* Client file */
++   int n_locations; /* Number of facilities */
++   long long n_clients; /* Number of clients */
++   bool is_percentage; /* Is percentage */
++
++   double *demand; /*Demand vector of clients */
++   double *fixed_cost; /* Cost vector of facilities */
++
++
++
++   bool findsolution;
++	double RADIUS; /* Coverage radius */
++   double sumvalid;
++	double COVERING_DEMAND; /* The required coverage demand */
++	double BUDGET; /* The required coverage budget */
++   
++   bool isfind; /* Does domination presolving succeed */
++   int validlocations; /* Number of facilities after domination presolving */
++
++	double timelimit;  /* Time limitation */
++	int seed;  /* Random seed */
++	int number_of_CPU; /* Number of CPUs */
++   
++   int* n_location; /*Vector of numbers of coverage facilities */
++
++   int numchg;
++   int* chgind;
++   char* sign;
++
++   long nodeindex;
++
++	bool coordinates_loaded;
++	double *x_location; /*X coordinates of facilities */
++   	double *y_location; /*Y coordinates of facilities */
++
++   	double *x_client; /*X coordinates of clients */
++   	double *y_client; /*Y coordinates of clients */
++	
++	//CPLEX related variables and environments
++	CPXENVptr env;
++	CPXLPptr lp;
++	int status,ccnt,rcnt,nzcnt;
++	int* rmatbeg, *rmatind,*cmatbeg, *cmatind;
++	double* rmatval,*cmatval,*x,*pi,*obj, *lb, *ub,*rhs;
++	char *c_type,* sense;
++	char **colname;
++	double objval,bestobjval;
++	int lpstat,nodecount;
++	///////////////////////////////////////////////////////////////////////////////
++
++	int counter_c;
++	int counter_l;
++
++
++   double presolve_time; /* Total presolving time */
++   double presolve_IA_time; /* Presolving time of isomorphic aggregation */
++   double presolve_D_time; /* Presolving time of domination presolving */
++   double presolve_node_time; /* Prsolving time of nonoverlap fixing presolving */
++
++   long nfix;
++
++   bool isBranch;
++   bool isCut;
++   bool isBin; /*Set client variables binary or not */
++   bool isIA; /* Do isomorphic aggregation or not */
++   bool isSA; /* Do singleton aggregation or not */
++   bool isD; /* Do domination presolving or not */
++   bool isPSCLP; /* Is solving model a PSCLP (or a MCLP) */
++} mystr;
++
++
++#endif
