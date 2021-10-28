@@ -4,20 +4,20 @@
 //Read facility and client files if files exist.
 void read_file(instance *inst)
 {
-   cout << "Facility file: " << inst->input_file_f << endl; /* Facility file */
-   cout << "Customer file: " << inst->input_file_c << endl; /* Client file */
+   cout << "Facility information: " << inst->input_file_f << endl; /* Facility file */
+   cout << "Customer information: " << inst->input_file_c << endl; /* Client file */
 
    ifstream in_f(inst->input_file_f);
-   ifstream in_c(inst->input_file_c);
    if(!in_f)
    {
       ofstream err("Error.log",ios::app);
       cout << "Faclity file could not be opened. " << endl;
       exit(1);
    }
-   if(!in_c)
+   ifstream in_c(inst->input_file_c);
+   if(atoi(inst->input_file_c) > 0)
    {
-      
+      inst->n_clients = atoi(inst->input_file_c); 
       inst->coordinates_loaded = false;
       cout << "Customer file could not be opened. " << endl;
    }
@@ -25,15 +25,10 @@ void read_file(instance *inst)
       inst->coordinates_loaded = true;
 
    //The number of facilities/clients does not exceed the number of rows in files.
-   double a;
-   in_f >> a;
-   if(inst->n_locations > a)
-      inst->n_locations = (int)floor(a+1e-8);
+   in_f >> inst->n_locations;
    if( inst->coordinates_loaded == true)
    {
-      in_c >> a;
-      if(inst->n_clients > a)
-         inst->n_clients = (int)floor(a+1e-8);
+      in_c >> inst->n_clients;
    }
    cout << "Original model: "<< endl;
    cout << "Number of facilities: " << inst->n_locations << endl;
@@ -54,16 +49,15 @@ void read_file(instance *inst)
    //Generate client pointer
    MyPair* mypair; 
    vector<int> vec;
-   char dummy_char;
    int dummy_int;
+   double a;
 	for ( int j = 0; j < inst->n_locations; j++ )
 	{
-      in_f >> dummy_char;
 		in_f >> dummy_int;
 		in_f >> inst->x_location[j];
 		in_f >> inst->y_location[j];
 		in_f >> inst->fixed_cost[j];
-      inst->fixed_cost[j] = 1;
+		in_f >> a;
       mypair = new MyPair(j);
       if(inst->isPSCLP)
       {
@@ -82,12 +76,7 @@ void read_file(instance *inst)
    {
       for ( int i = 0; i < inst->n_clients; i++ )
       {
-
-         char dummy_char;
-         int dummy_int;
-
-         in_c >>dummy_char;
-         in_c >>dummy_int;
+         in_c >> dummy_int;
          in_c >> inst->x_client[i];
          in_c >> inst->y_client[i];
          if( strcmp(inst->input_file_f, inst->input_file_c) == 0)
@@ -95,6 +84,7 @@ void read_file(instance *inst)
             inst->x_client[i] = inst->x_location[i];
             inst->y_client[i] = inst->y_location[i];
          }
+		   in_f >> a;
          in_c >> inst->demand[i];
       }
    }

@@ -55,13 +55,13 @@ do
             #Random data
             for((l=1; l<=5;l++));
             do
-               f_name=../TESTDATA/f_data_2500/n2500s$l.dat
-               c_name=../TESTDATA/f_data_2500/n2500s$l.dat
+               f_name=../TESTDATA/n${N[i]}s$l.dat
+               c_name=../TESTDATA/n${N[i]}s$l.dat
 
                workname=n${N[i]}_m${N[i]}_r${R[j]}_d${D[k]}_s${l}
          
-               bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./bin/MCLPCPX ${exec[p]} ${f_name} ${c_name} ${N[i]} ${N[i]} $timlim ${R[j]} ${D[k]}"
-               #echo "./bin/MCLPCPX ${exec[p]} ${f_name} ${c_name} ${N[i]} ${N[i]} $timlim ${R[j]} ${D[k]}"
+               #bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./bin/MCLPCPX ${exec[p]} ${f_name} ${c_name} ${N[i]} ${N[i]} $timlim ${R[j]} ${D[k]}"
+               echo "./bin/MCLPCPX ${exec[p]} ${f_name} ${c_name} $timlim ${R[j]} 0 ${D[k]}"
             done
          done
       done

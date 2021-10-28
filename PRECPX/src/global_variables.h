@@ -147,6 +147,7 @@ typedef struct {
    char *input_file_c; /* Client file */
    int n_locations; /* Number of facilities */
    long long n_clients; /* Number of clients */
+   bool is_percentage; /* Is percentage */
 
    double *demand; /*Demand vector of clients */
    double *fixed_cost; /* Cost vector of facilities */

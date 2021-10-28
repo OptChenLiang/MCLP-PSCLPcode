@@ -15,36 +15,35 @@ int main(int argc, char** argv) {
 	inst.input_file_c = (char *) calloc(1000, sizeof(char));
 	////////////////////////////////////////////////////////////////////////////////////////
    int exec = 0;
-	if (argc >= 9)
+	if (argc >= 8)
 	{
       exec = atoi(argv[1]);
       //Input locations file, clients file and other solving parameters
       strcpy(inst.input_file_f, argv[2]);
       strcpy(inst.input_file_c, argv[3]);
-      inst.n_locations=atoi(argv[4]);
-      inst.n_clients=atoll(argv[5]);
-      inst.timelimit=atof(argv[6]);
-      inst.RADIUS=atof(argv[7]);
+      inst.timelimit=atof(argv[4]);
+      inst.RADIUS=atof(argv[5]);
+      inst.is_percentage=atoi(argv[6]);
       cout << "Radius: " << inst.RADIUS << endl;
       if(inst.isPSCLP)
       {
-         inst.COVERING_DEMAND=atof(argv[8]);
-         if(inst.COVERING_DEMAND < 1)
+         inst.COVERING_DEMAND=atof(argv[7]);
+         if(inst.is_percentage == 1)
             cout << "Demand(%): " << inst.COVERING_DEMAND << endl;
          else
             cout << "Demand: " << inst.COVERING_DEMAND << endl;
       }
       else
       {
-         inst.BUDGET=atof(argv[8]);
-         if(inst.BUDGET < 1)
+         inst.BUDGET=atof(argv[7]);
+         if(inst.is_percentage == 1)
             cout << "Budget(%): " << inst.BUDGET << endl;
          else
             cout << "Budget: " << inst.BUDGET << endl;
       }
       inst.seed = -1;
-      if (argc >= 10)
-         inst.seed=atof(argv[9]); /* Random seed (optional) */
+      if (argc >= 9)
+         inst.seed=atof(argv[8]); /* Random seed (optional) */
 	}
 	else
 	{
@@ -52,13 +51,12 @@ int main(int argc, char** argv) {
 		cout << "ERROR NUMBER STANDARD PARAMETERS" << endl;
       cout << "Param1:\t settings\n";
 		cout << "Param2:\t file of facilities\n";
-      cout << "Param3:\t customers file (can be NULL and then generate customers randomly when running the code)\n";
-      cout << "Param4:\t number of facilities\n";
-      cout << "Param5:\t number of customers\n";
-		cout << "Param6:\t time limitation in seconds\n";
-		cout << "Param7:\t covering radius\n";
-		cout << "Param8:\t budget in the MCLP or covering demand in the PSCLP, <= 1 means percentage\n";
-		cout << "Param9:\t CPXPARAM_RandomSeed for CPLEX\n";
+      cout << "Param3:\t customers file (can be a number and then generate customers randomly when running the code)\n";
+		cout << "Param4:\t time limitation in seconds\n";
+		cout << "Param5:\t covering radius\n";
+		cout << "Param6:\t is percentage of Param7 (total budget for the MCLP or total covering demand for the PSCLP)?\n";
+		cout << "Param7:\t budget for the MCLP or covering demand for the PSCLP\n";
+		cout << "Param8:\t CPXPARAM_RandomSeed for CPLEX\n";
 		exit(-1);
 	}
    inst.isBranch = true;
