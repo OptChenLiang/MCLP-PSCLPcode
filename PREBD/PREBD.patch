@@ -1,6 +1,6 @@
-diff -uprN LocationCovering/src_MCLP/MCLP_BEN.cpp LocationCovering1/src_MCLP/MCLP_BEN.cpp
---- LocationCovering/src_MCLP/MCLP_BEN.cpp	2021-10-28 22:15:32.557501600 +0800
-+++ LocationCovering1/src_MCLP/MCLP_BEN.cpp	2021-10-28 22:24:02.016968000 +0800
+diff -uparN LocationCovering/src_MCLP/MCLP_BEN.cpp LocationCovering1/src_MCLP/MCLP_BEN.cpp
+--- LocationCovering/src_MCLP/MCLP_BEN.cpp	2021-10-29 00:11:13.043668800 +0800
++++ LocationCovering1/src_MCLP/MCLP_BEN.cpp	2021-10-29 00:05:50.982113400 +0800
 @@ -1,5 +1,5 @@
  
 -
@@ -141,9 +141,9 @@ diff -uprN LocationCovering/src_MCLP/MCLP_BEN.cpp LocationCovering1/src_MCLP/MCL
  void clean_model_DFL_BEN_2(instance *inst)
  /*****************************************************************/
  {
-diff -uprN LocationCovering/src_MCLP/MCLP_BEN.h LocationCovering1/src_MCLP/MCLP_BEN.h
---- LocationCovering/src_MCLP/MCLP_BEN.h	2021-10-28 22:15:32.559688500 +0800
-+++ LocationCovering1/src_MCLP/MCLP_BEN.h	2021-10-28 22:24:02.017965300 +0800
+diff -uparN LocationCovering/src_MCLP/MCLP_BEN.h LocationCovering1/src_MCLP/MCLP_BEN.h
+--- LocationCovering/src_MCLP/MCLP_BEN.h	2021-10-29 00:11:13.055552400 +0800
++++ LocationCovering1/src_MCLP/MCLP_BEN.h	2021-10-29 00:05:50.976125300 +0800
 @@ -4,19 +4,20 @@
  
  #include "global_variables.h"
@@ -169,10 +169,9 @@ diff -uprN LocationCovering/src_MCLP/MCLP_BEN.h LocationCovering1/src_MCLP/MCLP_
  void clean_model_DFL_BEN_2(instance *inst);
  /*****************************************************************/
  
-Binary files LocationCovering/src_MCLP/MCLP_BEN.o and LocationCovering1/src_MCLP/MCLP_BEN.o differ
-diff -uprN LocationCovering/src_MCLP/Main.cpp LocationCovering1/src_MCLP/Main.cpp
---- LocationCovering/src_MCLP/Main.cpp	2021-10-28 22:15:32.559688500 +0800
-+++ LocationCovering1/src_MCLP/Main.cpp	2021-10-28 22:24:02.020957200 +0800
+diff -uparN LocationCovering/src_MCLP/Main.cpp LocationCovering1/src_MCLP/Main.cpp
+--- LocationCovering/src_MCLP/Main.cpp	2021-10-29 00:11:13.048533700 +0800
++++ LocationCovering1/src_MCLP/Main.cpp	2021-10-29 00:05:50.987062000 +0800
 @@ -9,50 +9,105 @@
  
  #include "global_functions.h"
@@ -324,9 +323,9 @@ diff -uprN LocationCovering/src_MCLP/Main.cpp LocationCovering1/src_MCLP/Main.cp
  
  	return 1;
  }
-diff -uprN LocationCovering/src_MCLP/global_functions.cpp LocationCovering1/src_MCLP/global_functions.cpp
---- LocationCovering/src_MCLP/global_functions.cpp	2021-10-28 22:15:32.556505300 +0800
-+++ LocationCovering1/src_MCLP/global_functions.cpp	2021-10-28 22:24:02.014973300 +0800
+diff -uparN LocationCovering/src_MCLP/global_functions.cpp LocationCovering1/src_MCLP/global_functions.cpp
+--- LocationCovering/src_MCLP/global_functions.cpp	2021-10-29 00:11:13.057509600 +0800
++++ LocationCovering1/src_MCLP/global_functions.cpp	2021-10-29 00:05:50.985218600 +0800
 @@ -318,8 +318,8 @@ double distance(double x1,double y1,doub
  {
  
@@ -489,9 +488,9 @@ diff -uprN LocationCovering/src_MCLP/global_functions.cpp LocationCovering1/src_
  	}
  
  	delete[]inst->cliets_OK;
-diff -uprN LocationCovering/src_MCLP/global_functions.h LocationCovering1/src_MCLP/global_functions.h
---- LocationCovering/src_MCLP/global_functions.h	2021-10-28 22:15:32.560685600 +0800
-+++ LocationCovering1/src_MCLP/global_functions.h	2021-10-28 22:24:02.020957200 +0800
+diff -uparN LocationCovering/src_MCLP/global_functions.h LocationCovering1/src_MCLP/global_functions.h
+--- LocationCovering/src_MCLP/global_functions.h	2021-10-29 00:11:13.052704600 +0800
++++ LocationCovering1/src_MCLP/global_functions.h	2021-10-29 00:05:50.977129800 +0800
 @@ -33,10 +33,6 @@ double distance_manatthan(double x1,doub
  /*****************************************************************/
  
@@ -503,10 +502,9 @@ diff -uprN LocationCovering/src_MCLP/global_functions.h LocationCovering1/src_MC
  void free_data(instance *inst);
  /*****************************************************************/
  
-Binary files LocationCovering/src_MCLP/global_functions.o and LocationCovering1/src_MCLP/global_functions.o differ
-diff -uprN LocationCovering/src_MCLP/global_variables.h LocationCovering1/src_MCLP/global_variables.h
---- LocationCovering/src_MCLP/global_variables.h	2021-10-28 22:15:32.561682900 +0800
-+++ LocationCovering1/src_MCLP/global_variables.h	2021-10-28 22:24:02.022951900 +0800
+diff -uparN LocationCovering/src_MCLP/global_variables.h LocationCovering1/src_MCLP/global_variables.h
+--- LocationCovering/src_MCLP/global_variables.h	2021-10-29 00:11:13.045841700 +0800
++++ LocationCovering1/src_MCLP/global_variables.h	2021-10-29 00:05:50.980114000 +0800
 @@ -16,7 +16,7 @@
  #include <algorithm>
  
@@ -579,9 +577,9 @@ diff -uprN LocationCovering/src_MCLP/global_variables.h LocationCovering1/src_MC
  	CPXENVptr env_CFL,env_CFL_BEN,env_CFL_BEN_FACETS,env_CFL_BEN_2,env_DFL_BEN_2,env_CFL_BEN_AUX,env_CFL_BEN_FACETS_AUX,env_CFL_MOD,env_CFL_penalty,env_DFL,env_DFL_penalty,env_DFL_MOD,env_CFL2,env_CFL_CVAR,env_DFL_CVAR,env_CFL_CONS,env_DFL_CONS,env_CFL_GAMMA,env_DFL_GAMMA,env_CFL_EXP;
  	CPXLPptr  lp_CFL,lp_CFL_BEN,lp_CFL_BEN_FACETS,lp_CFL_BEN_2,lp_DFL_BEN_2,lp_CFL_BEN_AUX,lp_CFL_BEN_FACETS_AUX,lp_CFL_MOD,lp_CFL_penalty,lp_DFL,lp_DFL_penalty,lp_DFL_MOD,lp_CFL2,lp_CFL_CVAR,lp_DFL_CVAR,lp_CFL_CONS,lp_DFL_CONS,lp_CFL_GAMMA,lp_DFL_GAMMA,lp_CFL_EXP;
  	int status,ccnt,rcnt,nzcnt;
-diff -uprN LocationCovering/src_MCLP/presolve.cpp LocationCovering1/src_MCLP/presolve.cpp
+diff -uparN LocationCovering/src_MCLP/presolve.cpp LocationCovering1/src_MCLP/presolve.cpp
 --- LocationCovering/src_MCLP/presolve.cpp	1970-01-01 08:00:00.000000000 +0800
-+++ LocationCovering1/src_MCLP/presolve.cpp	2021-10-28 22:24:02.022951900 +0800
++++ LocationCovering1/src_MCLP/presolve.cpp	2021-10-29 00:05:50.988057200 +0800
 @@ -0,0 +1,490 @@
 +#include "presolve.h"
 +#include <cstdlib>
@@ -1073,9 +1071,9 @@ diff -uprN LocationCovering/src_MCLP/presolve.cpp LocationCovering1/src_MCLP/pre
 +{
 +   NodePresolveInit(inst);
 +}
-diff -uprN LocationCovering/src_MCLP/presolve.h LocationCovering1/src_MCLP/presolve.h
+diff -uparN LocationCovering/src_MCLP/presolve.h LocationCovering1/src_MCLP/presolve.h
 --- LocationCovering/src_MCLP/presolve.h	1970-01-01 08:00:00.000000000 +0800
-+++ LocationCovering1/src_MCLP/presolve.h	2021-10-28 22:24:02.021954600 +0800
++++ LocationCovering1/src_MCLP/presolve.h	2021-10-29 00:05:50.993046700 +0800
 @@ -0,0 +1,36 @@
 +#ifndef PRESOLVE__H
 +#define PRESOLVE__H
@@ -1113,10 +1111,10 @@ diff -uprN LocationCovering/src_MCLP/presolve.h LocationCovering1/src_MCLP/preso
 +//Node presolving
 +void NodePresolve(mystr* inst, double bestobj);
 +#endif
-diff -uprN LocationCovering/src_MCLP/read.cpp LocationCovering1/src_MCLP/read.cpp
+diff -uparN LocationCovering/src_MCLP/read.cpp LocationCovering1/src_MCLP/read.cpp
 --- LocationCovering/src_MCLP/read.cpp	1970-01-01 08:00:00.000000000 +0800
-+++ LocationCovering1/src_MCLP/read.cpp	2021-10-28 22:24:02.015970800 +0800
-@@ -0,0 +1,384 @@
++++ LocationCovering1/src_MCLP/read.cpp	2021-10-29 00:05:50.990193100 +0800
+@@ -0,0 +1,379 @@
 +#include "global_functions.h"
 +#include "presolve.h"
 +#include "read.h"
@@ -1168,16 +1166,15 @@ diff -uprN LocationCovering/src_MCLP/read.cpp LocationCovering1/src_MCLP/read.cp
 +
 +   MyPair* mypair;
 +   vector<int> vec;
-+   char dummy_char;
 +   int dummy_int;
++   double a;
 +	for ( int j = 0; j < inst->n_locations; j++ )
 +	{
-+      in_f >> dummy_char;
 +		in_f >> dummy_int;
 +		in_f >> inst->x_location[j];
 +		in_f >> inst->y_location[j];
 +		in_f >> inst->fixed_cost[j];
-+      inst->fixed_cost[j] = 1;
++      in_f >> a;
 +      mypair = new MyPair(j);
 +      if(inst->isPSCLP)
 +      {
@@ -1196,11 +1193,6 @@ diff -uprN LocationCovering/src_MCLP/read.cpp LocationCovering1/src_MCLP/read.cp
 +   {
 +      for ( int i = 0; i < inst->n_clients; i++ )
 +      {
-+
-+         char dummy_char;
-+         int dummy_int;
-+
-+         in_c >>dummy_char;
 +         in_c >>dummy_int;
 +         in_c >> inst->x_client[i];
 +         in_c >> inst->y_client[i];
@@ -1209,6 +1201,7 @@ diff -uprN LocationCovering/src_MCLP/read.cpp LocationCovering1/src_MCLP/read.cp
 +            inst->x_client[i] = inst->x_location[i];
 +            inst->y_client[i] = inst->y_location[i];
 +         }
++         in_f >> a;
 +         in_c >> inst->demand[i];
 +      }
 +   }
@@ -1501,9 +1494,9 @@ diff -uprN LocationCovering/src_MCLP/read.cpp LocationCovering1/src_MCLP/read.cp
 +
 +}
 +
-diff -uprN LocationCovering/src_MCLP/read.h LocationCovering1/src_MCLP/read.h
+diff -uparN LocationCovering/src_MCLP/read.h LocationCovering1/src_MCLP/read.h
 --- LocationCovering/src_MCLP/read.h	1970-01-01 08:00:00.000000000 +0800
-+++ LocationCovering1/src_MCLP/read.h	2021-10-28 22:24:02.019959900 +0800
++++ LocationCovering1/src_MCLP/read.h	2021-10-29 00:05:50.979123000 +0800
 @@ -0,0 +1,17 @@
 +#ifndef FUNCTIONS_HEADER
 +#define FUNCTIONS_HEADER
@@ -1522,9 +1515,9 @@ diff -uprN LocationCovering/src_MCLP/read.h LocationCovering1/src_MCLP/read.h
 +void READ_NEW_FILE1(instance *inst, mystr* inst1);
 +/*****************************************************************/
 +#endif
-diff -uprN LocationCovering/src_MCLP/struct.h LocationCovering1/src_MCLP/struct.h
+diff -uparN LocationCovering/src_MCLP/struct.h LocationCovering1/src_MCLP/struct.h
 --- LocationCovering/src_MCLP/struct.h	1970-01-01 08:00:00.000000000 +0800
-+++ LocationCovering1/src_MCLP/struct.h	2021-10-28 22:24:02.018962700 +0800
++++ LocationCovering1/src_MCLP/struct.h	2021-10-29 00:05:50.974130000 +0800
 @@ -0,0 +1,234 @@
 +#ifndef VARIABLE_HEADER
 +#define VARIABLE_HEADER
@@ -1760,9 +1753,9 @@ diff -uprN LocationCovering/src_MCLP/struct.h LocationCovering1/src_MCLP/struct.
 +
 +
 +#endif
-diff -uprN LocationCovering/src_PSCLP/Main.cpp LocationCovering1/src_PSCLP/Main.cpp
---- LocationCovering/src_PSCLP/Main.cpp	2021-10-28 22:15:32.554509500 +0800
-+++ LocationCovering1/src_PSCLP/Main.cpp	2021-10-28 22:24:02.009986400 +0800
+diff -uparN LocationCovering/src_PSCLP/Main.cpp LocationCovering1/src_PSCLP/Main.cpp
+--- LocationCovering/src_PSCLP/Main.cpp	2021-10-29 00:11:12.999394700 +0800
++++ LocationCovering1/src_PSCLP/Main.cpp	2021-10-29 00:05:51.009039600 +0800
 @@ -9,50 +9,106 @@
  
  #include "global_functions.h"
@@ -1915,9 +1908,9 @@ diff -uprN LocationCovering/src_PSCLP/Main.cpp LocationCovering1/src_PSCLP/Main.
  
  	return 1;
  }
-diff -uprN LocationCovering/src_PSCLP/PSCLP.cpp LocationCovering1/src_PSCLP/PSCLP.cpp
---- LocationCovering/src_PSCLP/PSCLP.cpp	2021-10-28 22:15:32.553512100 +0800
-+++ LocationCovering1/src_PSCLP/PSCLP.cpp	2021-10-28 22:24:02.008989200 +0800
+diff -uparN LocationCovering/src_PSCLP/PSCLP.cpp LocationCovering1/src_PSCLP/PSCLP.cpp
+--- LocationCovering/src_PSCLP/PSCLP.cpp	2021-10-29 00:11:13.006337800 +0800
++++ LocationCovering1/src_PSCLP/PSCLP.cpp	2021-10-29 00:05:50.995085100 +0800
 @@ -428,10 +428,10 @@ void solve_model_CFL(instance *inst)
  	inst->lpstat=CPXgetstat(inst->env_CFL,inst->lp_CFL);
  	inst->nodecount = CPXgetnodecnt(inst->env_CFL, inst->lp_CFL);
@@ -1946,9 +1939,9 @@ diff -uprN LocationCovering/src_PSCLP/PSCLP.cpp LocationCovering1/src_PSCLP/PSCL
  
  
  	//	printf("\nnumcols\t%d\n",cur_numcols);
-diff -uprN LocationCovering/src_PSCLP/PSCLP_BEN.cpp LocationCovering1/src_PSCLP/PSCLP_BEN.cpp
---- LocationCovering/src_PSCLP/PSCLP_BEN.cpp	2021-10-28 22:15:32.552513100 +0800
-+++ LocationCovering1/src_PSCLP/PSCLP_BEN.cpp	2021-10-28 22:24:02.006994500 +0800
+diff -uparN LocationCovering/src_PSCLP/PSCLP_BEN.cpp LocationCovering1/src_PSCLP/PSCLP_BEN.cpp
+--- LocationCovering/src_PSCLP/PSCLP_BEN.cpp	2021-10-29 00:11:13.010326800 +0800
++++ LocationCovering1/src_PSCLP/PSCLP_BEN.cpp	2021-10-29 00:05:51.007046100 +0800
 @@ -1,5 +1,5 @@
  
 -
@@ -2080,9 +2073,9 @@ diff -uprN LocationCovering/src_PSCLP/PSCLP_BEN.cpp LocationCovering1/src_PSCLP/
  void clean_model_CFL_BEN_2(instance *inst)
  /*****************************************************************/
  {
-diff -uprN LocationCovering/src_PSCLP/PSCLP_BEN.h LocationCovering1/src_PSCLP/PSCLP_BEN.h
---- LocationCovering/src_PSCLP/PSCLP_BEN.h	2021-10-28 22:15:32.552513100 +0800
-+++ LocationCovering1/src_PSCLP/PSCLP_BEN.h	2021-10-28 22:24:02.007991800 +0800
+diff -uparN LocationCovering/src_PSCLP/PSCLP_BEN.h LocationCovering1/src_PSCLP/PSCLP_BEN.h
+--- LocationCovering/src_PSCLP/PSCLP_BEN.h	2021-10-29 00:11:12.997400400 +0800
++++ LocationCovering1/src_PSCLP/PSCLP_BEN.h	2021-10-29 00:05:51.000067000 +0800
 @@ -4,6 +4,7 @@
  
  #include "global_variables.h"
@@ -2111,9 +2104,9 @@ diff -uprN LocationCovering/src_PSCLP/PSCLP_BEN.h LocationCovering1/src_PSCLP/PS
  void clean_model_CFL_BEN_2(instance *inst);
  /*****************************************************************/
  
-diff -uprN LocationCovering/src_PSCLP/global_functions.cpp LocationCovering1/src_PSCLP/global_functions.cpp
---- LocationCovering/src_PSCLP/global_functions.cpp	2021-10-28 22:15:32.551345800 +0800
-+++ LocationCovering1/src_PSCLP/global_functions.cpp	2021-10-28 22:24:02.005995500 +0800
+diff -uparN LocationCovering/src_PSCLP/global_functions.cpp LocationCovering1/src_PSCLP/global_functions.cpp
+--- LocationCovering/src_PSCLP/global_functions.cpp	2021-10-29 00:11:13.008332200 +0800
++++ LocationCovering1/src_PSCLP/global_functions.cpp	2021-10-29 00:05:51.011033800 +0800
 @@ -318,10 +318,10 @@ double distance(double x1,double y1,doub
  {
  
@@ -2299,9 +2292,9 @@ diff -uprN LocationCovering/src_PSCLP/global_functions.cpp LocationCovering1/src
  		if(I_TILDE[i] <= 1 + 0.0001)
  		{
  			//pi
-diff -uprN LocationCovering/src_PSCLP/global_functions.h LocationCovering1/src_PSCLP/global_functions.h
---- LocationCovering/src_PSCLP/global_functions.h	2021-10-28 22:15:32.555506800 +0800
-+++ LocationCovering1/src_PSCLP/global_functions.h	2021-10-28 22:24:02.010983800 +0800
+diff -uparN LocationCovering/src_PSCLP/global_functions.h LocationCovering1/src_PSCLP/global_functions.h
+--- LocationCovering/src_PSCLP/global_functions.h	2021-10-29 00:11:13.002348500 +0800
++++ LocationCovering1/src_PSCLP/global_functions.h	2021-10-29 00:05:51.013029300 +0800
 @@ -33,10 +33,6 @@ double distance_manatthan(double x1,doub
  /*****************************************************************/
  
@@ -2313,9 +2306,9 @@ diff -uprN LocationCovering/src_PSCLP/global_functions.h LocationCovering1/src_P
  void free_data(instance *inst);
  /*****************************************************************/
  
-diff -uprN LocationCovering/src_PSCLP/global_variables.h LocationCovering1/src_PSCLP/global_variables.h
---- LocationCovering/src_PSCLP/global_variables.h	2021-10-28 22:15:32.553512100 +0800
-+++ LocationCovering1/src_PSCLP/global_variables.h	2021-10-28 22:24:02.008989200 +0800
+diff -uparN LocationCovering/src_PSCLP/global_variables.h LocationCovering1/src_PSCLP/global_variables.h
+--- LocationCovering/src_PSCLP/global_variables.h	2021-10-29 00:11:13.004342900 +0800
++++ LocationCovering1/src_PSCLP/global_variables.h	2021-10-29 00:05:51.010037300 +0800
 @@ -16,7 +16,7 @@
  #include <algorithm>
  
@@ -2383,9 +2376,9 @@ diff -uprN LocationCovering/src_PSCLP/global_variables.h LocationCovering1/src_P
  	CPXENVptr env_CFL,env_CFL_BEN,env_CFL_BEN_FACETS,env_CFL_BEN_2,env_DFL_BEN_2,env_CFL_BEN_AUX,env_CFL_BEN_FACETS_AUX,env_CFL_MOD,env_CFL_penalty,env_DFL,env_DFL_penalty,env_DFL_MOD,env_CFL2,env_CFL_CVAR,env_DFL_CVAR,env_CFL_CONS,env_DFL_CONS,env_CFL_GAMMA,env_DFL_GAMMA,env_CFL_EXP;
  	CPXLPptr  lp_CFL,lp_CFL_BEN,lp_CFL_BEN_FACETS,lp_CFL_BEN_2,lp_DFL_BEN_2,lp_CFL_BEN_AUX,lp_CFL_BEN_FACETS_AUX,lp_CFL_MOD,lp_CFL_penalty,lp_DFL,lp_DFL_penalty,lp_DFL_MOD,lp_CFL2,lp_CFL_CVAR,lp_DFL_CVAR,lp_CFL_CONS,lp_DFL_CONS,lp_CFL_GAMMA,lp_DFL_GAMMA,lp_CFL_EXP;
  	int status,ccnt,rcnt,nzcnt;
-diff -uprN LocationCovering/src_PSCLP/presolve.cpp LocationCovering1/src_PSCLP/presolve.cpp
+diff -uparN LocationCovering/src_PSCLP/presolve.cpp LocationCovering1/src_PSCLP/presolve.cpp
 --- LocationCovering/src_PSCLP/presolve.cpp	1970-01-01 08:00:00.000000000 +0800
-+++ LocationCovering1/src_PSCLP/presolve.cpp	2021-10-28 22:24:02.003883300 +0800
++++ LocationCovering1/src_PSCLP/presolve.cpp	2021-10-29 00:05:50.998071700 +0800
 @@ -0,0 +1,514 @@
 +#include "presolve.h"
 +#include <cstdlib>
@@ -2901,9 +2894,9 @@ diff -uprN LocationCovering/src_PSCLP/presolve.cpp LocationCovering1/src_PSCLP/p
 +{
 +   NodePresolveInit(inst);
 +}
-diff -uprN LocationCovering/src_PSCLP/presolve.h LocationCovering1/src_PSCLP/presolve.h
+diff -uparN LocationCovering/src_PSCLP/presolve.h LocationCovering1/src_PSCLP/presolve.h
 --- LocationCovering/src_PSCLP/presolve.h	1970-01-01 08:00:00.000000000 +0800
-+++ LocationCovering1/src_PSCLP/presolve.h	2021-10-28 22:24:02.004880600 +0800
++++ LocationCovering1/src_PSCLP/presolve.h	2021-10-29 00:05:51.006049700 +0800
 @@ -0,0 +1,36 @@
 +#ifndef PRESOLVE__H
 +#define PRESOLVE__H
@@ -2941,9 +2934,9 @@ diff -uprN LocationCovering/src_PSCLP/presolve.h LocationCovering1/src_PSCLP/pre
 +//Node presolving
 +void NodePresolve(mystr* inst, double bestobj);
 +#endif
-diff -uprN LocationCovering/src_PSCLP/read.cpp LocationCovering1/src_PSCLP/read.cpp
+diff -uparN LocationCovering/src_PSCLP/read.cpp LocationCovering1/src_PSCLP/read.cpp
 --- LocationCovering/src_PSCLP/read.cpp	1970-01-01 08:00:00.000000000 +0800
-+++ LocationCovering1/src_PSCLP/read.cpp	2021-10-28 22:24:02.004880600 +0800
++++ LocationCovering1/src_PSCLP/read.cpp	2021-10-29 00:05:51.003056900 +0800
 @@ -0,0 +1,383 @@
 +#include "global_functions.h"
 +#include "presolve.h"
@@ -2996,16 +2989,15 @@ diff -uprN LocationCovering/src_PSCLP/read.cpp LocationCovering1/src_PSCLP/read.
 +
 +   MyPair* mypair;
 +   vector<int> vec;
-+   char dummy_char;
 +   int dummy_int;
++   double a;
 +	for ( int j = 0; j < inst->n_locations; j++ )
 +	{
-+      in_f >> dummy_char;
 +		in_f >> dummy_int;
 +		in_f >> inst->x_location[j];
 +		in_f >> inst->y_location[j];
 +		in_f >> inst->fixed_cost[j];
-+      inst->fixed_cost[j] = 1;
++      in_f >> a;
 +      mypair = new MyPair(j);
 +      if(inst->isPSCLP)
 +      {
@@ -3037,6 +3029,7 @@ diff -uprN LocationCovering/src_PSCLP/read.cpp LocationCovering1/src_PSCLP/read.
 +            inst->x_client[i] = inst->x_location[i];
 +            inst->y_client[i] = inst->y_location[i];
 +         }
++         in_c >> a;
 +         in_c >> inst->demand[i];
 +      }
 +   }
@@ -3328,9 +3321,9 @@ diff -uprN LocationCovering/src_PSCLP/read.cpp LocationCovering1/src_PSCLP/read.
 +
 +}
 +
-diff -uprN LocationCovering/src_PSCLP/read.h LocationCovering1/src_PSCLP/read.h
+diff -uparN LocationCovering/src_PSCLP/read.h LocationCovering1/src_PSCLP/read.h
 --- LocationCovering/src_PSCLP/read.h	1970-01-01 08:00:00.000000000 +0800
-+++ LocationCovering1/src_PSCLP/read.h	2021-10-28 22:24:02.007991800 +0800
++++ LocationCovering1/src_PSCLP/read.h	2021-10-29 00:05:50.997078700 +0800
 @@ -0,0 +1,17 @@
 +#ifndef FUNCTIONS_HEADER
 +#define FUNCTIONS_HEADER
@@ -3349,9 +3342,9 @@ diff -uprN LocationCovering/src_PSCLP/read.h LocationCovering1/src_PSCLP/read.h
 +void READ_NEW_FILE1(instance *inst, mystr* inst1);
 +/*****************************************************************/
 +#endif
-diff -uprN LocationCovering/src_PSCLP/struct.h LocationCovering1/src_PSCLP/struct.h
+diff -uparN LocationCovering/src_PSCLP/struct.h LocationCovering1/src_PSCLP/struct.h
 --- LocationCovering/src_PSCLP/struct.h	1970-01-01 08:00:00.000000000 +0800
-+++ LocationCovering1/src_PSCLP/struct.h	2021-10-28 22:24:02.010983800 +0800
++++ LocationCovering1/src_PSCLP/struct.h	2021-10-29 00:05:51.005058100 +0800
 @@ -0,0 +1,228 @@
 +#ifndef VARIABLE_HEADER
 +#define VARIABLE_HEADER
