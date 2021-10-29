@@ -1,7 +1,7 @@
 ## Introduction
-The README contains code and complementary material to the paper
+This site contains code and complementary material to the paper
 
-L. Chen, S.-J. Chen, W.-K. Chen, Y.-H. Dai, J. Juan, and T. Quan (2021). 
+L. Chen, S.-J. Chen, W.-K. Chen, Y.-H. Dai, T. Quan, and J. Chen (2021). 
 Efficient presolving methods for solving maximal covering and partial set covering location problems
 
 To enhance of capability of solving the maximal covering location problem (MCLP) and 
@@ -14,123 +14,98 @@ partial set covering location problem (PSCLP), the paper proposes five presolvin
 5. nonoverlap fixing (`NON_FIX`).
 
 Directory `PRECPX/` includes all source files and header files for solving the MCLP and PSCLP
-using CPLEX with the proposed presolving methods;
+using CPLEX (CPX) with the proposed presolving methods;
 
-Directory `PREBD/` includes patch files for the Benders decomposition [Cordeau et. al.，2019];
+Directory `PREBD/` contains Makefile and the patch for the Benders decomposition (BD) [Cordeau et. al.，2019];
 
 Directory `TESTDATA/` contains the related data sets in the paper.
 
+To compile and run the code, CPLEX libraries and header files are required. 
+Excute `mkdir lib` and `mkdir include` in directory `MCLP-PSCLPcode`, 
+and copy the libraries and header files in the corresponding directories..
 
-Note that, to compile and run the code, the CPLEX libraries and header files are required and given in directories  `lib/` and `include/`.
+## How to complile PRECPX
+
+In order to compile the excutable files, run
+
+```
+cd PRECPX
+make
+```
+
+Then the following executable files will be generated.
+
+- `bin/MCLPCPX`   (solve the MCLP using CPX)
+- `bin/PSCLPCPX`  (solve the PSCLP using CPX)
+
+See the parameters of executable files in "How to run the solver" to get information.
 
 ## How to complile PREBD
-We have written the patch files (combining with singleton and isomorphic aggregations and domination) for the code in Cordeau et. al.，2019. Please run 
-
+In order to build PREBD based on BD, please download their code in directory `PREBD` by 
 ```
 cd PREBD
 git clone https://github.com/fabiofurini/LocationCovering
-./patch.sh
 ```
-
-Then the source files in `LocationCovering/src_MCLP` and  `LocationCovering/src_PSCLP` will be updated. 
-
-Please run 
-
+Excute `patch -p0 < PREBD.patch`, and then you can easily compile using the command
 ```
 make
 ```
 
-the following executable files will be generated.
+The following executable files will be generated.
 
 - `bin/MCLPBD`     (solve the MCLP using BD)
 - `bin/PSCLPBD`    (solve the PSCLP using BD)
 
 See the parameters of executable files in "How to run the solver" to get information of implementing presolving.
 
-## How to complile PREBD
-
-We have written the `Makefile` in the main directory. To compile the code, one can just run 
-
-```
-make
-```
-
-in directory `PRECPX/` or `PREBD/`. Then the following executable files will be generated.
-
-- `bin/MCLPCPX`   (solve the MCLP using CPX)
-- `bin/PSCLPCPX`  (solve the PSCLP using CPX)
-
-See the parameters of executable files in "How to run the solver" to get information of implementing presolving.
-
 ## Information for the data sets
-In directory `TESTDATA/`, we provide some facility information.
-Directory `f_data_100/` contains coordinates of 100 facilities and directory `f_data_2500/` contains coordinates of 2500 facilities, which are all randomly generated.
+In directory `TESTDATA/`, we provide some facility information. In each file, 
 
-In each file, 
+- row 1 gives the number of points; 
 
-- column 1 "F" means "facility"; 
+- column 1 gives the index of points; 
 
-- column 2 gives the index of facility; 
+- columns 2 and 3 give coordinates (x,y) of points;
 
-- columns 3 and 4 give coordinates (x,y) of facility;
+- column 4 gives the budget of the facility; (ignored when this file is used as customer file)
 
-- column 5 gives the demand of customer when considering test set T2 where the coordinates of facilities and customers are chosen to be identical
-
-   (the costs of all facilities are 1 in the paper).
+- column 5 gives the demand of the customer; (ignored when this file is used as facility file)
 
 ## How to run the solver
-For a given executable file [EXE] (`MCLPCPX`, `PSCLPCPX`, `MCLPBD`, or `PSCLPBD`), the solver can be run in the corresponding main directory as
+For a given executable file [EXE] (`MCLPCPX`, `PSCLPCPX`, `MCLPBD`, or `PSCLPBD`), the solver can be run
+in the corresponding main directory as
 
   ```
-  ./bin/[EXE] [PS] [FF] [FC] [NF] [NC] [TL] [R] [P] ([RS])
+  ./bin/[EXE] [PS] [IF] [IC] [TL] [R] [IP] [P] ([RS])
   ```
 
 where the arguments are listed in the following:
 
 `[PS]` presolving settings for `MCLPCPX` or `PSCLPCPX`; 
-- 0: `CPX`; 
-- 1: `PRE+CPX`;
-- 2: `No SIN_AGG`;
-- 3: `No ISO_AGG`;
-- 4: `No NON_CAN`;
-- 5: `No DOM`;
-- 6: `No NON_FIX`;
+- 0: `CPX`;             (CPLEX solver without our proposed presolving methods) 
+- 1: `PRE+CPX`;         (CPX with our five proposed presolving methods)
+- 2: `No SIN_AGG`;      (PRE+CPX with the singleton aggregation disabled)
+- 3: `No ISO_AGG`;      (PRE+CPX with the isomorphic aggregation disabled)
+- 4: `No NON_CAN`;      (PRE+CPX with the nonzero cancellation disabled)
+- 5: `No DOM`;          (PRE+CPX with the domination disabled)
+- 6: `No NON_FIX`;      (PRE+CPX with the nonoverlap fixing disabled)
 
-  for `PREBD`
-- 0: `BD`;
-- 1: `PRE+BD`;
+  for `MCLPBD` or `PSCLPBD`
+- 0: `BD`;              (Benders decomposition [Cordeau et. al.，2019])
+- 1: `PRE+BD`;          (BD with the singleton and isomorphic aggregations and domination)
 
-`[FF]` facilities file; 
-`[FC]` customers file (as the numbers of customers are extremely large in some testsets in the paper, the parameter can be NULL and then generated randomly when running the code);
-`[NF]` number of facilities;
-`[NC]` number of customers;
+`[FF]` facility file; 
+`[FC]` customer file (as the numbers of customers are extremely large in some testsets in the paper, 
+      the parameter can be the number of customers and then the customer data will be generated randomly);
 `[TL]` time limitation in seconds;
 `[R]`  covering radius;
-`[P] ` budget parameter for the MCLP or covering demand parameter in the PSCLP
-     (a value less than 1 means a percentage);
+`[IP]` is the parameter [P] percentage of total budget for the MCLP or total covering demand for the PSCLP?;
+`[P] ` budget for the MCLP or covering demand for the PSCLP (real value if [IP]=0; percentage if [IP]=1);
 `[RS]` `CPXPARAM_RandomSeed` for `CPX` (optional).
 
-one can execute scripts e.g. `./Subs-MCLP-T1.sh` to see all the command in the paper.
-
-
-### Example
-
-1. For instance in testset T1, consider the MCLP with 100 facilities and 100000 customers. The dataset is given by `../TESTDATA/f_data_100/n100_f10_100_s2.dat` with covering radius 5.75 and budget 10. For using CPLEX with our presolving methods within 10000 seconds, one can run 
-
+The solver can be run as, e.g. 
  ```
- ./bin/MCLPCPX 1 ../TESTDATA/f_data_100/n100_f10_100_s2.dat NULL 100 100000 10000 5.75 0.1
+ ./bin/MCLPCPX 1 ../TESTDATA/n100s2.dat 100000 10000 5.75 1 0.1
  ```
 
-2. For instance in testset T2, consider the MCLP with 1700 facilities and 1700 customers (same coordinates). The dataset is given by `../TESTDATA/f_data_2500/n2500s2.dat` with covering radius 4 and budget 20. For using CPLEX with our presolving methods except the domination within 10000 seconds, one can run 
-
-#SC@LC: why the name of dateset is n2500s2.dat in this example?
-
- ```
-./bin/MCLPCPX 5 ../TESTDATA/f_data_2500/n2500s2.dat ../TESTDATA/f_data_2500/n2500s2.dat 1700 1700 10000 4 20
- ```
-
-3. For instance in testset T3, consider the PSCLP with 1500 facilities and 10000000 customers. The dataset is given by `../TESTDATA/n2500s5.dat` with covering radius 1.0328 and covering demand 70% of total demand. For using Benders Decomposition with our presolving methods within 10000 seconds, one can run 
-
-  ```
-  ./bin/BD 1 ../TESTDATA/f_data_2500/n2500s5.dat NULL 1500 10000000 10000 1.0328 0.7  
-  ```
+The software is for academic purposes only, see also the file license.md  provided.
