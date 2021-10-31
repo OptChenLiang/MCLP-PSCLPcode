@@ -30,7 +30,7 @@ In order to compile the excutable files, run
 
 ```
 cd PRECPX
-make
+make CPLEXLIBDIR=<cplex/lib/x86-64_linux/static_pic/> CPLEXINCDIR=<cplex/include/ilcplex/> 
 ```
 
 Then the following executable files will be generated.
@@ -48,7 +48,7 @@ git clone https://github.com/fabiofurini/LocationCovering
 ```
 Excute `patch -p0 < PREBD.patch`, and then you can easily compile using the command
 ```
-make
+make CPLEXLIBDIR=<cplex/lib/x86-64_linux/static_pic/> CPLEXINCDIR=<cplex/include/ilcplex/> 
 ```
 
 The following executable files will be generated.
