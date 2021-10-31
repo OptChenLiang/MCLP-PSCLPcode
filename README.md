@@ -20,18 +20,15 @@ Directory `PREBD/` contains Makefile and the patch for the Benders decomposition
 
 Directory `TESTDATA/` contains the related data sets in the paper.
 
-To compile and run the code, CPLEX libraries and header files are required. 
-Excute `mkdir lib` and `mkdir include` in directory `MCLP-PSCLPcode`, 
-and copy the libraries and header files in the corresponding directories..
-
 ## How to complile PRECPX
 
-In order to compile the excutable files, run
-
+In order to compile the excutable files, CPLEX libraries and header files are required. 
+Therefore you use the command:
 ```
 cd PRECPX
-make CPLEXLIBDIR=<cplex/lib/x86-64_linux/static_pic/> CPLEXINCDIR=<cplex/include/ilcplex/> 
-```
+make CPLEXINCDIR=<cplex/include/ilcplex/>  CPLEXLIBDIR=<cplex/lib/x86-64_linux/static_pic/> 
+- "<cplex/include/ilcplex/>": directory of CPLEX headers
+- "<cplex/lib/x86-64_linux/static_pic/>": directory of CPLEX libraries
 
 Then the following executable files will be generated.
 
@@ -46,9 +43,9 @@ In order to build PREBD based on BD, please download their code in directory `PR
 cd PREBD
 git clone https://github.com/fabiofurini/LocationCovering
 ```
-Excute `patch -p0 < PREBD.patch`, and then you can easily compile using the command
+Excute `patch -p0 < PREBD.patch`, and then, simlar to compling PRECPX, you compile using the command
 ```
-make CPLEXLIBDIR=<cplex/lib/x86-64_linux/static_pic/> CPLEXINCDIR=<cplex/include/ilcplex/> 
+make CPLEXINCDIR=<cplex/include/ilcplex/>  CPLEXLIBDIR=<cplex/lib/x86-64_linux/static_pic/> 
 ```
 
 The following executable files will be generated.
@@ -108,4 +105,3 @@ The solver can be run as, e.g.
  ./bin/MCLPCPX 1 ../TESTDATA/n100s2.dat 100000 10000 5.75 1 0.1
  ```
 
-The software is for academic purposes only, see also the file license.md  provided.

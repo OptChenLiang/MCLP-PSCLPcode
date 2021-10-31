@@ -1,3 +1,2 @@
-cd LocationCovering
-patch -p1 < ../PREBD.patch
+patch -p0 < PREBD.patch
 
