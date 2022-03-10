@@ -1,4 +1,4 @@
-timlim=10000;
+timlim=10000
 exec[0]=0 #None
 exec[1]=1 #All
 exec[2]=2 #NO SIN_AGG
@@ -89,8 +89,9 @@ do
 
                f_name=../TESTDATA/n${N[i]}s$l.dat
 
-               #workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
-               #bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./bin/MCLPCPX ${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
+               #bsub -J ${workname} -q batch -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./bin/MCLPCPX ${exec[p]} ${f_name} ${M[k]} $timlim ${RR} 1 ${DD}"
+               #bsub -J ${workname} -q serial -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./bin/MCLPCPX ${exec[p]} ${f_name} ${M[k]} $timlim ${RR} 1 ${DD}"
                echo "./bin/MCLPCPX ${exec[p]} ${f_name} ${M[k]} $timlim ${RR} 1 ${DD}"
             done
          done

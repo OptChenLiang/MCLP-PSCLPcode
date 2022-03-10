@@ -216,18 +216,18 @@ diff -uparN LocationCovering/src_MCLP/Main.cpp LocationCovering1/src_MCLP/Main.c
 +      {
 +         inst1.COVERING_DEMAND=atof(argv[7]);
 +         if(inst1.is_percentage == 1)
-+            printf("Demand(percentage): %f\n", inst.COVERING_DEMAND);
++            printf("Demand(percentage): %f\n", inst1.COVERING_DEMAND);
 +         else
-+            printf("Demand: %f\n", inst.COVERING_DEMAND);
++            printf("Demand: %f\n", inst1.COVERING_DEMAND);
 +      }
 +      else
 +      {
 +         inst1.BUDGET=atof(argv[7]);
 +         printf("%f\n", inst1.BUDGET);
 +         if(inst1.is_percentage == 1)
-+            printf( "Budget(percentage): %f\n", inst.BUDGET );
++            printf( "Budget(percentage): %f\n", inst1.BUDGET );
 +         else
-+            printf( "Budget: %f\n", inst.BUDGET);
++            printf( "Budget: %f\n", inst1.BUDGET);
 +      }
 +      inst1.seed = -1;
 +      if (argc >= 9)
@@ -1792,18 +1792,18 @@ diff -uparN LocationCovering/src_PSCLP/Main.cpp LocationCovering1/src_PSCLP/Main
 +      {
 +         inst1.COVERING_DEMAND=atof(argv[7]);
 +         if(inst1.is_percentage == 1)
-+            printf("Demand(percentage): %f\n", inst.COVERING_DEMAND);
++            printf("Demand(percentage): %f\n", inst1.COVERING_DEMAND);
 +         else
-+            printf("Demand: %f\n", inst.COVERING_DEMAND);
++            printf("Demand: %f\n", inst1.COVERING_DEMAND);
 +      }
 +      else
 +      {
 +         inst1.BUDGET=atof(argv[7]);
 +         printf("%f\n", inst1.BUDGET);
 +         if(inst1.is_percentage == 1)
-+            printf( "Budget(percentage): %f\n", inst.BUDGET );
++            printf( "Budget(percentage): %f\n", inst1.BUDGET );
 +         else
-+            printf( "Budget: %f\n", inst.BUDGET);
++            printf( "Budget: %f\n", inst1.BUDGET);
 +      }
 +      inst1.seed = -1;
 +      if (argc >= 9)

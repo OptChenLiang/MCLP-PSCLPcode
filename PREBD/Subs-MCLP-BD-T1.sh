@@ -85,7 +85,7 @@ do
                f_name=../TESTDATA/n${N[i]}s$l.dat
 
                workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
-               #bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./MCLP ${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               #bsub -J ${workname} -q batch -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./bin/MCLPBD ${exec[p]} ${f_name} ${M[k]} $timlim ${RR} 1 ${DD}"
                echo "./bin/MCLPBD ${exec[p]} ${f_name} ${M[k]} $timlim ${RR} 1 ${DD}"
             done
          done

@@ -47,14 +47,14 @@ M[3]=1000000000;
 
 maindir=T3-PSCLP
 mkdir ${maindir}
-for((i=0; i<=1;i++));
+for((i=1; i<=1;i++));
 do
    dir[i]=${maindir}/${exec[i]};
    mkdir ${dir[i]}
 done
 
 #Settings
-for((p=0; p<=1;p++));
+for((p=1; p<=1;p++));
 do
    #Number of customers
    for((k=1; k<=3;k++));
@@ -75,7 +75,7 @@ do
 
                workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
          
-               #bsub -J ${workname} -q batch -R "span[ptile=2]" -n 2 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./PSCLP ${exec[p]} ${f_name} NULL ${N[i]} ${M[k]} $timlim ${RR} ${DD}"
+               #bsub -J ${workname} -q serial -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./bin/PSCLPBD ${exec[p]} ${f_name} ${M[k]} $timlim ${RR} 1 ${DD}"
                echo "./bin/PSCLPBD ${exec[p]} ${f_name} ${M[k]} $timlim ${RR} 1 ${DD}"
 
             done
