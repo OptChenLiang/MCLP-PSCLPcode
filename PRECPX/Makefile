@@ -35,11 +35,11 @@ clean :
 
 MCLPCPX: src/main.cpp src/global_functions.o src/model.o src/presolve.o
 	mkdir -p bin
-	$(CCC) $(CFLAGS) $(CLNDIRS) -o bin/$@ $^ $(CLNFLAGS)
+	$(CCC) -o bin/$@ $^ $(CFLAGS) $(CLNDIRS) -DPSCLP=0 $(CLNFLAGS)
 
 PSCLPCPX: src/main.cpp src/global_functions.o src/model.o src/presolve.o
 	mkdir -p bin
-	$(CCC) $(CFLAGS) $(CLNDIRS) -DPSCLP=1 -o bin/$@ $^ $(CLNFLAGS)
+	$(CCC) -o bin/$@ $^ $(CFLAGS) $(CLNDIRS) -DPSCLP=1 $(CLNFLAGS)
 
 REMARK:
 	echo "make CPLEXLIBDIR=<cplex/lib/x86-64_linux/static_pic/> CPLEXINCDIR=<cplex/include/ilcplex/>"

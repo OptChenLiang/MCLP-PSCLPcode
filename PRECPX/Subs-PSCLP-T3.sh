@@ -1,4 +1,4 @@
-timlim=10000;
+timlim=100;
 exec[0]=0 #None
 exec[1]=1 #All
 exec[2]=2 #NO SIN_AGG
@@ -59,7 +59,7 @@ do
 done
 
 #Settings
-for((p=1; p<=6;p++));
+for((p=3; p<=3;p++));
 do
    #Number of customers
    for((k=1; k<=3;k++));
@@ -80,8 +80,8 @@ do
 
                workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
          
-               #bsub -J ${workname} -q batch -R "span[ptile=1]" -n 1 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out "./bin/PSCLPCPX ${exec[p]} ${f_name} ${M[k]} $timlim ${RR} 1 ${DD}"
-               echo "./bin/PSCLPCPX ${exec[p]} ${f_name} ${M[k]} $timlim ${RR} 1 ${DD}"
+               bsub -J ${workname} -q batch -R "span[ptile=8]" -n 8 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./bin/PSCLPCPX ${exec[p]} ${f_name} ${M[k]} $timlim ${RR} 1 ${DD}"
+               #echo "./bin/PSCLPCPX ${exec[p]} ${f_name} ${M[k]} $timlim ${RR} 1 ${DD}"
             done
          done
       done
