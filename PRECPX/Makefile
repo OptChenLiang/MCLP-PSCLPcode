@@ -1,17 +1,17 @@
-CCC = g++ -O0
+CCC = g++
 
 # ---------------------------------------------------------------------
 # Compiler options 
 # ---------------------------------------------------------------------
 
-CCOPT = -m64 -O -fPIC -fno-strict-aliasing -fexceptions -std=c++11
+CCOPT = -m64 -fPIC -fno-strict-aliasing -fexceptions -std=c++11
 COPT  = -m64 -fPIC -fno-strict-aliasing -std=c++11
 
 # ---------------------------------------------------------------------
 # Link options and libraries
 # ---------------------------------------------------------------------
 
-#CPLEXLIBDIR   = ../lib/
+CPLEXLIBDIR   = cplex/lib/
 #echo "make CPLEXLIBDIR=<cplex/lib/x86-64_linux/static_pic/> CPLEXINCDIR=<cplex/include/ilcplex/>"
 
 CCLNDIRS  = -L$(CPLEXLIBDIR) -L$(CONCERTLIBDIR)
@@ -19,7 +19,7 @@ CLNDIRS   = -L$(CPLEXLIBDIR)
 CCLNFLAGS = -lconcert -lilocplex -lcplex -lm -lpthread -ldl
 CLNFLAGS  = -lcplex -lm -lpthread -ldl
 
-#CPLEXINCDIR   = ../include
+CPLEXINCDIR   = cplex/include
 
 CFLAGS  = $(COPT) -I$(CPLEXINCDIR) -O2
 
@@ -35,11 +35,11 @@ clean :
 
 MCLPCPX: src/main.cpp src/global_functions.o src/model.o src/presolve.o
 	mkdir -p bin
-	$(CCC) -o bin/$@ $^ $(CFLAGS) $(CLNDIRS) -DPSCLP=0 $(CLNFLAGS)
+	$(CCC) $(CFLAGS) -o bin/$@ $^ $(CLNDIRS) $(CLNFLAGS)  
 
 PSCLPCPX: src/main.cpp src/global_functions.o src/model.o src/presolve.o
 	mkdir -p bin
-	$(CCC) -o bin/$@ $^ $(CFLAGS) $(CLNDIRS) -DPSCLP=1 $(CLNFLAGS)
+	$(CCC) $(CFLAGS) -o bin/$@ $^ $(CLNDIRS) -DPSCLP $(CLNFLAGS) 
 
 REMARK:
 	echo "make CPLEXLIBDIR=<cplex/lib/x86-64_linux/static_pic/> CPLEXINCDIR=<cplex/include/ilcplex/>"
@@ -51,3 +51,4 @@ dep_file = ./$@
 
 %.o : %.cpp %.h
 	$(CCC) $(CFLAGS) -o $(dep_file) -c $<
+#CPLEXINCDIR   = ../include

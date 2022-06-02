@@ -275,7 +275,7 @@ void build_model(instance *inst)
    free(inst->sense);
 
 
-#ifdef write_prob
+//#ifdef write_prob
    /////////////////////////////////////////////////////////////////////////////////////////////////////////
    //Write the created ILP model on a file
 	inst->status=CPXwriteprob(inst->env,inst->lp,"problem.lp",NULL);
@@ -284,7 +284,7 @@ void build_model(instance *inst)
 		exit(-1);
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-#endif
+//#endif
    //Statistics
    cout<<"NNZ after presolving: " << CPXgetnumnz( inst->env, inst->lp ) <<endl;;
 

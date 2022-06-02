@@ -338,7 +338,7 @@ void IA(instance *inst)
    local_dummy.len = len;
    time_presolvestart=clock();
    double rsquare = inst->RADIUS*inst->RADIUS;
-   int a = 10, b = 100;
+   int a = 1, b = 100;
 	for ( long long i = 0; i < inst->n_clients; i++ ){
       len = 0;
       if(inst->coordinates_loaded == false)
