@@ -80,8 +80,8 @@ do
 
                workname=n${N[i]}_m${M[k]}_r${RR}_d${DD}_s${l}
          
-               bsub -J ${workname} -q batch -R "span[ptile=8]" -n 8 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./bin/MCLPCPX ${exec[p]} ${f_name} ${M[k]} $timlim ${RR} 1 ${DD}"
-               #echo "./bin/MCLPCPX ${exec[p]} ${f_name} ${M[k]} $timlim ${RR} 1 ${DD}"
+               #bsub -J ${workname} -q batch -R "span[ptile=8]" -n 8 -e ./${dir[p]}/${workname}.err -o ./${dir[p]}/${workname}.out -x "./bin/MCLPCPX ${exec[p]} ${f_name} ${M[k]} $timlim ${RR} 1 ${DD}"
+               echo "./bin/MCLPCPX ${exec[p]} ${f_name} ${M[k]} $timlim ${RR} 1 ${DD}"
             done
          done
       done

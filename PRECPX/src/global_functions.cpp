@@ -62,7 +62,8 @@ void read_file(instance *inst)
       if(inst->isPSCLP)
       {
          mypair->demand = 0;
-         mypair->cost = rand()%10 + 90;//inst->fixed_cost[j];
+         mypair->cost = inst->fixed_cost[j];
+         //mypair->cost = rand()%10 + 90;//inst->fixed_cost[j];
       }
       else
       {
