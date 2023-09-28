@@ -1,8 +1,8 @@
 ## Introduction
 This site contains code and complementary material to the paper
 
-L. Chen, S.-J. Chen, W.-K. Chen, Y.-H. Dai, T. Quan, and J. Chen (2021). 
-Efficient presolving methods for solving maximal covering and partial set covering location problems
+L. Chen, S.-J. Chen, W.-K. Chen, Y.-H. Dai, T. Quan, and J. Chen (2023). 
+Efficient presolving methods for solving maximal covering and partial set covering location problems, European Journal of Operational Research, 311(1):73-87
 
 To enhance of capability of solving the maximal covering location problem (MCLP) and 
 partial set covering location problem (PSCLP), the paper proposes five presolving methods including
